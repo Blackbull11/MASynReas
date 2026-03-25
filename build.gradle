@@ -1,0 +1,142 @@
+/*
+   Project my_mas
+
+   Gradle build file for JaCaMo Applications
+   décembre 08, 2025 - 20:21:42
+*/
+
+plugins {
+    id 'com.gradleup.shadow' version '8.3.3'
+    id 'java'
+    id 'maven-publish'
+}
+
+defaultTasks 'run'
+
+apply from: '.jcm-deps.gradle' // this file contains dependencies declared in the .jcm files
+
+version '1.0'
+group   'org.jacamo'
+
+repositories {
+    maven { url "https://raw.githubusercontent.com/jacamo-lang/mvn-repo/master" }
+    maven { url "https://repo.gradle.org/gradle/libs-releases" }
+
+    //maven { url "http://jacamo.sourceforge.net/maven2" }
+    //maven { url "https://jade.tilab.com/maven/" }
+
+    flatDir { dirs 'lib' }
+
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+
+}
+
+dependencies {
+    implementation('org.jacamo:jacamo:1.3.0')
+    implementation 'org.apache.jena:apache-jena-libs:4.9.0'
+    implementation 'org.apache.jena:jena-arq:4.10.0'
+    implementation 'org.apache.jena:jena-core:4.10.0'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/env'
+            srcDir 'src/agt'
+            srcDir 'src/org'
+            srcDir 'src/int'
+            srcDir 'src/java'
+        }
+        resources {
+            srcDir 'src/resources'
+        }
+    }
+}
+
+task run (type: JavaExec, dependsOn: 'classes') {
+    group       ' JaCaMo'
+    description 'runs the JaCaMo application'
+    doFirst {
+        mkdir 'log'
+    }
+    mainClass = 'jacamo.infra.JaCaMoLauncher'
+    args 'my_mas.jcm'
+    // jvmArgs '-Xss15m'
+    classpath sourceSets.main.runtimeClasspath
+}
+
+task buildJCMDeps (type: JavaExec, dependsOn: 'classes') {
+    mainClass = 'jacamo.infra.RunJaCaMoProject'
+    args = ['my_mas.jcm', '--deps']
+    classpath sourceSets.main.runtimeClasspath
+}
+
+jar {
+    duplicatesStrategy 'exclude'
+
+    archiveBaseName = project.name
+
+    from (project.projectDir.absolutePath + '/src') {
+        include '**/*.asl'
+        include '**/*.xml'
+        include '**/*.sai'
+        include '**/*.ptl'
+        include '**/*.jcm'
+        exclude 'test'
+    }
+    from (project.buildDir.absolutePath + '/classes') {
+        include '**/*'
+    }
+
+    manifest {
+        attributes 'Main-Class': 'jacamo.infra.JaCaMoLauncher'
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+shadowJar {
+    doFirst {
+        copy {
+            from 'my_mas.jcm'
+            rename 'my_mas.jcm','default.jcm'
+            into project.buildDir.absolutePath + '/jcm'
+        }
+    }
+    archiveFileName = "jacamo-${project.name}-${project.version}-all.jar" // the name must start with jacamo so that jacamo...jar is found in the classpath
+    from (project.projectDir.absolutePath + '/src') {
+        include '**/*.asl'
+        include '**/*.xml'
+        include '**/*.sai'
+        include '**/*.ptl'
+        include '**/*.jcm'
+        include '*.properties'
+        exclude 'test'
+    }
+    from (project.buildDir.absolutePath + '/classes') {
+        include '**/*'
+    }
+    from (project.buildDir.absolutePath + '/jcm') {
+        include '**/*'
+    }
+    from (project.projectDir.absolutePath + '/') {
+        include '*.properties'
+    }
+
+    doLast {
+        println("You can run your application with: java -jar build/libs/jacamo-${project.name}-${project.version}-all.jar")
+    }
+}
+
+clean {
+    delete 'bin'
+    delete 'build'
+    delete 'log'
+}
