@@ -1,4 +1,4 @@
-// CArtAgO artifact code for project my_mas
+// CArtAgO artifact code for project multiagentSystem
 
 package example;
 

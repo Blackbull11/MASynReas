@@ -1,42 +1,49 @@
-// Agent bob in project appSPARQL
-
-/* Initial beliefs and rules */
+/* ── beliefs ── */
 endpoint("http://localhost:8890/sparql").
-query("SELECT DISTINCT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 10").
+result_file("sparql_result.json").
+python_script("sparql_runner.py").
 
-/* Initial goals */
+mode(python).   // ← switch to mode(jena) to use the original Jena path
 
+/* ── initial goal ── */
 !start_query.
 
-/* Plans */
+/* ── Plans ── */
 
+// --- Python mode: delegate everything to the user's Python script ---
++!start_query : mode(python)
+  <- .print("Agent: Mode Python — lancement du script utilisateur...");
+     joinWorkspace("sparql_workspace", WspId);
+     lookupArtifact("sparql_manager", ArtId);
+     focus(ArtId);
+     ?python_script(Script);
+     ?result_file(ResultFile);
+     execPython(Script, ResultFile).
+
+// --- Jena mode: original direct SPARQL query ---
++!start_query : mode(jena)
+  <- .print("Agent: Mode Jena — exécution de la requête SPARQL directe...");
+     joinWorkspace("sparql_workspace", WspId);
+     lookupArtifact("sparql_manager", ArtId);
+     focus(ArtId);
+     ?endpoint(E);
+     ?query(Q);
+     execQuery(E, Q).
+
+// --- Fallback ---
 +!start_query
-    <- .print("Agent: Exécution de la requête sur localhost:8890/sparql...");
-       joinWorkspace("sparql_workspace", WspId);
-       lookupArtifact("sparql_manager", ArtId);
-       focus(ArtId);
-       .findall(Qry, query(Qry), Queries);
-       Queries = [Q|_];
-       ?endpoint(E);
-       execQuery(E, Q).
+  <- .print("Agent: ERREUR — mode inconnu ou plan échoué.").
 
-+!start_query : .fail
-    <- .print("Agent: !!! ERREUR FATALE - Le plan principal a échoué !!!");
-       .print("Agent: L'opération sparql_manager.execQuery a échoué.").
-
+/* ── Result handlers ── */
 +query_result(Result)
-    <- .print("--- Résultat de la requête SPARQL ---");
-       .print(Result);
-       .print("-------------------------------------").
+  <- .print("--- Résultat ---");
+     .print(Result);
+     .print("----------------").
 
 +query_error(ErrorMsg)
-    <- .print("!!! ERREUR SPARQL !!!") ;
-       .print(ErrorMsg);
-       .print("-----------------------").
-
+  <- .print("!!! ERREUR !!!");
+     .print(ErrorMsg);
+     .print("---------------").
 
 { include("$jacamo/templates/common-cartago.asl") }
 { include("$jacamo/templates/common-moise.asl") }
-
-// uncomment the include below to have an agent compliant with its organisation
-//{ include("$moise/asl/org-obedient.asl") }

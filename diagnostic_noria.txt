@@ -1,0 +1,39 @@
+SEVERITE : CRITIQUE
+RAISON   : Panne propagee ET ressource sans plan de reparation
+ACTION   : Escalade immediate requise sur les deux equipes
+
+Alarmes critiques:
+"[
+  {
+    "resource": "RES_TOY_as2",
+    "message": "SYS_ERROR: L2 table overflow.",
+    "repair": "Net card reset",
+    "app": "APP_TOY_PFS01",
+    "team": "TEAM_TOY_Support02",
+    "has_repair": true
+  }
+]"
+
+Propagations:
+"[
+  {
+    "resource": "RES_TOY_as2",
+    "message": "SYS_ERROR: L2 table overflow.",
+    "repair": "Net card reset",
+    "app": "APP_TOY_PFS01",
+    "team": "TEAM_TOY_Support02",
+    "has_repair": true
+  }
+]"
+
+Alarmes sans reparation:
+"[
+  {
+    "resource": "RES_TOY_as2",
+    "message": "SYS_ERROR: L2 table overflow.",
+    "repair": "Net card reset",
+    "app": "APP_TOY_PFS01",
+    "team": "TEAM_TOY_Support02",
+    "has_repair": true
+  }
+]"

@@ -3,7 +3,7 @@
 <?xml-stylesheet href="https://moise-lang.github.io/xml/os.xsl" type="text/xsl" ?>
 
 <organisational-specification
-    id="my_mas"
+    id="multiagentSystem"
     os-version="0.8"
 
     xmlns='http://moise.sourceforge.net/os'

@@ -1,0 +1,20 @@
+[
+  {
+    "resource": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/RES_TOY_as2"
+    },
+    "logMessage": {
+      "type": "literal",
+      "value": "SYS_ERROR: L2 table overflow."
+    },
+    "repairLabel": {
+      "type": "literal",
+      "value": "Net card reset"
+    },
+    "app": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/APP_TOY_PFS01"
+    }
+  }
+]

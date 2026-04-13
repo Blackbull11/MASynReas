@@ -1,4 +1,4 @@
-// Agent that tests 'bob' in project my_mas
+// Agent that tests 'bob' in project multiagentSystem
 
 // includes target agent to tests
 { include("sample_agent.asl") }
