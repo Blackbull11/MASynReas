@@ -51,11 +51,13 @@ public class SparqlArtifact extends Artifact {
             ProcessBuilder pb = new ProcessBuilder(pythonCmd, scriptPath);
             pb.redirectErrorStream(true);
             pb.directory(new File(System.getProperty("user.dir")));
+            pb.environment().put("PYTHONIOENCODING", "utf-8");
+            pb.environment().put("PYTHONUTF8", "1");
             Process process = pb.start();
 
-            // 2. Stream Python stdout to the JaCaMo console
+            // Forcer UTF-8 côté Java pour lire le flux
             BufferedReader reader = new BufferedReader(
-                new InputStreamReader(process.getInputStream())
+                new InputStreamReader(process.getInputStream(), java.nio.charset.StandardCharsets.UTF_8)
             );
             StringBuilder output = new StringBuilder();
             String line;
@@ -88,6 +90,22 @@ public class SparqlArtifact extends Artifact {
         } catch (Exception e) {
             log("Erreur lors de l'exécution Python : " + e.getMessage());
             signal("query_error", "Exception Java: " + e.getMessage());
+        }
+    }
+
+    //permet d'écrire le rapport ( le diagnostic) dans un fichier .txt
+
+    @OPERATION
+    public void writeReport(String filePath, String content) {
+        try {
+            java.nio.file.Files.write(
+                java.nio.file.Paths.get(filePath),
+                content.getBytes(java.nio.charset.StandardCharsets.UTF_8)
+            );
+            log("Rapport écrit dans : " + filePath);
+        } catch (Exception e) {
+            log("Erreur écriture rapport : " + e.getMessage());
+            signal("report_error", e.getMessage());
         }
     }
 }
