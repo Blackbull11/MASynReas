@@ -3,3 +3,4 @@ log/
 .vscode/
 *.class
 .gradle/
+result_narrative.txt

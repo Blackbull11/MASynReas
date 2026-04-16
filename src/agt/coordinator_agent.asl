@@ -1,5 +1,3 @@
-workers_expected(3).
-workers_done(0).
 critical_alarms([]).
 propagations([]).
 unhandled_alarms([]).
@@ -10,13 +8,12 @@ report_file("diagnostic_noria.txt").
 +!wait_for_results
   <- .print("=== Coordinator: en attente des 3 workers... ===").
 
-/* garde : ignorer les doublons par worker */
 +worker_done("critical_alarm_agent", Result)[source(Sender)]
     : not received_critical
   <- +received_critical;
      .print("Coordinator: alarmes critiques recues");
      -+critical_alarms(Result);
-     !increment_counter.
+     !check_and_trigger.
 
 +worker_done("critical_alarm_agent", Result)[source(Sender)]
     : received_critical <- true.
@@ -26,7 +23,7 @@ report_file("diagnostic_noria.txt").
   <- +received_propagation;
      .print("Coordinator: propagations recues");
      -+propagations(Result);
-     !increment_counter.
+     !check_and_trigger.
 
 +worker_done("propagation_agent", Result)[source(Sender)]
     : received_propagation <- true.
@@ -36,38 +33,47 @@ report_file("diagnostic_noria.txt").
   <- +received_unhandled;
      .print("Coordinator: alarmes non traitees recues");
      -+unhandled_alarms(Result);
-     !increment_counter.
+     !check_and_trigger.
 
 +worker_done("unhandled_agent", Result)[source(Sender)]
     : received_unhandled <- true.
 
 +worker_error(Id, Msg)[source(Sender)]
   <- .print("Coordinator: ERREUR du worker ", Id, " : ", Msg);
-     !increment_counter.
+     !check_and_trigger.
 
-/* garde : ne lancer le diagnostic qu'une seule fois */
-+!increment_counter : not diagnosis_done
-  <- ?workers_done(N);
-     N1 = N + 1;
-     -+workers_done(N1);
-     ?workers_expected(Total);
-     if (N1 >= Total) {
-         +diagnosis_done;
-         !run_diagnosis
-     }.
+/* déclenche le diagnostic seulement quand les 3 flags sont posés */
++!check_and_trigger
+  : received_critical & received_propagation & received_unhandled & not diagnosis_done
+  <- +diagnosis_done.
 
-+!increment_counter : diagnosis_done <- true.
++!check_and_trigger <- true.
+
+/* réactif : fired exactement une fois quand diagnosis_done est ajouté */
++diagnosis_done
+  <- .print("Coordinator: === demarrage du diagnostic ===");
+     !run_diagnosis.
 
 +!run_diagnosis
   <- !compute_severity(Severity, Reason, Action);
+     .print("Coordinator: severite -> ", Severity);
      !write_report(Severity, Reason, Action);
+     !run_narrative(Severity, Reason, Action).
+
++!run_narrative(Severity, Reason, Action)
+  <- .print("Coordinator: lancement de la synthese narrative LLM...");
+     execPython("diagnosis_llm.py", "result_narrative.txt");
      .print("");
      .print("=== DIAGNOSTIC GLOBAL NORIA ===");
      .print("Severite : ", Severity);
      .print("Raison   : ", Reason);
      .print("Action   : ", Action);
-     .print("Rapport  : diagnostic_noria.txt");
+     .print("Narrative: voir diagnostic_noria.txt");
      .print("================================").
+
+/* ignore les signaux query_result/query_error des scripts de detection */
++query_result(_) <- true.
++query_error(_)  <- true.
 
 +!compute_severity(Severity, Reason, Action)
   <- ?propagations(P);
