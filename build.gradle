@@ -13,7 +13,7 @@ plugins {
 
 defaultTasks 'run'
 
-apply from: '.jcm-deps.gradle' // this file contains dependencies declared in the .jcm files
+apply from: '.jcm-deps.gradle'
 
 version '1.0'
 group   'org.jacamo'
@@ -21,15 +21,9 @@ group   'org.jacamo'
 repositories {
     maven { url "https://raw.githubusercontent.com/jacamo-lang/mvn-repo/master" }
     maven { url "https://repo.gradle.org/gradle/libs-releases" }
-
-    //maven { url "http://jacamo.sourceforge.net/maven2" }
-    //maven { url "https://jade.tilab.com/maven/" }
-
     flatDir { dirs 'lib' }
-
     mavenCentral()
     maven { url "https://jitpack.io" }
-
 }
 
 dependencies {
@@ -61,14 +55,14 @@ task run (type: JavaExec, dependsOn: 'classes') {
         mkdir 'log'
     }
     mainClass = 'jacamo.infra.JaCaMoLauncher'
-    args 'multiagentSystem.jcm'
+    args 'multiagentSystem_v2.jcm'   // ← CHANGER CETTE LIGNE ET CELLE 1 paRa en DESSOUS
     // jvmArgs '-Xss15m'
     classpath sourceSets.main.runtimeClasspath
 }
 
 task buildJCMDeps (type: JavaExec, dependsOn: 'classes') {
     mainClass = 'jacamo.infra.RunJaCaMoProject'
-    args = ['multiagentSystem.jcm', '--deps']
+    args = ['multiagentSystem_v2.jcm', '--deps']   // ← ET CETTE LIGNE AUSSI
     classpath sourceSets.main.runtimeClasspath
 }
 
@@ -110,7 +104,7 @@ shadowJar {
             into project.buildDir.absolutePath + '/jcm'
         }
     }
-    archiveFileName = "jacamo-${project.name}-${project.version}-all.jar" // the name must start with jacamo so that jacamo...jar is found in the classpath
+    archiveFileName = "jacamo-${project.name}-${project.version}-all.jar"
     from (project.projectDir.absolutePath + '/src') {
         include '**/*.asl'
         include '**/*.xml'
