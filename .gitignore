@@ -3,3 +3,5 @@ log/
 .vscode/
 *.class
 .gradle/
+.gradle-local/
+.gradle-project-cache/
