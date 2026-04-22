@@ -84,6 +84,18 @@ mas multiagentSystem {
         focus: w.pyexec
     }
 
+    agent change_request_without_scheduled_time_detector {
+        focus: w.pyexec
+    }
+
+    agent procedure_not_linked_to_resource_type_detector {
+        focus: w.pyexec
+    }
+
+    agent ticket_without_assigned_procedure_detector {
+        focus: w.pyexec
+    }
+
     agent isolated_incident_resource_detector {
         focus: w.pyexec
     }
@@ -196,10 +208,22 @@ mas multiagentSystem {
         focus: w.pyexec
     }
 
+    agent change_linked_to_multiple_incidents_detector {
+        focus: w.pyexec
+    }
+
+    agent incident_without_ticket_detector {
+        focus: w.pyexec
+    }
+
+    agent ticket_without_linked_event_detector {
+        focus: w.pyexec
+    }
+
     workspace w {
         artifact pyexec: env.PythonExecArtifact()
     }
 
-    asl-path: ., src/agt, src/agt/structural/apriori, src/agt/structural/aposteriori, src/agt/dynamic/apriori, src/agt/dynamic/aposteriori, src/agt/functional/apriori, src/agt/functional/aposteriori
+    asl-path: ., src/agt, src/agt/structural/apriori, src/agt/structural/aposteriori, src/agt/dynamic/apriori, src/agt/dynamic/aposteriori, src/agt/functional/apriori, src/agt/functional/aposteriori, src/agt/procedural/apriori, src/agt/procedural/aposteriori
     java-path: ., src/env, src/agt
 }
