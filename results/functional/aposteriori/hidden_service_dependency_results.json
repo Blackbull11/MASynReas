@@ -1,0 +1,62 @@
+[
+  {
+    "event": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/event/LOG_TOY_pe_1_1_2022-02-12T22-58-00Z"
+    },
+    "time": {
+      "type": "literal",
+      "value": "2022-02-12T22:58:00Z"
+    },
+    "resource": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/RES_TOY_pe_1_1"
+    },
+    "application": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/APP_TOY_INF01"
+    },
+    "module": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/APPM_TOY_INF01_M01"
+    },
+    "service1": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/SVC_TOY_DBAccess"
+    },
+    "service2": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/SVC_TOY_TimeServer"
+    }
+  },
+  {
+    "event": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/event/LOG_TOY_pe_1_1_2022-02-12T22-58-00Z"
+    },
+    "time": {
+      "type": "literal",
+      "value": "2022-02-12T22:58:00Z"
+    },
+    "resource": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/RES_TOY_pe_1_1"
+    },
+    "application": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/APP_TOY_INF01"
+    },
+    "module": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/APPM_TOY_INF01_M01"
+    },
+    "service1": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/SVC_TOY_TimeServer"
+    },
+    "service2": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/SVC_TOY_DBAccess"
+    }
+  }
+]

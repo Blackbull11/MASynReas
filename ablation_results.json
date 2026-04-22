@@ -1,0 +1,287 @@
+{
+  "timestamp": "2026-04-23T00:19:01.988536",
+  "model": "llama3.1:8b",
+  "n_runs": 5,
+  "scenarios": [
+    {
+      "scenario_id": "S1_single_point_of_failure",
+      "description": "Resource RES_TOY_as2 triggers 3 independent structural signals",
+      "ground_truth": {
+        "diagnosis_type": "single_point_of_failure",
+        "target": "RES_TOY_as2",
+        "severity": "CRITICAL"
+      },
+      "conditions": [
+        {
+          "condition": "A - LLM alone",
+          "responses": [
+            "Based on the trouble ticket, I diagnose that:\n\nThe most likely root cause is a network outage or failure affecting Resource RES_TOY_as2.\nThe affected entity is Resource RES_TOY_as2, which appears to be experiencing limited network connectivity.\nSeverity level: CRITICAL, as multiple downstream applications may be impacted and there is no backup system in place.",
+            "Based on the trouble ticket, I diagnose that:\n\nThe most likely root cause is a hardware or infrastructure failure affecting Resource RES_TOY_as2.\nThe affected entity is Resource RES_TOY_as2, which appears to be experiencing limited network connectivity.\nSeverity level: CRITICAL, as multiple downstream applications may be impacted and there is no backup system in place.",
+            "Based on the trouble ticket, I diagnose that:\n\nThe most likely root cause is a network connectivity issue affecting Resource RES_TOY_as2.\nThe affected entity is Resource RES_TOY_as2, which appears to be experiencing limited network connectivity.\nSeverity level: HIGH - multiple downstream applications may be impacted if not resolved promptly.",
+            "Based on the trouble ticket, I diagnose that:\n\nThe most likely root cause is a hardware or infrastructure failure affecting Resource RES_TOY_as2.\nThe affected entity is Resource RES_TOY_as2, which appears to be experiencing limited network connectivity.\nSeverity level: CRITICAL, as multiple downstream applications may be impacted and there is no backup system in place.",
+            "Based on the trouble ticket, I diagnose that:\n\nThe most likely root cause is a hardware or infrastructure failure affecting Resource RES_TOY_as2.\nThe affected entity is Resource RES_TOY_as2, which appears to be experiencing limited network connectivity.\nSeverity level: CRITICAL, as multiple downstream applications may be impacted and there is no backup system in place."
+          ],
+          "avg_time_ms": 12950.0,
+          "hallucination_rate": 0.0,
+          "conformity_score": 0.67,
+          "consistency_score": 0.84,
+          "severity_match": 1
+        },
+        {
+          "condition": "B - Level-1 -> LLM",
+          "responses": [
+            "Based on the extracted facts, I diagnose that **RES_TOY_as2** is experiencing a critical issue (SEVERITY: CRITICAL) due to lack of redundancy with another resource, RES_TOY_srv1, which also shares the same ticket TT_TOY2022TT. This indicates a single point of failure and potential data loss or service interruption if RES_TOY_as2 fails completely. The high impact on this resource further supports the critical severity level.",
+            "Based on the extracted facts, I diagnose that **RES_TOY_as2** is experiencing a critical issue (SEVERITY: CRITICAL) due to a lack of redundancy (NO_REDUNDANCY_INCIDENT). The fact that RES_TOY_srv1 is also affected by the same ticket suggests a cascading failure. This situation may lead to significant service disruptions, making it a **CRITICAL** incident.",
+            "Based on the extracted facts, I diagnose a **CRITICAL** issue affecting the **RES_TOY_as2** resource. The lack of redundancy (no_redundancy_incident) and high impact (high_impact_resource) indicate that this resource is critical to the system's operation. Additionally, the isolated incident (isolated_incident_resource) suggests that RES_TOY_as2 has lost connectivity with other resources, further exacerbating the issue.",
+            "Based on the extracted facts, I diagnose a CRITICAL issue affecting RES_TOY_as2. The root cause is likely a single point of failure due to lack of redundancy, as indicated by the \"no_redundancy_incident\" fact. This is further supported by the high impact resource designation for RES_TOY_as2 and its isolated connectivity with only one degree.",
+            "Based on the extracted facts, I diagnose a **CRITICAL** issue affecting the **RES_TOY_as2** resource. The lack of redundancy (no_redundancy_incident) and high impact (high_impact_resource) indicate that this resource is critical to the system's functionality. Additionally, the isolated incident (isolated_incident_resource) suggests that RES_TOY_as2 has lost connectivity with other resources, further exacerbating the issue."
+          ],
+          "avg_time_ms": 13917.0,
+          "hallucination_rate": 0.25,
+          "conformity_score": 1.0,
+          "consistency_score": 0.44,
+          "severity_match": 1
+        },
+        {
+          "condition": "C - Level-1+2->LLM",
+          "responses": [
+            "Based on the provided diagnosis, I confirm that **Resource RES_TOY_as2** is indeed a single point of failure with a **CRITICAL** severity level. The corroborating evidence from three independent structural signals (isolated incident resource, no redundancy incident, and high impact resource) strongly supports this conclusion. This diagnosis indicates a significant risk to the overall system's reliability and availability, warranting immediate attention to mitigate potential cascading failures.",
+            "Based on the provided diagnosis, I confirm that Resource RES_TOY_as2 is indeed a single point of failure with CRITICAL severity. The corroborating evidence from isolated incident resource, no redundancy incident, and high impact resource indicators strongly supports this conclusion. This diagnosis warrants immediate attention to prevent potential cascading failures or service disruptions.",
+            "The diagnosis confirms that RES_TOY_as2 is a single point of failure with CRITICAL severity. This conclusion is supported by three independent structural signals: the resource's isolated incident, lack of redundancy, and high impact on dependent resources. The confidence level is 1.0, indicating a strong correlation between these indicators.",
+            "Based on the provided diagnosis, I confirm that **RES_TOY_as2** is indeed a single point of failure with a **CRITICAL** severity level. The corroborating evidence from multiple structural signals (isolated incident resource, no redundancy incident, and high impact resource) strongly supports this conclusion. The critical nature of this issue suggests that the system's availability and performance are severely compromised if RES_TOY_as2 fails.",
+            "Based on the provided inputs, I confirm the diagnosis that **RES_TOY_as2** is a single point of failure with a severity level of **CRITICAL**. The corroborating evidence from multiple structural signals, including isolated incident resource, no redundancy incident, and high impact resource, strongly supports this conclusion. This critical issue requires immediate attention to prevent potential cascading failures and ensure the overall stability of the system."
+          ],
+          "avg_time_ms": 16531.0,
+          "hallucination_rate": 0.0,
+          "conformity_score": 1.0,
+          "consistency_score": 0.54,
+          "severity_match": 1
+        }
+      ]
+    },
+    {
+      "scenario_id": "S2_change_induced_incident",
+      "description": "Change CR_2022_001 corroborated by dynamic and procedural signals",
+      "ground_truth": {
+        "diagnosis_type": "change_induced_incident",
+        "target": "CR_2022_001",
+        "severity": "HIGH"
+      },
+      "conditions": [
+        {
+          "condition": "A - LLM alone",
+          "responses": [
+            "Based on the trouble ticket, I diagnose:\n\n**Root Cause:** Likely a configuration or implementation issue related to the maintenance change CR_2022_001.\n**Affected Entity:** RES_TOY_as2 (a network device or system).\n**Severity Level:** HIGH - The incident was detected shortly after the maintenance change, indicating potential instability or security risks.\n\nNote: The fact that multiple recent incident reports are associated with this change suggests a possible systemic issue rather than an isolated problem.",
+            "Based on the provided trouble ticket, I diagnose the issue as follows:\n\n**Root Cause:** The maintenance change CR_2022_001 is likely the root cause of the incident.\n**Affected Entity:** RES_TOY_as2 (a network device or system).\n**Severity Level:** HIGH - Given that this is a repeat offender and was applied shortly before the incident, it suggests a potentially critical issue that requires immediate attention.\n\nNote: The fact that multiple recent incident reports have been associated with this change increases its likelihood of being the root cause.",
+            "Based on the trouble ticket, I diagnose the issue as follows:\n\n**Affected Entity:** RES_TOY_as2 ( likely a network device or router)\n\n**Likely Root Cause:** The maintenance change CR_2022_001 applied to the network is suspected to be the root cause of the incident. This change has been associated with multiple recent incidents, indicating it may have introduced a configuration error or bug.\n\n**Severity Level:** HIGH - Given that the incident was detected shortly after applying a maintenance change and this change has been linked to previous issues, it's likely that the network is experiencing significant disruptions, warranting a high severity level.",
+            "Based on the trouble ticket, I diagnose:\n\n**Root Cause:** The maintenance change CR_2022_001 applied to RES_TOY_as2 is likely the root cause of the incident.\n**Affected Entity:** RES_TOY_as2 (a network device or system).\n**Severity Level:** HIGH. The fact that multiple recent incident reports are associated with this change suggests a recurring issue, which warrants immediate attention.\n\nGiven the association with previous incidents and the timing shortly after applying the maintenance change, it's likely that CR_2022_001 has introduced an unintended configuration or software issue on RES_TOY_as2.",
+            "Based on the provided trouble ticket, I diagnose the issue as follows:\n\n**Likely Root Cause:** The maintenance change CR_2022_001 is likely the root cause of the incident.\n\n**Affected Entity:** RES_TOY_as2 (a network device or system).\n\n**Severity Level:** HIGH. The fact that multiple recent incident reports have been associated with this change suggests a potential systemic issue, and the timing of the incident shortly after the maintenance change was applied indicates a possible immediate impact on the affected entity's functionality.\n\nNote: Without further information, it is difficult to pinpoint the exact nature of the problem or its impact. Further investigation would be required to determine the specific cause and scope of the issue."
+          ],
+          "avg_time_ms": 17469.0,
+          "hallucination_rate": 0.0,
+          "conformity_score": 0.67,
+          "consistency_score": 0.52,
+          "severity_match": 1
+        },
+        {
+          "condition": "B - Level-1 -> LLM",
+          "responses": [
+            "Based on the extracted facts, I diagnose that the root cause of the issue is likely related to Change CR_2022_001, which has been linked to multiple incidents (3) and was followed by an alarm event EV_as2_alarm affecting Resource RES_TOY_as2. The affected entity is RES_TOY_as2, a critical resource as indicated by the severity level of the incident. I rate the severity level as CRITICAL due to the repeated incidents and potential impact on system stability.",
+            "Based on the extracted facts, I diagnose that the root cause of the issue is likely related to Change CR_2022_001, which has been linked to multiple incidents (3) and was followed by an alarm event EV_as2_alarm affecting Resource RES_TOY_as2. The affected entity is RES_TOY_as2, a resource associated with the AS2 service. I rate the severity level as HIGH due to the repeated incidents and alarm events triggered by this change.",
+            "Based on the extracted facts, I diagnose that the root cause of the issue is likely related to Change CR_2022_001, which has been linked to multiple incidents (3) and was followed by an alarm event EV_as2_alarm affecting Resource RES_TOY_as2. The affected entity is RES_TOY_as2, a resource that triggered an alarm after the change was applied. I rate the severity level as HIGH due to the repeated occurrence of incidents related to this change.",
+            "Based on the extracted facts, I diagnose that the root cause of the issue is likely related to Change CR_2022_001, which has been linked to multiple incidents (3) and was followed by an alarm event EV_as2_alarm affecting Resource RES_TOY_as2. The affected entity is RES_TOY_as2, a critical resource as indicated by the severity of the alarm event. I rate the severity level as CRITICAL due to the repeated incidents and the alarm event triggered by this change.",
+            "Based on the extracted facts, I diagnose that the root cause of the issue is likely related to Change CR_2022_001, which has been linked to multiple incidents (3) and was followed by an alarm event EV_as2_alarm affecting Resource RES_TOY_as2. The affected entity is RES_TOY_as2, a resource in the system. I would classify the severity level as HIGH due to the repeated occurrence of incidents following this change."
+          ],
+          "avg_time_ms": 15136.0,
+          "hallucination_rate": 0.0,
+          "conformity_score": 0.33,
+          "consistency_score": 0.82,
+          "severity_match": 0
+        },
+        {
+          "condition": "C - Level-1+2->LLM",
+          "responses": [
+            "Based on the provided inputs, I confirm the suggested diagnosis that Change CR_2022_001 is the probable root cause of the incidents. The dual corroboration from both dynamic (temporal relationship) and procedural (linked to multiple incident tickets) families supports this conclusion. I agree with the assigned severity level of HIGH due to the change's association with three separate incident tickets, indicating a significant impact on system stability.",
+            "Based on the provided information, I confirm the diagnosis that Change CR_2022_001 is the probable root cause of the incidents. The dual corroboration from both dynamic (temporal relationship) and procedural (linked to multiple incident tickets) families supports this conclusion. I agree with the assigned severity level of HIGH, indicating a significant impact on the system's stability and requiring immediate attention.",
+            "Based on the provided information, I confirm the diagnosis that Change CR_2022_001 is the probable root cause of the incidents. The dual corroboration from both dynamic (temporal relationship) and procedural (linked to multiple incident tickets) families supports this conclusion. I agree with the assigned severity level of HIGH, indicating a significant impact on the system or service.",
+            "Based on the provided information, I confirm the diagnosis that Change CR_2022_001 is the probable root cause of the incidents. The dual corroboration from both dynamic (temporal relationship) and procedural (linked to multiple incident tickets) families supports this conclusion. I agree with the assigned severity level of HIGH due to the change's association with three separate incidents on RES_TOY_as2, indicating a potential systemic issue.",
+            "Based on the provided inputs, I confirm the diagnosis that Change CR_2022_001 is the probable root cause of the incidents. The dual corroboration from both dynamic (temporal relationship) and procedural (linked to multiple incident tickets) families supports this conclusion. I agree with the assigned severity level of HIGH, indicating a significant impact on the system's stability and requiring immediate attention."
+          ],
+          "avg_time_ms": 14761.0,
+          "hallucination_rate": 0.0,
+          "conformity_score": 0.67,
+          "consistency_score": 0.82,
+          "severity_match": 1
+        }
+      ]
+    },
+    {
+      "scenario_id": "S3_traceability_breakdown",
+      "description": "Incidents without tickets and tickets without events co-present",
+      "ground_truth": {
+        "diagnosis_type": "traceability_breakdown",
+        "target": "operational_process",
+        "severity": "HIGH"
+      },
+      "conditions": [
+        {
+          "condition": "A - LLM alone",
+          "responses": [
+            "Based on the provided information, I diagnose the issue as a discrepancy between the alarm events recorded in the monitoring system ( likely \"Nagios\" or similar) and the corresponding trouble tickets opened in the ticketing system ( possibly \"ServiceNow\"). The most likely root cause is a misconfiguration or integration issue between these two systems. Severity: HIGH, as this indicates a potential failure of incident response processes, which can lead to delayed resolution of critical issues.",
+            "Based on the provided information, I diagnose the issue as a discrepancy between the alarm events recorded in the monitoring system ( likely \"Nagios\" or similar) and the corresponding trouble tickets opened in the ticketing system ( possibly \"ServiceNow\"). The most likely root cause is a misconfiguration or synchronization issue between these two systems. Affected entity: Ticketing System (SNOW). Severity: HIGH, as this indicates potential gaps in incident response and may lead to delayed resolution of critical issues.",
+            "Based on the provided information, I diagnose the issue as a discrepancy between the alarm events recorded in the monitoring system ( likely \"Nagios\" or similar) and the corresponding trouble tickets generated by the ticketing system ( possibly \"ServiceNow\"). The most likely root cause is a misconfiguration or integration issue between these two systems. Affected entity: Ticketing System (SNOW). Severity level: HIGH, as this could lead to delayed or missed incident response, potentially impacting business continuity and customer satisfaction.",
+            "Based on the provided information, I diagnose the issue as a discrepancy between the alarm events recorded in the monitoring system ( likely \"Nagios\" or similar) and the corresponding trouble tickets opened in the ticketing system ( possibly \"ServiceNow\"). The most likely root cause is a misconfiguration or integration issue between these two systems. Severity: HIGH, as this indicates a potential failure of incident response processes, which could lead to delayed resolution of critical issues.",
+            "Based on the provided information, I diagnose the issue as a discrepancy between the alarm events recorded in the monitoring system ( likely \"Nagios\" or similar) and the corresponding trouble tickets opened in the ticketing system ( possibly \"ServiceNow\"). The most likely root cause is a misconfiguration or integration issue between these two systems. Severity: HIGH, as this indicates a potential failure of incident response processes and may lead to delayed resolution of critical issues."
+          ],
+          "avg_time_ms": 13708.0,
+          "hallucination_rate": 0.0,
+          "conformity_score": 0.33,
+          "consistency_score": 0.8,
+          "severity_match": 1
+        },
+        {
+          "condition": "B - Level-1 -> LLM",
+          "responses": [
+            "Based on the detector results, I diagnose that the most likely root cause is an orphaned event issue, which has resulted in two events (EV_ORPHAN_1 and EV_ORPHAN_2) being reported without a corresponding ticket. The affected entity is likely the network monitoring system, as it failed to link these events with existing tickets. The severity level of this incident is HIGH due to the presence of a major severity event (EV_ORPHAN_1).",
+            "Based on the extracted facts, I diagnose that the most likely root cause is an orphaned event (\"EV_ORPHAN_1\") with a major severity level. This event is not linked to any ticket, indicating a potential issue with event-ticket correlation. The affected entity is likely the network monitoring system or the incident management process. Severity level: CRITICAL due to the major severity of the orphaned event.",
+            "Based on the detector results, I diagnose that the most likely root cause is an orphaned event issue, specifically EV_ORPHAN_1 with a major severity level. This event is not linked to any ticket, indicating a potential misconfiguration or data inconsistency in the system. The affected entity appears to be the network monitoring system, as it's unable to properly associate events with tickets. Severity level: CRITICAL due to the major severity of EV_ORPHAN_1 and its potential impact on incident management processes.",
+            "Based on the extracted facts, I diagnose that the most likely root cause is a misconfiguration or data inconsistency issue within the incident management system. The affected entity is the ticketing system, specifically Ticket TT_ORPHAN_1, which has an open status but lacks a linked event. The severity level of this issue is HIGH due to the presence of two orphaned events (EV_ORPHAN_1 and EV_ORPHAN_2) with major and minor severities, respectively, indicating potential data integrity problems.",
+            "Based on the detector results, I diagnose that the most likely root cause is an orphaned event (\"EV_ORPHAN_1\") with a major severity level, which indicates a critical issue. The affected entity is the network monitoring system, as it has failed to link this critical event to a corresponding ticket (\"TT_ORPHAN_1\"). This situation poses a HIGH severity risk due to the potential for undetected and unresolved issues in the network."
+          ],
+          "avg_time_ms": 14437.0,
+          "hallucination_rate": 0.0,
+          "conformity_score": 0.33,
+          "consistency_score": 0.52,
+          "severity_match": 1
+        },
+        {
+          "condition": "C - Level-1+2->LLM",
+          "responses": [
+            "Based on the provided inputs, I confirm the suggested diagnosis of a \"Systemic traceability breakdown\" with a severity level of HIGH. The presence of two incident events (EV_ORPHAN_1 and EV_ORPHAN_2) without associated tickets and one open ticket (TT_ORPHAN_1) without a linked event indicates a critical issue in maintaining operational process traceability. This breakdown can lead to difficulties in identifying root causes, tracking progress, and ensuring accountability, making it a HIGH-severity concern.",
+            "Based on the provided inputs, I confirm the suggested diagnosis of a \"Systemic traceability breakdown\" with a severity level of HIGH. The presence of two incident events (EV_ORPHAN_1 and EV_ORPHAN_2) without associated tickets and one open ticket (TT_ORPHAN_1) without a linked event indicates a critical issue in maintaining accurate and complete records of incidents and their corresponding tickets. This breakdown can lead to difficulties in tracking and resolving issues, making it essential to address this problem promptly.",
+            "Based on the provided inputs, I confirm the suggested diagnosis of a \"Systemic traceability breakdown\" with a severity level of HIGH. The evidence suggests that two incident events (EV_ORPHAN_1 and EV_ORPHAN_2) have no associated ticket, while one ticket (TT_ORPHAN_1) has no linked event. This indicates a critical failure in the operational process's ability to track and manage incidents and tickets, which can lead to delayed resolution times and increased risk of further issues. The high confidence level of 0.9 supports this diagnosis.",
+            "Based on the provided inputs, I confirm the suggested diagnosis of a \"Systemic traceability breakdown\" with a severity level of HIGH. The presence of two incident events (EV_ORPHAN_1 and EV_ORPHAN_2) without associated tickets and one open ticket (TT_ORPHAN_1) without a linked event indicates a significant issue with the operational process's ability to track and manage incidents. This breakdown can lead to delayed resolution, increased risk of further issues, and decreased overall system reliability.",
+            "Based on the provided inputs, I confirm the suggested diagnosis of a \"Systemic traceability breakdown\" with a severity level of HIGH. The presence of two incident events (EV_ORPHAN_1 and EV_ORPHAN_2) without associated tickets and one open ticket (TT_ORPHAN_1) without a linked event indicates a critical issue in maintaining the integrity of operational processes. This breakdown can lead to difficulties in tracking and resolving incidents, making it essential to address this issue promptly."
+          ],
+          "avg_time_ms": 17696.0,
+          "hallucination_rate": 0.0,
+          "conformity_score": 0.67,
+          "consistency_score": 0.62,
+          "severity_match": 1
+        }
+      ]
+    },
+    {
+      "scenario_id": "S4_structural_fragility_apriori",
+      "description": "RES_TOY_as2 accumulates 3 apriori governance weaknesses before any incident",
+      "ground_truth": {
+        "diagnosis_type": "structural_fragility",
+        "target": "RES_TOY_as2",
+        "severity": "HIGH"
+      },
+      "conditions": [
+        {
+          "condition": "A - LLM alone",
+          "responses": [
+            "Based on the trouble ticket, I diagnose that:\n\nThe most likely root cause is a configuration error or orphaned resource in the infrastructure hierarchy.\nThe affected entity is RES_TOY_as2, which appears to be an unmanaged resource with no parent resource, network interface, or management system assigned.\nSeverity: HIGH - The lack of management and visibility into this resource poses a risk to overall network security and monitoring capabilities.",
+            "Based on the trouble ticket, I diagnose that:\n\nThe most likely root cause is a configuration error or orphaned resource during infrastructure changes.\nThe affected entity is RES_TOY_as2, which is an unmanaged resource with no parent resource in the hierarchy, network interface recorded, or management system assigned.\nSeverity level: MEDIUM. This issue may not be causing immediate service disruption but could lead to future problems if left unaddressed, such as difficulty tracking resource utilization or security vulnerabilities due to lack of monitoring and management.",
+            "Based on the trouble ticket, I diagnose that the most likely root cause is a configuration error or orphaned resource in the infrastructure hierarchy. The affected entity is RES_TOY_as2, which has no parent resource, network interface, or management system assigned. This indicates a potential security risk and loss of visibility into the resource's performance and status. Severity level: HIGH, as an unmanaged resource can pose a significant risk to the overall security and integrity of the infrastructure.",
+            "Based on the trouble ticket, I diagnose that the most likely root cause is a configuration error or orphaned resource in the infrastructure hierarchy. The affected entity is RES_TOY_as2, which has no parent resource, network interface, or management system assigned. This indicates a potential security risk and loss of visibility into the resource's performance and behavior. Severity: HIGH, as an unmanaged resource can pose a significant risk to the overall security and stability of the infrastructure.",
+            "Based on the trouble ticket, I diagnose that the most likely root cause is a configuration error or orphaned resource in the infrastructure hierarchy. The affected entity is RES_TOY_as2, which has no parent resource, network interface, or management system assigned. This indicates a potential security risk and loss of visibility into the resource's performance and behavior. Severity: HIGH, as an unmanaged resource can pose a significant risk to the overall security and stability of the infrastructure."
+          ],
+          "avg_time_ms": 14184.0,
+          "hallucination_rate": 0.0,
+          "conformity_score": 0.67,
+          "consistency_score": 0.7,
+          "severity_match": 1
+        },
+        {
+          "condition": "B - Level-1 -> LLM",
+          "responses": [
+            "**Diagnosis:**\n\nThe most likely root cause is a configuration issue or a resource management problem, leading to orphaned resources and missing interfaces. The affected entities are RES_TOY_as2 (AS2 server) and RES_TOY_srv1 (server). I would classify the severity level as **HIGH**, as these issues can lead to data loss, security vulnerabilities, and service unavailability.\n\n**Recommendation:** Investigate the resource configuration and management processes to identify the root cause of this issue. Verify that RES_TOY_as2 and RES_TOY_srv1 are properly configured and managed within the system.",
+            "**Diagnosis:**\n\nThe most likely root cause is a configuration issue or a resource management problem, leading to orphaned resources and missing interfaces. The affected entities are RES_TOY_as2 (AS2 server) and RES_TOY_srv1 (server). I would rate the severity level as **HIGH**, as these issues can lead to data loss, security vulnerabilities, and service unavailability.\n\n**Recommendation:** Investigate the resource configuration and management policies to identify the root cause of this issue. Review the parent-child relationships between resources and ensure that all dependencies are properly set up.",
+            "**Diagnosis:**\n\nThe most likely root cause is a configuration issue affecting the resources \"RES_TOY_as2\" and \"RES_TOY_srv1\". These resources are orphaned, missing interfaces, and have no parent resource, indicating a misconfiguration or incomplete setup. The severity level is **CRITICAL**, as these issues can lead to service unavailability and security vulnerabilities.\n\n**Affected Entity:** RES_TOY_as2 and RES_TOY_srv1\n\n**Severity Level:** CRITICAL",
+            "**Diagnosis:**\n\nThe most likely root cause is a configuration issue or mismanagement of resources, leading to orphaned and missing interfaces for the entities RES_TOY_as2 and RES_TOY_srv1. The affected entities are two network resources: RES_TOY_as2 (AS2) and RES_TOY_srv1 (SRV1). I would classify this issue as **HIGH** severity due to the potential impact on data transfer and communication between these resources.\n\nNote that the absence of unmanaged resources in the detector results suggests that the issue is likely related to configuration or management rather than a security breach.",
+            "**Diagnosis:**\n\nThe most likely root cause is a configuration issue affecting the resources \"RES_TOY_as2\" and \"RES_TOY_srv1\". These resources are orphaned, missing interfaces, and have no parent resource, indicating a misconfiguration or incomplete setup. The severity level is **CRITICAL**, as these issues can lead to service unavailability and data loss.\n\n**Affected Entity:** RES_TOY_as2 and RES_TOY_srv1\n\n**Severity Level:** CRITICAL"
+          ],
+          "avg_time_ms": 16765.0,
+          "hallucination_rate": 0.0,
+          "conformity_score": 0.67,
+          "consistency_score": 0.51,
+          "severity_match": 1
+        },
+        {
+          "condition": "C - Level-1+2->LLM",
+          "responses": [
+            "Based on the correlation diagnoses, I confirm that both **RES_TOY_as2** and **RES_TOY_srv1** are experiencing structural fragility issues. However, I nuance the suggested diagnosis by noting that **RES_TOY_as2** is in a more critical state due to its higher evidence count (3) and confidence level (0.8), indicating a HIGH severity level. In contrast, **RES_TOY_srv1** has a MEDIUM severity level due to its lower evidence count (2) and confidence level (0.55).",
+            "Based on the correlation diagnoses, I confirm that both **RES_TOY_as2** and **RES_TOY_srv1** are experiencing structural fragility issues. However, I nuance the diagnosis by noting that **RES_TOY_as2** is in a more critical state due to its higher evidence count (3) and confidence level (0.8), indicating a HIGH severity level. In contrast, **RES_TOY_srv1** has a MEDIUM severity level with 2 structural weakness signals and a lower confidence level (0.55).",
+            "Based on the correlation diagnoses, I confirm that both **RES_TOY_as2** and **RES_TOY_srv1** are experiencing structural fragility issues. However, I nuance the suggested diagnosis by noting that while **RES_TOY_as2** has a higher confidence level (0.8) and severity level (**HIGH**) due to three accumulated weakness signals, **RES_TOY_srv1** has a lower confidence level (0.55) and severity level (**MEDIUM**) with only two identified weaknesses. This suggests that **RES_TOY_as2** is in a more critical state of disrepair compared to **RES_TOY_srv1**, which still requires attention but may not be as immediately threatening.",
+            "Based on the correlation diagnoses, I confirm that both **RES_TOY_as2** and **RES_TOY_srv1** are experiencing structural fragility issues. However, I nuance the suggested diagnosis by noting that while **RES_TOY_as2** has a higher confidence level (0.8) and is classified as HIGH severity due to its accumulation of 3 weakness signals, **RES_TOY_srv1**'s situation is less severe with only 2 signals detected, warranting a MEDIUM severity classification.",
+            "Based on the correlation diagnoses, I confirm that both **RES_TOY_as2** and **RES_TOY_srv1** are experiencing structural fragility issues. However, I nuance the diagnosis by noting that **RES_TOY_as2** is in a more critical state due to its higher evidence count (3) and confidence level (0.8), indicating a HIGH severity level. In contrast, **RES_TOY_srv1** has a MEDIUM severity level with 2 structural weakness signals and a lower confidence level (0.55)."
+          ],
+          "avg_time_ms": 20773.0,
+          "hallucination_rate": 0.0,
+          "conformity_score": 1.0,
+          "consistency_score": 0.7,
+          "severity_match": 1
+        }
+      ]
+    },
+    {
+      "scenario_id": "S5_cross_family_combined",
+      "description": "RES_TOY_as2 is a SPOF AND the incident was likely change-induced",
+      "ground_truth": {
+        "diagnosis_type": "single_point_of_failure",
+        "target": "RES_TOY_as2",
+        "severity": "CRITICAL"
+      },
+      "conditions": [
+        {
+          "condition": "A - LLM alone",
+          "responses": [
+            "Based on the provided information, I diagnose the issue as a **CRITICAL** failure of the RES_TOY_as2 resource. The most likely root cause is the recent maintenance change CR_2022_001, which may have introduced an unforeseen issue or configuration error. The affected entity is the RES_TOY_as2 resource itself, and multiple applications are impacted due to its limited connectivity and lack of a backup system.",
+            "Based on the provided information, I diagnose the issue as a **CRITICAL** failure of the RES_TOY_as2 resource. The most likely root cause is the recent maintenance change CR_2022_001, which may have introduced an unforeseen issue or configuration error. The affected entity is the RES_TOY_as2 resource itself, and multiple applications are impacted due to its limited connectivity and lack of a backup system.",
+            "Based on the provided information, I diagnose the issue as follows:\n\nThe most likely root cause is a configuration or code change introduced by maintenance change CR_2022_001, which has caused an unexpected behavior or error on RES_TOY_as2.\n\nThe affected entity is the RES_TOY_as2 resource, which is experiencing limited connectivity and triggering major alarms.\n\nSeverity level: CRITICAL. The incident involves multiple impacted applications, limited connectivity, and no backup system available, indicating a high risk of service disruption and potential data loss.",
+            "Based on the trouble ticket, I diagnose the issue as a **CRITICAL** failure of the RES_TOY_as2 resource due to a likely configuration or maintenance-related error introduced by change CR_2022_001. The affected entity is the RES_TOY_as2 resource itself, which has limited connectivity and no backup system in place. This lack of redundancy exacerbates the severity of the issue, making it critical that the problem be resolved promptly to prevent further application outages.",
+            "Based on the trouble ticket, I diagnose that the likely root cause is a failure of the maintenance change CR_2022_001 applied to RES_TOY_as2, which has resulted in a critical system failure. The affected entity is the RES_TOY_as2 resource, which is experiencing limited connectivity and no backup system. This incident is classified as CRITICAL due to its severity, impact on multiple applications, and the lack of redundancy or failover capabilities."
+          ],
+          "avg_time_ms": 13487.0,
+          "hallucination_rate": 0.0,
+          "conformity_score": 0.67,
+          "consistency_score": 0.53,
+          "severity_match": 1
+        },
+        {
+          "condition": "B - Level-1 -> LLM",
+          "responses": [
+            "Based on the extracted facts, I diagnose that the root cause of the issue is likely related to a recent change (CR_2022_001) that was applied to resource RES_TOY_as2. This change has resulted in multiple incidents (3) and has caused high impact to the affected entity. The severity level is HIGH due to the lack of redundancy and connectivity issues with the isolated incident resource.",
+            "Based on the extracted facts, I diagnose that the root cause of the issue is likely related to a recent change (CR_2022_001) that was linked to multiple incidents, including the current one affecting RES_TOY_as2. The fact that this resource has no redundancy and high impact suggests that its failure or malfunction would have significant consequences. Given these factors, I assess the severity level as CRITICAL for RES_TOY_as2.",
+            "Based on the extracted facts, I diagnose that the root cause of the issue is likely related to a recent change (CR_2022_001) that was implemented on resource RES_TOY_as2. This change has resulted in multiple incidents (3) and has caused high impact to the affected entity. The severity level is HIGH due to the critical nature of the impacted resource, which is indicated by its connectivity degree being 1.",
+            "Based on the extracted facts, I diagnose that the root cause of the issue is likely related to a recent change (CR_2022_001) that was linked to multiple incidents, including the current one (TT_TOY2022TT) affecting resource RES_TOY_as2. The severity level is HIGH due to the high impact on this critical resource and its connectivity degree being only 1, indicating it's a single point of failure.",
+            "Based on the extracted facts, I diagnose that the likely root cause of the issue is a recent change (CR_2022_001) that was linked to multiple incidents, including the current one (TT_TOY2022TT) affecting resource RES_TOY_as2. The high impact and lack of redundancy indicate that this resource is critical to the network's functionality, making the severity level CRITICAL."
+          ],
+          "avg_time_ms": 15173.0,
+          "hallucination_rate": 0.0,
+          "conformity_score": 0.33,
+          "consistency_score": 0.56,
+          "severity_match": 0
+        },
+        {
+          "condition": "C - Level-1+2->LLM",
+          "responses": [
+            "Based on the provided information, I confirm the diagnosis of a single point of failure for resource \"RES_TOY_as2\" with a CRITICAL severity level. This is supported by evidence from multiple detector results indicating that RES_TOY_as2 is isolated, non-redundant, and high-impact. Additionally, the correlation diagnoses suggest that change CR_2022_001 may have triggered this incident, but its impact is considered HIGH rather than CRITICAL due to the presence of other contributing factors.",
+            "Based on the provided structured facts, I confirm the diagnosis of a single point of failure for resource **RES_TOY_as2**, which is critical (CRITICAL) due to its isolated, non-redundant, and high-impact nature. The evidence from detector results supports this conclusion. Additionally, change **CR_2022_001** is likely the trigger for the incident, with a severity of HIGH, as it was followed by multiple incidents and has a moderate confidence level (0.85).",
+            "Based on the provided data, I confirm the diagnosis of a single point of failure for resource \"RES_TOY_as2\" with a CRITICAL severity level. This is supported by evidence from multiple detector results indicating that RES_TOY_as2 is isolated, non-redundant, and high-impact. Additionally, the correlation diagnoses suggest that change CR_2022_001 may have triggered this incident, but its severity is classified as HIGH rather than CRITICAL due to a lower confidence level.",
+            "Based on the provided information, I confirm the diagnosis of a single point of failure for resource RES_TOY_as2 with a severity level of CRITICAL. This is supported by evidence from multiple detector results indicating that RES_TOY_as2 is isolated, non-redundant, and high-impact. The change induced incident diagnosis for CR_2022_001 is also plausible, but its confidence level is lower (0.85) compared to the single point of failure diagnosis. I would recommend prioritizing the resolution of the single point of failure issue with RES_TOY_as2 over rolling back the change CR_2022_001.",
+            "Based on the provided information, I confirm the diagnosis of a single point of failure for resource RES_TOY_as2 with a severity level of CRITICAL. This is supported by evidence from multiple detector results indicating that RES_TOY_as2 is isolated, non-redundant, and high-impact. The change-induced incident diagnosis for CR_2022_001 is also plausible, but its severity level should be nuanced to MEDIUM due to the lower confidence level (0.85) compared to the single point of failure diagnosis."
+          ],
+          "avg_time_ms": 21066.0,
+          "hallucination_rate": 0.0,
+          "conformity_score": 1.0,
+          "consistency_score": 0.63,
+          "severity_match": 1
+        }
+      ]
+    }
+  ]
+}

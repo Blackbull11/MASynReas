@@ -1,0 +1,17 @@
+[
+  {
+    "application": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/APP_TOY_PFS01"
+    },
+    "module": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/APPM_TOY_PFS01_M01"
+    },
+    "eventCount": {
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+      "value": "4"
+    }
+  }
+]

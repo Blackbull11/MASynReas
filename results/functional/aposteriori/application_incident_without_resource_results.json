@@ -1,0 +1,74 @@
+[
+  {
+    "event": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/event/LOG_TOY_TT_TOY2022TT02_STATUS_Current"
+    },
+    "application": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/APP_TOY_MON01"
+    },
+    "time": {
+      "type": "literal",
+      "value": "2022-02-12T23:05:00Z"
+    },
+    "type": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/kos/Notification/EventType/stateChange"
+    }
+  },
+  {
+    "event": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/event/LOG_TOY_TT_TOY2022TT02_STATUS_Restored"
+    },
+    "application": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/APP_TOY_MON01"
+    },
+    "time": {
+      "type": "literal",
+      "value": "2022-02-12T23:25:00Z"
+    },
+    "type": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/kos/Notification/EventType/stateChange"
+    }
+  },
+  {
+    "event": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/event/LOG_TOY_TT_TOY2022TT02_STATUS_Closed"
+    },
+    "application": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/APP_TOY_MON01"
+    },
+    "time": {
+      "type": "literal",
+      "value": "2022-02-12T23:30:00Z"
+    },
+    "type": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/kos/Notification/EventType/stateChange"
+    }
+  },
+  {
+    "event": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/event/LOG_TOY_TT_TOY2022TT_STATUS_Current"
+    },
+    "application": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/APP_TOY_MON01"
+    },
+    "time": {
+      "type": "literal",
+      "value": "2022-04-26T12:02:00Z"
+    },
+    "type": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/kos/Notification/EventType/stateChange"
+    }
+  }
+]

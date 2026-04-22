@@ -35,8 +35,7 @@ completed(0).
 
 +!check_shutdown
   : selected_mode(apriori) & expected_mode_runs(apriori, Expected) & completed(Expected)
-  <- .print("[AprioriTestController] All apriori detectors reported. Stopping MAS.");
-     .stopMAS.
+  <- .print("[AprioriTestController] All apriori level-1 detectors reported. Waiting for level-2...").
 
 +!check_shutdown
   <- true.
