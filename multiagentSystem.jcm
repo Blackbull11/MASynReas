@@ -56,6 +56,34 @@ mas multiagentSystem {
         focus: w.pyexec
     }
 
+    agent application_without_module_detector {
+        focus: w.pyexec
+    }
+
+    agent application_without_resource_detector {
+        focus: w.pyexec
+    }
+
+    agent duplicated_functional_mapping_detector {
+        focus: w.pyexec
+    }
+
+    agent inconsistent_service_hierarchy_detector {
+        focus: w.pyexec
+    }
+
+    agent over_concentrated_service_detector {
+        focus: w.pyexec
+    }
+
+    agent service_without_application_detector {
+        focus: w.pyexec
+    }
+
+    agent service_without_resource_coverage_detector {
+        focus: w.pyexec
+    }
+
     agent isolated_incident_resource_detector {
         focus: w.pyexec
     }
@@ -132,10 +160,46 @@ mas multiagentSystem {
         focus: w.pyexec
     }
 
+    agent application_incident_without_resource_detector {
+        focus: w.pyexec
+    }
+
+    agent cascading_service_failure_detector {
+        focus: w.pyexec
+    }
+
+    agent conflicting_application_state_detector {
+        focus: w.pyexec
+    }
+
+    agent hidden_service_dependency_detector {
+        focus: w.pyexec
+    }
+
+    agent module_level_incident_aggregation_detector {
+        focus: w.pyexec
+    }
+
+    agent resource_event_without_service_impact_detector {
+        focus: w.pyexec
+    }
+
+    agent service_impacted_by_multiple_resources_detector {
+        focus: w.pyexec
+    }
+
+    agent service_without_ticket_escalation_detector {
+        focus: w.pyexec
+    }
+
+    agent service_with_repeated_incident_detector {
+        focus: w.pyexec
+    }
+
     workspace w {
         artifact pyexec: env.PythonExecArtifact()
     }
 
-    asl-path: ., src/agt, src/agt/structural/apriori, src/agt/structural/aposteriori, src/agt/dynamic/apriori, src/agt/dynamic/aposteriori
+    asl-path: ., src/agt, src/agt/structural/apriori, src/agt/structural/aposteriori, src/agt/dynamic/apriori, src/agt/dynamic/aposteriori, src/agt/functional/apriori, src/agt/functional/aposteriori
     java-path: ., src/env, src/agt
 }
