@@ -44,6 +44,18 @@ mas multiagentSystem {
         focus: w.pyexec
     }
 
+    agent change_without_effective_time_detector {
+        focus: w.pyexec
+    }
+
+    agent event_without_related_element_detector {
+        focus: w.pyexec
+    }
+
+    agent event_without_timestamp_detector {
+        focus: w.pyexec
+    }
+
     agent isolated_incident_resource_detector {
         focus: w.pyexec
     }
@@ -72,10 +84,58 @@ mas multiagentSystem {
         focus: w.pyexec
     }
 
+    agent change_followed_by_incident_detector {
+        focus: w.pyexec
+    }
+
+    agent change_overlap_conflict {
+        focus: w.pyexec
+    }
+
+    agent critical_event_ticket_escalation_detector {
+        focus: w.pyexec
+    }
+
+    agent event_burst_detector {
+        focus: w.pyexec
+    }
+
+    agent flapping_state_detector {
+        focus: w.pyexec
+    }
+
+    agent incident_propagation_detector {
+        focus: w.pyexec
+    }
+
+    agent multi_element_synchronous_incident_detector {
+        focus: w.pyexec
+    }
+
+    agent parent_child_event_escalation_detector {
+        focus: w.pyexec
+    }
+
+    agent reopened_incident_detector {
+        focus: w.pyexec
+    }
+
+    agent repeated_similar_event_detector {
+        focus: w.pyexec
+    }
+
+    agent silent_degradation_after_change_detector {
+        focus: w.pyexec
+    }
+
+    agent stale_incident_detector {
+        focus: w.pyexec
+    }
+
     workspace w {
         artifact pyexec: env.PythonExecArtifact()
     }
 
-    asl-path: ., src/agt, src/agt/structural/apriori, src/agt/structural/aposteriori
+    asl-path: ., src/agt, src/agt/structural/apriori, src/agt/structural/aposteriori, src/agt/dynamic/apriori, src/agt/dynamic/aposteriori
     java-path: ., src/env, src/agt
 }

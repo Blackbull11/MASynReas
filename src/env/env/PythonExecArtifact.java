@@ -18,11 +18,14 @@ import java.util.Properties;
 import java.util.stream.Stream;
 
 public class PythonExecArtifact extends Artifact {
+    private String pythonExecutable;
 
     void init() {
         clearResultsDirectory();
         defineObsProperty("last_run_status", "idle");
-        String selectedMode = readConfiguredMode();
+        Properties config = loadConfiguration();
+        pythonExecutable = readConfiguredPythonExecutable(config);
+        String selectedMode = readConfiguredMode(config);
         defineObsProperty("selected_mode", selectedMode);
         defineObsProperty("expected_mode_runs", selectedMode, countPythonDetectors(selectedMode));
     }
@@ -42,7 +45,7 @@ public class PythonExecArtifact extends Artifact {
             ObsProperty status = getObsProperty("last_run_status");
             status.updateValue("running");
 
-            ProcessBuilder pb = new ProcessBuilder("python", scriptFile.getAbsolutePath());
+            ProcessBuilder pb = new ProcessBuilder(pythonExecutable, scriptFile.getAbsolutePath());
             pb.directory(projectRoot);
             pb.redirectErrorStream(true);
 
@@ -109,22 +112,26 @@ public class PythonExecArtifact extends Artifact {
         }
     }
 
-    private String readConfiguredMode() {
+    private Properties loadConfiguration() {
         Path configPath = Paths.get("").toAbsolutePath().resolve("mas.properties");
         Properties properties = new Properties();
 
         if (!Files.exists(configPath)) {
             failed("MAS configuration file not found: " + configPath);
-            return "apriori";
+            return properties;
         }
 
         try (InputStream inputStream = Files.newInputStream(configPath)) {
             properties.load(inputStream);
         } catch (IOException e) {
             failed("Could not read MAS configuration file: " + e.getMessage());
-            return "apriori";
+            return properties;
         }
 
+        return properties;
+    }
+
+    private String readConfiguredMode(Properties properties) {
         String configuredMode = properties.getProperty("mode", "").trim().toLowerCase(Locale.ROOT);
 
         if (!"apriori".equals(configuredMode) && !"aposteriori".equals(configuredMode)) {
@@ -134,6 +141,25 @@ public class PythonExecArtifact extends Artifact {
 
         log("[PythonExecArtifact] Selected mode from mas.properties: " + configuredMode);
         return configuredMode;
+    }
+
+    private String readConfiguredPythonExecutable(Properties properties) {
+        String configuredPython = properties.getProperty("python.path", "").trim();
+
+        if (configuredPython.isEmpty()) {
+            failed("Missing 'python.path' in mas.properties.");
+            return "python";
+        }
+
+        Path pythonPath = Paths.get(configuredPython);
+
+        if (!Files.exists(pythonPath)) {
+            failed("Configured python.path does not exist: " + configuredPython);
+            return configuredPython;
+        }
+
+        log("[PythonExecArtifact] Using Python interpreter: " + configuredPython);
+        return configuredPython;
     }
 
     private int countPythonDetectors(String mode) {
