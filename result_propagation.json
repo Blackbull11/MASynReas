@@ -5,7 +5,7 @@
     "impacted": [
       {
         "resource": "RES_TOY_srv1",
-        "log": "IF_STATE_CHANGE: ge-1/1 to DOWN."
+        "log": "IF_STATE_CHANGE: ge-1/1 to UP."
       }
     ]
   }

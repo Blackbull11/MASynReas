@@ -1,30 +1,79 @@
-# Multi-agent-Synergistic-Reasoning
-Common Scientific Project about "Multi-agent Synergistic Reasoning" in collaboration with Orange Research
+# MASynReas
+
+MASynReas is a multi-agent system for anomaly diagnosis in a knowledge graph representing an ICT or telecommunication network.
+
+The project is implemented with:
+- JaCaMo for the multi-agent system
+- Python scripts for SPARQL query execution
+- OpenLink Virtuoso as the SPARQL endpoint
+- NORIA-O as the ontology used to structure the graph
 
 ## Architecture
 
-The system is a JaCaMo multi-agent system that performs automated network diagnostics on the NORIA knowledge graph (telecom ontology). It uses a **coordinator-worker** pattern:
+The system has three layers:
 
-- **3 worker agents** run SPARQL detection scripts in parallel against a Virtuoso endpoint (`localhost:8890`)
-- **1 coordinator agent** collects results, computes a severity level, writes a structured report, then calls a local LLM to generate a narrative diagnosis
-- Results are written to `diagnostic_noria.txt`
+- **Level 1 — Detector agents** (54 agents across 4 families): each runs a SPARQL query against Virtuoso and writes a JSON result to `results/`
+- **Level 2 — Diagnoser agents** (4 agents): correlate level-1 results across families to produce structured diagnoses with confidence scores
+- **Level 3 — Narrative synthesis**: a local LLM (via Ollama) synthesizes a natural language diagnosis from level-1+2 outputs
 
-### Agents
-| Agent | Script | Role |
-|---|---|---|
-| `critical_alarm_agent` | `detection_major.py` | Finds major alarms with a repair plan |
-| `propagation_agent` | `detection_propagation.py` | Detects fault propagation across network links |
-| `unhandled_agent` | `detection_unhandled.py` | Finds major alarms with no repair plan |
-| `coordinator` | `coordinator_agent.asl` | Aggregates results, diagnoses, writes report |
+### Agent families
 
-### Severity levels
-| Level | Condition |
-|---|---|
-| CRITIQUE | Propagation + unhandled alarms |
-| MAJEURE | Propagation only |
-| ELEVEE | Unhandled alarms only |
-| NORMALE | Critical alarms with repair plan |
-| OK | Nothing detected |
+| Family | Apriori agents | Aposteriori agents |
+|--------|:--------------:|:-----------------:|
+| Structural | 10 | 7 |
+| Dynamic | — | 12 |
+| Functional | 7 | 9 |
+| Procedural | 3 | 3 |
+
+### Level-2 diagnosers
+
+| Agent | Mode | Correlation |
+|-------|------|-------------|
+| `single_point_of_failure_diagnoser` | aposteriori | 3 structural signals on same resource |
+| `change_induced_incident_diagnoser` | aposteriori | dynamic + procedural signals on same change |
+| `traceability_breakdown_diagnoser` | aposteriori | incident_without_ticket + ticket_without_event |
+| `structural_fragility_diagnoser` | apriori | accumulation of governance weaknesses |
+
+## Execution Modes
+
+The MAS can be launched in two modes:
+- `apriori`: detects structural weaknesses independently of any incident context
+- `aposteriori`: diagnoses anomalies in an incident context
+
+The selected mode is configured in `mas.properties`:
+
+```properties
+mode=apriori
+python.path=C:/path/to/python.exe
+```
+
+Accepted values: `apriori` or `aposteriori`.
+
+## Running the MAS
+
+From the project root:
+
+```powershell
+jacamo multiagentSystem.jcm
+```
+
+In `apriori` mode, the MAS stops automatically after all detectors and the level-2 diagnoser complete.  
+In `aposteriori` mode, the 3 level-2 diagnosers run after all level-1 detectors complete.
+
+## Running experiments (without JaCaMo)
+
+```powershell
+# Run all level-1 detectors directly
+python -X utf8 run_all_detectors.py both
+
+# Complementarity table (non-redundancy proof)
+python -X utf8 complementarity_table.py
+
+# Ablation study — LLM value added by each MAS layer (~25 min)
+python -X utf8 ablation_study.py
+```
+
+See `EXPERIMENTS_README.md` for full results and analysis.
 
 ## Requirements
 
@@ -34,35 +83,25 @@ The system is a JaCaMo multi-agent system that performs automated network diagno
 
 ### Python
 - Python 3.8+
-- `requests` library: `pip install requests`
+- `requests`, `SPARQLWrapper` libraries
 
 ### SPARQL endpoint
-- Virtuoso running on `http://localhost:8890/sparql` with the NORIA knowledge graph loaded
+- Virtuoso running on `http://localhost:8890/sparql` with NORIA-O dataset loaded
 
-### Ollama (required for LLM narrative)
-The 5th step of the diagnosis generates a natural language narrative using a local LLM via [Ollama](https://ollama.com).
-
-**Each team member must install Ollama independently — it runs locally and is not shared.**
+### Ollama (for level-3 narrative and ablation study)
 
 1. Download and install Ollama from `ollama.com/download`
-2. Pull the model:
+2. Pull the models:
    ```bash
    ollama pull llama3.2:3b
+   ollama pull llama3.1:8b
    ```
-3. Ollama starts automatically as a background service after installation. If needed, start it manually:
-   ```bash
-   ollama serve
-   ```
+3. Ollama starts automatically as a background service. If needed: `ollama serve`
 
-To use a different model, change line 7 of `diagnosis_llm.py`:
-```python
-MODEL = "llama3.2:3b"  # change to "mistral", "qwen2.5:3b", etc.
-```
+## Main entry files
 
-## Running
-
-```bash
-jacamo multiagentSystem_v2.jcm
-```
-
-Output is written to `diagnostic_noria.txt`.
+- `multiagentSystem.jcm` — main JaCaMo project file
+- `mas.properties` — mode and python path configuration
+- `src/env/env/PythonExecArtifact.java` — shared artifact that runs Python scripts
+- `src/agt/level2/README.md` — level-2 agent documentation
+- `EXPERIMENTS_README.md` — experiment results and analysis
