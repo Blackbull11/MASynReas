@@ -1,7 +1,7 @@
 /*
  * Service Without Application Detector - Functional / A Priori
  *
- * Planned level-1 detector for services that are not linked to any
+ * This level-1 executor agent detects services that are not linked to any
  * application module.
  */
 
