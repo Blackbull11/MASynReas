@@ -5,7 +5,9 @@
 
                                                                                 ],
                                        "criticality_structural_weakness_detector":  [
-
+                                                                                        {
+                                                                                            "application":  "baseA:app_customer_portal"
+                                                                                        }
                                                                                     ],
                                        "incomplete_network_link_detector":  [
 
@@ -17,7 +19,9 @@
 
                                                                             ],
                                        "missing_redundancy_detector":  [
-
+                                                                           {
+                                                                               "application":  "baseA:app_customer_portal"
+                                                                           }
                                                                        ],
                                        "orphan_interface_detector":  [
 
@@ -57,7 +61,9 @@
 
                                                                                    ],
                                        "over_concentrated_service_detector":  [
-
+                                                                                  {
+                                                                                      "service":  "baseA:service_customer_access"
+                                                                                  }
                                                                               ],
                                        "service_without_application_detector":  [
 

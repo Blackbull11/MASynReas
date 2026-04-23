@@ -1,35 +1,33 @@
 ﻿{
-    "dataset_id":  "DS01_clean_baseA",
-    "title":  "Clean control scenario derived from Base A",
-    "base_graph":  "baseA",
-    "source_variant":  "quiescentA",
+    "dataset_id":  "DS27_scalability_large",
+    "title":  "Large clean graph for the third point of the scalability curve",
+    "base_graph":  "baseB",
+    "source_variant":  "largeQuiescentB",
     "mode":  "both",
     "graph_files":  [
                         "dataset.ttl"
                     ],
     "mutation_profile":  {
-                             "type":  "quiescent_clean_slice",
+                             "type":  "scalability_large",
                              "injected_anomalies":  [
 
                                                     ],
                              "removed_entities":  [
-                                                      "baseA:event_customer_warning",
-                                                      "baseA:event_monitoring_warning",
-                                                      "baseA:ticket_customer_warning",
-                                                      "baseA:ticket_monitoring_warning"
+
                                                   ],
                              "removed_relations":  [
 
                                                    ],
                              "noise_additions":  [
-
+                                                     "Two extra healthy business stacks"
                                                  ]
                          },
     "kpi_targets":  [
-                        "false_positive_control",
-                        "activation_correctness",
-                        "baseline_runtime",
-                        "traceability_sanity_check"
+                        "end_to_end_runtime",
+                        "mean_runtime_per_detector",
+                        "mean_runtime_per_diagnoser",
+                        "sparql_efficiency",
+                        "scalability_curve_point_3"
                     ],
     "expected_summary":  {
                              "nonzero_level1_agents":  {

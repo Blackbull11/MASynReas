@@ -1,7 +1,11 @@
 ﻿{
     "apriori":  {
                     "critical_service_exposure_diagnoser":  [
-
+                                                                {
+                                                                    "anchor":  "baseA:app_customer_portal",
+                                                                    "reliability":  "high",
+                                                                    "severity":  "high"
+                                                                }
                                                             ],
                     "functional_mapping_gap_diagnoser":  [
 

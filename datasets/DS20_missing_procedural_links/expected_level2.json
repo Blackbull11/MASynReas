@@ -33,7 +33,11 @@
 
                                                               ],
                         "traceability_breakdown_diagnoser":  [
-
+                                                                 {
+                                                                     "anchor":  "procedural_links_bundle_baseB",
+                                                                     "reliability":  "high",
+                                                                     "severity":  "medium"
+                                                                 }
                                                              ],
                         "unstable_component_diagnoser":  [
 

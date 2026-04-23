@@ -34,10 +34,14 @@
                                    },
                     "dynamic":  {
                                     "change_without_effective_time_detector":  [
-
+                                                                                   {
+                                                                                       "change":  "baseA:change_switch_firmware_window"
+                                                                                   }
                                                                                ],
                                     "event_without_related_element_detector":  [
-
+                                                                                   {
+                                                                                       "event":  "baseA:event_partial_signal"
+                                                                                   }
                                                                                ],
                                     "event_without_timestamp_detector":  [
 

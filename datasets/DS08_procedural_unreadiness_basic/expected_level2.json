@@ -10,7 +10,11 @@
 
                                                     ],
                     "procedural_unreadiness_diagnoser":  [
-
+                                                             {
+                                                                 "anchor":  "baseA:ticket_procedural_gap",
+                                                                 "reliability":  "high",
+                                                                 "severity":  "medium"
+                                                             }
                                                          ],
                     "structural_fragility_diagnoser":  [
 

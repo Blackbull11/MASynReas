@@ -1,0 +1,47 @@
+﻿{
+    "dataset_id":  "DS10_apriori_mixed_two_true_diagnoses",
+    "title":  "Two independent apriori diagnosis families coexist in the same graph",
+    "base_graph":  "baseA",
+    "source_variant":  "quiescentA",
+    "mode":  "apriori",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "mixed_apriori_multi_diagnosis",
+                             "injected_anomalies":  [
+
+                                                    ],
+                             "removed_entities":  [
+                                                      "baseA:module_monitoring_dashboard"
+                                                  ],
+                             "removed_relations":  [
+                                                       "noria:resourceForApplication from baseA:res_customer_vm_02 to baseA:app_customer_portal"
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "precision_at_l2",
+                        "recall_at_l2",
+                        "top1_diagnosis_accuracy",
+                        "family_contribution_analysis"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "apriori/structural/criticality_structural_weakness_detector",
+                                                           "apriori/structural/missing_redundancy_detector",
+                                                           "apriori/functional/application_without_module_detector",
+                                                           "apriori/functional/over_concentrated_service_detector",
+                                                           "apriori/functional/service_without_application_detector",
+                                                           "apriori/functional/service_without_resource_coverage_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  [
+                                                               "apriori/critical_service_exposure_diagnoser",
+                                                               "apriori/functional_mapping_gap_diagnoser"
+                                                           ],
+                             "level1_total_bindings":  6,
+                             "level2_total_diagnoses":  2
+                         }
+}

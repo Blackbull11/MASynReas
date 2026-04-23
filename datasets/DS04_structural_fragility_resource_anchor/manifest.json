@@ -1,0 +1,42 @@
+﻿{
+    "dataset_id":  "DS04_structural_fragility_resource_anchor",
+    "title":  "A single resource accumulates structural weakness signals",
+    "base_graph":  "baseA",
+    "source_variant":  "quiescentA",
+    "mode":  "apriori",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "structural_anchor_fragility",
+                             "injected_anomalies":  [
+
+                                                    ],
+                             "removed_entities":  [
+                                                      "baseA:if_switch_02_port_01",
+                                                      "baseA:if_switch_02_port_02"
+                                                  ],
+                             "removed_relations":  [
+                                                       "noria:resourceManagedBy on baseA:res_access_switch_02",
+                                                       "seas:subSystemOf on baseA:res_access_switch_02"
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "precision_at_l2",
+                        "recall_at_l2",
+                        "family_contribution_analysis"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "apriori/structural/missing_interface_detector",
+                                                           "apriori/structural/missing_parent_resource_detector",
+                                                           "apriori/structural/unmanaged_resource_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  "apriori/structural_fragility_diagnoser",
+                             "level1_total_bindings":  3,
+                             "level2_total_diagnoses":  1
+                         }
+}

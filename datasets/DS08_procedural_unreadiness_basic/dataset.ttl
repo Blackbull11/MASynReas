@@ -247,15 +247,6 @@ baseA:procedure_restart_monitoring_agent
     a pep:Procedure ;
     rdfs:label "Restart monitoring agent"@en .
 
-baseA:change_switch_firmware_window
-    a noria:ChangeRequest ;
-    rdfs:label "Access switch firmware verification"@en ;
-    noria:eventRelatedElement baseA:res_access_switch_01 ;
-    noria:plannedStartDate "2026-01-05T08:00:00Z"^^xsd:dateTime ;
-    noria:plannedEndDate "2026-01-05T08:30:00Z"^^xsd:dateTime ;
-    noria:changeRequestActualStartTime "2026-01-05T08:05:00Z"^^xsd:dateTime ;
-    noria:changeRequestActualEndTime "2026-01-05T08:20:00Z"^^xsd:dateTime .
-
 baseA:change_monitoring_patch
     a noria:ChangeRequest ;
     rdfs:label "Monitoring stack patch window"@en ;
@@ -264,4 +255,35 @@ baseA:change_monitoring_patch
     noria:plannedEndDate "2026-01-07T09:45:00Z"^^xsd:dateTime ;
     noria:changeRequestActualStartTime "2026-01-07T09:05:00Z"^^xsd:dateTime ;
     noria:changeRequestActualEndTime "2026-01-07T09:30:00Z"^^xsd:dateTime .
+
+baseA:change_switch_firmware_window
+    a noria:ChangeRequest ;
+    rdfs:label "Access switch firmware verification"@en ;
+    noria:eventRelatedElement baseA:res_access_switch_01 ;
+    noria:changeRequestActualStartTime "2026-01-05T08:05:00Z"^^xsd:dateTime ;
+    noria:changeRequestActualEndTime "2026-01-05T08:20:00Z"^^xsd:dateTime .
+
+baseA:event_procedural_gap
+    a noria:EventRecord ;
+    rdfs:label "Procedural gap event"@en ;
+    noria:eventRelatedElement baseA:app_customer_portal ;
+    noria:logOriginatingManagedObject baseA:res_customer_vm_01 ;
+    noria:logOriginatingManagementSystem baseA:app_customer_portal ;
+    noria:loggingTime "2026-01-11T09:00:00Z"^^xsd:dateTime ;
+    noria:alarmSeverity baseA:severity_minor ;
+    noria:logText "Ticket raised without associated remediation playbook."@en ;
+    dcterms:type baseA:event_type_warning .
+
+baseA:ticket_procedural_gap
+    a noria:TroubleTicket ;
+    rdfs:label "Procedural gap ticket"@en ;
+    noria:troubleTicketTrigger baseA:event_procedural_gap ;
+    dcterms:relation baseA:event_procedural_gap ;
+    noria:troubleTicketImpacts baseA:app_customer_portal ;
+    noria:troubleTicketRelatedResource baseA:res_customer_vm_01 ;
+    noria:troubleTicketDetectionDateTime "2026-01-11T09:10:00Z"^^xsd:dateTime ;
+    noria:troubleTicketStatusCurrent baseA:status_closed ;
+    noria:troubleTicketSeverity baseA:severity_minor ;
+    noria:troubleTicketPriority baseA:priority_normal ;
+    noria:troubleTicketUrgency baseA:urgency_normal .
 

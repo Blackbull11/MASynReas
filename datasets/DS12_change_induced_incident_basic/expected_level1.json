@@ -104,13 +104,22 @@
                                        },
                         "dynamic":  {
                                         "change_followed_by_incident_detector":  [
-
+                                                                                     {
+                                                                                         "change":  "baseB:change_customer_release",
+                                                                                         "event":  "baseB:event_customer_post_change"
+                                                                                     }
                                                                                  ],
                                         "change_overlap_conflict":  [
-
+                                                                        {
+                                                                            "change1":  "baseB:change_customer_release",
+                                                                            "change2":  "baseB:change_customer_hotfix"
+                                                                        }
                                                                     ],
                                         "critical_event_ticket_escalation_detector":  [
-
+                                                                                          {
+                                                                                              "event":  "baseB:event_customer_post_change",
+                                                                                              "ticket":  "baseB:ticket_customer_post_change"
+                                                                                          }
                                                                                       ],
                                         "event_burst_detector":  [
 

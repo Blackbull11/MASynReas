@@ -1,0 +1,42 @@
+﻿{
+    "dataset_id":  "DS19_missing_data_structural_and_temporal",
+    "title":  "Structural and temporal information is degraded without creating a full diagnosis",
+    "base_graph":  "baseB",
+    "source_variant":  "baseB",
+    "mode":  "both",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "missing_data_robustness",
+                             "injected_anomalies":  [
+
+                                                    ],
+                             "removed_entities":  [
+                                                      "baseB:if_billing_api_02"
+                                                  ],
+                             "removed_relations":  [
+                                                       "noria:loggingTime on baseB:event_monitoring_warning",
+                                                       "noria:eventRelatedElement on baseB:event_workforce_warning"
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "missing_data_robustness",
+                        "activation_correctness"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "apriori/structural/missing_interface_detector",
+                                                           "apriori/dynamic/event_without_related_element_detector",
+                                                           "apriori/dynamic/event_without_timestamp_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  {
+
+                                                           },
+                             "level1_total_bindings":  3,
+                             "level2_total_diagnoses":  0
+                         }
+}

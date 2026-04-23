@@ -158,15 +158,6 @@ baseA:res_access_switch_01
     seas:subSystemOf baseA:network_zone_access ;
     prov:wasDerivedFrom "MASynReas-baseA" .
 
-baseA:res_access_switch_02
-    a noria:Resource ;
-    rdfs:label "Access Switch 02"@en ;
-    noria:resourceType baseA:type_switch ;
-    noria:resourceManagedBy baseA:team_network ;
-    noria:locatedIn baseA:room_dc1 ;
-    seas:subSystemOf baseA:network_zone_access ;
-    prov:wasDerivedFrom "MASynReas-baseA" .
-
 baseA:if_customer_vm_01
     a noria:NetworkInterface ;
     rdfs:label "Customer VM 01 interface"@en ;
@@ -256,6 +247,14 @@ baseA:change_switch_firmware_window
     noria:changeRequestActualStartTime "2026-01-05T08:05:00Z"^^xsd:dateTime ;
     noria:changeRequestActualEndTime "2026-01-05T08:20:00Z"^^xsd:dateTime .
 
+baseA:res_access_switch_02
+    a noria:Resource ;
+    rdfs:label "Access Switch 02"@en ;
+    noria:resourceType baseA:type_switch ;
+    noria:locatedIn baseA:room_dc1 ;
+    seas:subSystemOf baseA:network_zone_access ;
+    prov:wasDerivedFrom "MASynReas-baseA" .
+
 baseA:change_monitoring_patch
     a noria:ChangeRequest ;
     rdfs:label "Monitoring stack patch window"@en ;
@@ -263,5 +262,15 @@ baseA:change_monitoring_patch
     noria:plannedStartDate "2026-01-07T09:00:00Z"^^xsd:dateTime ;
     noria:plannedEndDate "2026-01-07T09:45:00Z"^^xsd:dateTime ;
     noria:changeRequestActualStartTime "2026-01-07T09:05:00Z"^^xsd:dateTime ;
-    noria:changeRequestActualEndTime "2026-01-07T09:30:00Z"^^xsd:dateTime .
+.
+
+baseA:event_missing_timestamp
+    a noria:EventRecord ;
+    rdfs:label "Event without timestamp"@en ;
+    noria:eventRelatedElement baseA:res_monitor_vm_02 ;
+    noria:logOriginatingManagedObject baseA:res_monitor_vm_02 ;
+    noria:logOriginatingManagementSystem baseA:app_monitoring_dashboard ;
+    noria:alarmProposedRepairAction baseA:procedure_restart_monitoring_agent ;
+    noria:logText "Signal emitted without trusted timestamp."@en ;
+    dcterms:type baseA:event_type_warning .
 

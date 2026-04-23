@@ -1,0 +1,41 @@
+﻿{
+    "dataset_id":  "DS22_noisy_duplicate_and_inconsistent_records",
+    "title":  "Weak inconsistent functional records are introduced without a decisive diagnosis",
+    "base_graph":  "baseB",
+    "source_variant":  "quiescentB",
+    "mode":  "both",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "noise_duplicate_inconsistent_records",
+                             "injected_anomalies":  [
+                                                        "baseB:module_shadow_ops",
+                                                        "baseB:res_shadow_probe"
+                                                    ],
+                             "removed_entities":  [
+
+                                                  ],
+                             "removed_relations":  [
+
+                                                   ],
+                             "noise_additions":  [
+                                                     "Low-stakes duplicated and inconsistent functional mappings"
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "noise_robustness",
+                        "false_positive_sensitivity"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "apriori/functional/duplicated_functional_mapping_detector",
+                                                           "apriori/functional/inconsistent_service_hierarchy_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  {
+
+                                                           },
+                             "level1_total_bindings":  2,
+                             "level2_total_diagnoses":  0
+                         }
+}

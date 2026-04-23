@@ -1,0 +1,57 @@
+﻿{
+    "dataset_id":  "DS24_reliability_calibration_bundle",
+    "title":  "Several diagnosis candidates are present with different evidence strengths",
+    "base_graph":  "baseB",
+    "source_variant":  "quiescentB",
+    "mode":  "both",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "reliability_calibration_bundle",
+                             "injected_anomalies":  [
+                                                        "baseB:event_reliability_gap"
+                                                    ],
+                             "removed_entities":  [
+                                                      "baseB:if_firewall_02_port_01",
+                                                      "baseB:if_firewall_02_port_02"
+                                                  ],
+                             "removed_relations":  [
+                                                       "noria:changeRequestActualEndTime on baseB:change_switch_maintenance",
+                                                       "noria:resourceForApplication on baseB:res_customer_vm_02",
+                                                       "noria:resourceManagedBy on baseB:res_firewall_02",
+                                                       "seas:subSystemOf on baseB:res_firewall_02"
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "reliability_score_calibration",
+                        "activation_threshold_sanity"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "apriori/structural/criticality_structural_weakness_detector",
+                                                           "apriori/structural/missing_interface_detector",
+                                                           "apriori/structural/missing_parent_resource_detector",
+                                                           "apriori/structural/missing_redundancy_detector",
+                                                           "apriori/structural/unmanaged_resource_detector",
+                                                           "apriori/dynamic/change_without_effective_time_detector",
+                                                           "apriori/dynamic/event_without_related_element_detector",
+                                                           "apriori/functional/over_concentrated_service_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  [
+                                                               "apriori/critical_service_exposure_diagnoser",
+                                                               "apriori/observability_gap_diagnoser",
+                                                               "apriori/structural_fragility_diagnoser"
+                                                           ],
+                             "level1_total_bindings":  8,
+                             "level2_total_diagnoses":  3
+                         },
+    "ranking_expectation":  [
+                                "apriori/structural_fragility_diagnoser",
+                                "apriori/critical_service_exposure_diagnoser",
+                                "apriori/observability_gap_diagnoser"
+                            ]
+}

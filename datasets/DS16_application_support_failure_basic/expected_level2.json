@@ -18,7 +18,11 @@
                 },
     "aposteriori":  {
                         "application_support_failure_diagnoser":  [
-
+                                                                      {
+                                                                          "anchor":  "baseB:app_billing_gateway",
+                                                                          "reliability":  "high",
+                                                                          "severity":  "medium"
+                                                                      }
                                                                   ],
                         "change_induced_incident_diagnoser":  [
 

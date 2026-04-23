@@ -157,7 +157,9 @@
 
                                                                                           ],
                                            "resource_event_without_service_impact_detector":  [
-
+                                                                                                  {
+                                                                                                      "resource":  "baseB:res_firewall_02"
+                                                                                                  }
                                                                                               ],
                                            "service_impacted_by_multiple_resources_detector":  [
 

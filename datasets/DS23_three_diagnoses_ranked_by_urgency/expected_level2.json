@@ -30,13 +30,25 @@
 
                                                       ],
                         "single_point_of_failure_diagnoser":  [
-
+                                                                  {
+                                                                      "anchor":  "baseB:res_firewall_01",
+                                                                      "reliability":  "high",
+                                                                      "severity":  "high"
+                                                                  }
                                                               ],
                         "traceability_breakdown_diagnoser":  [
-
+                                                                 {
+                                                                     "anchor":  "baseB:app_billing_gateway",
+                                                                     "reliability":  "medium",
+                                                                     "severity":  "medium"
+                                                                 }
                                                              ],
                         "unstable_component_diagnoser":  [
-
+                                                             {
+                                                                 "anchor":  "baseB:res_monitor_vm_01",
+                                                                 "reliability":  "high",
+                                                                 "severity":  "medium"
+                                                             }
                                                          ]
                     }
 }

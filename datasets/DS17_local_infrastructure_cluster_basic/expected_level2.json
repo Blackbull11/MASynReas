@@ -24,7 +24,11 @@
 
                                                               ],
                         "local_infrastructure_cluster_diagnoser":  [
-
+                                                                       {
+                                                                           "anchor":  "baseB:room_dc1",
+                                                                           "reliability":  "high",
+                                                                           "severity":  "high"
+                                                                       }
                                                                    ],
                         "service_cascade_diagnoser":  [
 

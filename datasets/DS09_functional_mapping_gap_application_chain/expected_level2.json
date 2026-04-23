@@ -4,7 +4,11 @@
 
                                                             ],
                     "functional_mapping_gap_diagnoser":  [
-
+                                                             {
+                                                                 "anchor":  "baseA:service_customer_access",
+                                                                 "reliability":  "high",
+                                                                 "severity":  "medium"
+                                                             }
                                                          ],
                     "observability_gap_diagnoser":  [
 

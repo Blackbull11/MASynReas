@@ -1,0 +1,52 @@
+﻿{
+    "dataset_id":  "DS18_aposteriori_mixed_two_true_diagnoses",
+    "title":  "Two independent aposteriori diagnosis families coexist",
+    "base_graph":  "baseB",
+    "source_variant":  "baseB",
+    "mode":  "aposteriori",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "mixed_aposteriori_multi_diagnosis",
+                             "injected_anomalies":  [
+                                                        "baseB:event_monitor_down",
+                                                        "baseB:event_monitor_up",
+                                                        "baseB:event_monitor_timeout",
+                                                        "baseB:event_monitor_timeout_repeat",
+                                                        "baseB:ticket_monitor_resolved_old",
+                                                        "baseB:ticket_monitor_active_new"
+                                                    ],
+                             "removed_entities":  [
+
+                                                  ],
+                             "removed_relations":  [
+
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "precision_at_l2",
+                        "recall_at_l2",
+                        "top1_diagnosis_accuracy",
+                        "mrr",
+                        "family_contribution_analysis"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "aposteriori/dynamic/event_burst_detector",
+                                                           "aposteriori/dynamic/flapping_state_detector",
+                                                           "aposteriori/dynamic/reopened_incident_detector",
+                                                           "aposteriori/functional/cascading_service_failure_detector",
+                                                           "aposteriori/functional/hidden_service_dependency_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  [
+                                                               "aposteriori/service_cascade_diagnoser",
+                                                               "aposteriori/unstable_component_diagnoser"
+                                                           ],
+                             "level1_total_bindings":  5,
+                             "level2_total_diagnoses":  2
+                         }
+}

@@ -27,7 +27,11 @@
 
                                                                    ],
                         "service_cascade_diagnoser":  [
-
+                                                          {
+                                                              "anchor":  "baseB:module_monitoring_dashboard",
+                                                              "reliability":  "high",
+                                                              "severity":  "medium"
+                                                          }
                                                       ],
                         "single_point_of_failure_diagnoser":  [
 

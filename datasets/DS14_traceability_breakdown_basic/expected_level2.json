@@ -33,7 +33,11 @@
 
                                                               ],
                         "traceability_breakdown_diagnoser":  [
-
+                                                                 {
+                                                                     "anchor":  "baseB:app_billing_gateway",
+                                                                     "reliability":  "high",
+                                                                     "severity":  "medium"
+                                                                 }
                                                              ],
                         "unstable_component_diagnoser":  [
 

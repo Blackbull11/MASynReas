@@ -1,0 +1,42 @@
+﻿{
+    "dataset_id":  "DS03_partial_evidence_no_l2_v2",
+    "title":  "Multi-signal weak evidence without coherent level-2 anchor",
+    "base_graph":  "baseA",
+    "source_variant":  "quiescentA",
+    "mode":  "both",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "multi_signal_weak_evidence",
+                             "injected_anomalies":  [
+                                                        "baseA:event_missing_timestamp"
+                                                    ],
+                             "removed_entities":  [
+
+                                                  ],
+                             "removed_relations":  [
+                                                       "noria:resourceManagedBy on baseA:res_access_switch_02",
+                                                       "noria:changeRequestActualEndTime on baseA:change_monitoring_patch"
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "activation_correctness",
+                        "false_positive_resistance_under_multi_signal_conditions"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "apriori/structural/unmanaged_resource_detector",
+                                                           "apriori/dynamic/change_without_effective_time_detector",
+                                                           "apriori/dynamic/event_without_timestamp_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  {
+
+                                                           },
+                             "level1_total_bindings":  3,
+                             "level2_total_diagnoses":  0
+                         }
+}

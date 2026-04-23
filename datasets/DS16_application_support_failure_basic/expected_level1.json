@@ -81,7 +81,9 @@
     "aposteriori":  {
                         "structural":  {
                                            "application_mapping_inconsistency_detector":  [
-
+                                                                                              {
+                                                                                                  "application":  "baseB:app_billing_gateway"
+                                                                                              }
                                                                                           ],
                                            "child_component_incident_escalation_detector":  [
 
@@ -142,7 +144,9 @@
                                     },
                         "functional":  {
                                            "application_incident_without_resource_detector":  [
-
+                                                                                                  {
+                                                                                                      "application":  "baseB:app_billing_gateway"
+                                                                                                  }
                                                                                               ],
                                            "cascading_service_failure_detector":  [
 

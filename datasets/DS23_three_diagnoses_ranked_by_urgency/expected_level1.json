@@ -87,16 +87,24 @@
 
                                                                                             ],
                                            "high_impact_resource_detector":  [
-
+                                                                                 {
+                                                                                     "resource":  "baseB:res_firewall_01"
+                                                                                 }
                                                                              ],
                                            "incident_on_incomplete_link_detector":  [
-
+                                                                                        {
+                                                                                            "resource":  "baseB:res_firewall_01"
+                                                                                        }
                                                                                     ],
                                            "isolated_incident_resource_detector":  [
-
+                                                                                       {
+                                                                                           "resource":  "baseB:res_firewall_01"
+                                                                                       }
                                                                                    ],
                                            "no_redundancy_incident_detector":  [
-
+                                                                                   {
+                                                                                       "resource":  "baseB:res_firewall_01"
+                                                                                   }
                                                                                ],
                                            "spatial_incident_cluster_detector":  [
 
@@ -113,10 +121,14 @@
 
                                                                                       ],
                                         "event_burst_detector":  [
-
+                                                                     {
+                                                                         "element":  "baseB:res_monitor_vm_01"
+                                                                     }
                                                                  ],
                                         "flapping_state_detector":  [
-
+                                                                        {
+                                                                            "element":  "baseB:res_monitor_vm_01"
+                                                                        }
                                                                     ],
                                         "incident_propagation_detector":  [
 
@@ -128,7 +140,9 @@
 
                                                                                    ],
                                         "reopened_incident_detector":  [
-
+                                                                           {
+                                                                               "relatedElement":  "baseB:res_monitor_vm_01"
+                                                                           }
                                                                        ],
                                         "repeated_similar_event_detector":  [
 
@@ -174,10 +188,14 @@
 
                                                                                             ],
                                            "incident_without_ticket_detector":  [
-
+                                                                                    {
+                                                                                        "event":  "baseB:event_billing_warning"
+                                                                                    }
                                                                                 ],
                                            "ticket_without_linked_event_detector":  [
-
+                                                                                        {
+                                                                                            "ticket":  "baseB:ticket_billing_warning"
+                                                                                        }
                                                                                     ]
                                        }
                     }

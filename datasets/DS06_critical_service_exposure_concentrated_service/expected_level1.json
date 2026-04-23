@@ -5,19 +5,25 @@
 
                                                                                 ],
                                        "criticality_structural_weakness_detector":  [
-
+                                                                                        {
+                                                                                            "application":  "baseA:app_customer_portal"
+                                                                                        }
                                                                                     ],
                                        "incomplete_network_link_detector":  [
 
                                                                             ],
                                        "missing_interface_detector":  [
-
+                                                                          {
+                                                                              "resource":  "baseA:res_customer_vm_01"
+                                                                          }
                                                                       ],
                                        "missing_parent_resource_detector":  [
 
                                                                             ],
                                        "missing_redundancy_detector":  [
-
+                                                                           {
+                                                                               "application":  "baseA:app_customer_portal"
+                                                                           }
                                                                        ],
                                        "orphan_interface_detector":  [
 
@@ -29,7 +35,9 @@
 
                                                                           ],
                                        "unmanaged_resource_detector":  [
-
+                                                                           {
+                                                                               "resource":  "baseA:res_customer_vm_01"
+                                                                           }
                                                                        ]
                                    },
                     "dynamic":  {
@@ -57,7 +65,9 @@
 
                                                                                    ],
                                        "over_concentrated_service_detector":  [
-
+                                                                                  {
+                                                                                      "service":  "baseA:service_customer_access"
+                                                                                  }
                                                                               ],
                                        "service_without_application_detector":  [
 

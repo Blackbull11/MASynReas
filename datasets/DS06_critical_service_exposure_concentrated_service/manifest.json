@@ -1,0 +1,42 @@
+﻿{
+    "dataset_id":  "DS06_critical_service_exposure_concentrated_service",
+    "title":  "A stronger critical service exposure case on the same business chain",
+    "base_graph":  "baseA",
+    "source_variant":  "quiescentA",
+    "mode":  "apriori",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "critical_support_concentration_strong",
+                             "injected_anomalies":  [
+
+                                                    ],
+                             "removed_entities":  [
+                                                      "baseA:if_customer_vm_01"
+                                                  ],
+                             "removed_relations":  [
+                                                       "noria:resourceForApplication from baseA:res_customer_vm_02 to baseA:app_customer_portal",
+                                                       "noria:resourceManagedBy on baseA:res_customer_vm_01"
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "severity_score_comparison",
+                        "priority_score_comparison"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "apriori/structural/criticality_structural_weakness_detector",
+                                                           "apriori/structural/missing_interface_detector",
+                                                           "apriori/structural/missing_redundancy_detector",
+                                                           "apriori/structural/unmanaged_resource_detector",
+                                                           "apriori/functional/over_concentrated_service_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  "apriori/critical_service_exposure_diagnoser",
+                             "level1_total_bindings":  5,
+                             "level2_total_diagnoses":  1
+                         }
+}

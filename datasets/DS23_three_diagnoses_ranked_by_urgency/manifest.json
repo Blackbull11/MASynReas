@@ -1,0 +1,66 @@
+﻿{
+    "dataset_id":  "DS23_three_diagnoses_ranked_by_urgency",
+    "title":  "Three true diagnoses coexist with different operational urgency",
+    "base_graph":  "baseB",
+    "source_variant":  "baseB",
+    "mode":  "aposteriori",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "ranking_three_true_diagnoses",
+                             "injected_anomalies":  [
+                                                        "baseB:event_firewall_major",
+                                                        "baseB:ticket_firewall_major",
+                                                        "baseB:event_monitor_down",
+                                                        "baseB:event_monitor_up",
+                                                        "baseB:event_monitor_timeout",
+                                                        "baseB:event_monitor_timeout_repeat",
+                                                        "baseB:ticket_monitor_resolved_old",
+                                                        "baseB:ticket_monitor_active_new"
+                                                    ],
+                             "removed_entities":  [
+                                                      "baseB:if_workforce_vm_01",
+                                                      "baseB:if_firewall_01_port_02",
+                                                      "baseB:link_workforce_vm_01_to_firewall_01",
+                                                      "baseB:if_monitor_vm_01"
+                                                  ],
+                             "removed_relations":  [
+                                                       "noria:troubleTicketTrigger on baseB:ticket_billing_warning",
+                                                       "dcterms:relation on baseB:ticket_billing_warning"
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "top1_diagnosis_accuracy",
+                        "mrr",
+                        "priority_score_calibration"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "aposteriori/structural/high_impact_resource_detector",
+                                                           "aposteriori/structural/incident_on_incomplete_link_detector",
+                                                           "aposteriori/structural/isolated_incident_resource_detector",
+                                                           "aposteriori/structural/no_redundancy_incident_detector",
+                                                           "aposteriori/dynamic/event_burst_detector",
+                                                           "aposteriori/dynamic/flapping_state_detector",
+                                                           "aposteriori/dynamic/reopened_incident_detector",
+                                                           "aposteriori/procedural/incident_without_ticket_detector",
+                                                           "aposteriori/procedural/ticket_without_linked_event_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  [
+                                                               "aposteriori/single_point_of_failure_diagnoser",
+                                                               "aposteriori/traceability_breakdown_diagnoser",
+                                                               "aposteriori/unstable_component_diagnoser"
+                                                           ],
+                             "level1_total_bindings":  9,
+                             "level2_total_diagnoses":  3
+                         },
+    "ranking_expectation":  [
+                                "aposteriori/single_point_of_failure_diagnoser",
+                                "aposteriori/unstable_component_diagnoser",
+                                "aposteriori/traceability_breakdown_diagnoser"
+                            ]
+}
