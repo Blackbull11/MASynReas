@@ -74,6 +74,10 @@ python -X utf8 baseline_monoagent.py both
 
 # Ablation study — LLM value added by each MAS layer (~25 min)
 python -X utf8 ablation_study.py
+
+# LLM baseline comparison — give the full graph to a single LLM
+# Requires Virtuoso + Ollama, or noria_graph.ttl + HuggingFace transformers
+python -X utf8 llm_detector_baseline.py both both
 ```
 
 See `EXPERIMENTS_README.md` for full results and analysis.
@@ -100,6 +104,20 @@ See `EXPERIMENTS_README.md` for full results and analysis.
    ollama pull llama3.1:8b
    ```
 3. Ollama starts automatically as a background service. If needed: `ollama serve`
+
+### LLM baseline on a GPU server (no Virtuoso needed)
+
+`llm_detector_baseline.py` auto-detects the available backend:
+- If Ollama is running locally → uses it (any pulled model)
+- Otherwise → loads `mistralai/Mistral-7B-Instruct-v0.3` via HuggingFace transformers
+
+To run on a remote GPU server, copy three files and install one dependency:
+```bash
+scp llm_detector_baseline.py noria_graph.ttl user@server:~/baseline/
+scp -r results/ user@server:~/baseline/
+ssh user@server "pip install --user transformers accelerate torch requests protobuf sentencepiece"
+ssh user@server "cd ~/baseline && HF_HOME=/tmp/hf_cache python3 llm_detector_baseline.py both both"
+```
 
 ## Main entry files
 

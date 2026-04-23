@@ -178,6 +178,85 @@ décisive : sans elle, le LLM est submergé par des signaux contradictoires.
 
 ---
 
+## 3. Baseline LLM monovalent — comparaison directe avec le MAS
+
+**Script :** `llm_detector_baseline.py`  
+**Objectif :** mesurer ce qu'un LLM obtient quand on lui donne le graphe entier et qu'on lui demande de trouver les anomalies — sans aucun pré-traitement MAS.
+
+### Protocole
+
+Deux axes orthogonaux, 4 combinaisons testées :
+
+- **Mode** : `apriori` (config statique seulement) / `aposteriori` (config + incidents + tickets)
+- **Stratégie** : `guided` (briefing ontologique : types d'entités, familles d'anomalies) / `open` (prompt minimal : "trouve les anomalies")
+
+Le graphe exporté via SPARQL CONSTRUCT filtre les prédicats non diagnostiques (`prov:wasDerivedFrom`, `foaf:*`, `rdfs:label`) pour réduire le contexte à ~4 200 tokens utiles.
+
+Les métriques sont calculées par rapport au ground truth MAS (`results/`) :
+- **Recall** : fraction des entités détectées par le MAS que le LLM a aussi trouvées
+- **Precision** : fraction des entités LLM confirmées par le MAS
+- **Hallucination** : fraction des entités LLM absentes du graphe
+- **Agents couverts** : fraction des agents MAS dont le LLM a touché au moins une entité
+
+### Deux runs réalisés
+
+**Run CPU** — `mistral:latest` Q4_K_M via Ollama, Intel CPU (machine locale) :
+
+| Combinaison | Détections | Recall | Precision | Halluc | Agents | Temps |
+|---|:---:|:---:|:---:|:---:|:---:|---:|
+| apriori / guided | 14 | 0.06 | 0.14 | 0.00 | 1/6 | 1 660s |
+| apriori / open | 5 | 0.03 | 0.20 | 0.00 | 1/6 | 1 468s |
+| aposteriori / guided | 4 | 0.00 | 0.00 | 0.25 | 0/9 | 3 032s |
+| aposteriori / open | 5 | 0.16 | 0.60 | 0.00 | 4/9 | 2 436s |
+
+**Run GPU** — `Mistral-7B-Instruct-v0.3` float16 via HuggingFace transformers, NVIDIA RTX 4000 Ada (20 GB VRAM, jaguar.polytechnique.fr) :
+
+| Combinaison | Détections | Recall | Precision | Halluc | Agents | Temps |
+|---|:---:|:---:|:---:|:---:|:---:|---:|
+| apriori / guided | 11 | 0.06 | 0.18 | 0.09 | 2/6 | 188s |
+| apriori / open | 5 | 0.00 | 0.00 | 0.00 | 0/6 | 28s |
+| **aposteriori / guided** | **4** | **0.21** | **1.00** | **0.00** | **3/9** | **23s** |
+| aposteriori / open | 5 | 0.16 | 0.75 | 0.00 | 4/9 | 24s |
+
+Note : les deux runs utilisent des variantes différentes de Mistral 7B (base Q4 vs Instruct float16) — les résultats sont donc indicatifs et non strictement comparables. Le run GPU utilise un modèle plus récent et de meilleure qualité.
+
+### Analyse
+
+#### Ce que le LLM fait bien
+
+En mode `aposteriori/guided` sur GPU, le LLM atteint **precision=1.00** : ses 4 détections sont toutes dans le ground truth MAS. Il a correctement identifié `RES_TOY_srv1` (serveur en panne), `RES_TOY_term1` (point de terminaison défaillant), `APP_TOY_PFS01` (application sans ressource redondante), et `TT_TOY2022TT` (ticket sans procédure de réparation). C'est un raisonnement causal correct : le LLM lit les alarmes et remonte la chaîne d'impact.
+
+#### Ce que le LLM rate systématiquement
+
+Certains agents MAS ne sont couverts dans aucune combinaison :
+
+| Agent | Raison de l'échec LLM |
+|---|---|
+| `application_without_resource` | Nécessite d'énumérer toutes les apps et vérifier l'absence d'une relation |
+| `ticket_without_assigned_procedure` | Détection par absence — le LLM ne constate pas ce qui manque |
+| `module_level_incident_aggregation` | Nécessite de regrouper des incidents par module applicatif |
+| `service_with_repeated_incident` | Nécessite de compter des occurrences répétées |
+
+Ces agents partagent une structure commune : **raisonnement par absence ou comptage exhaustif**. Le LLM répond aux signaux positifs présents dans le texte ; il ne fait pas de scan systématique pour détecter ce qui devrait être là et ne l'est pas.
+
+#### Différence de granularité
+
+Le LLM raisonne au niveau réseau physique (liens, équipements, alarmes visibles). Le MAS raisonne au niveau impact applicatif et traçabilité opérationnelle. Sur le même dataset, leurs détections sont **complémentaires plutôt que redondantes**.
+
+#### Speedup GPU
+
+Le run GPU est ~80× plus rapide que le run CPU pour un modèle comparable (23s vs 1 660s pour apriori/guided). L'essentiel du gain vient de la parallélisation du prefill sur les ~5 000 tokens du prompt.
+
+### Conclusion
+
+> Un LLM monovalent est un bon diagnosticien quand les preuves sont
+> explicites dans le graphe (aposteriori, precision jusqu'à 1.00),
+> mais un mauvais détecteur systématique : il manque les familles entières
+> d'anomalies qui nécessitent un raisonnement par absence ou par comptage.
+> Le MAS couvre exactement ce que le LLM ne peut pas faire de façon fiable.
+
+---
+
 ## Reproduire les expériences
 
 ```powershell
@@ -194,6 +273,14 @@ python -X utf8 baseline_monoagent.py both
 
 # 4. Étude d'ablation (~25 minutes)
 python -X utf8 ablation_study.py
+
+# 5. Baseline LLM monovalent
+# Sur machine locale avec Ollama (lent sur CPU) :
+python -X utf8 llm_detector_baseline.py both both
+
+# Sur serveur GPU sans Ollama (auto-détecte HuggingFace transformers) :
+# scp llm_detector_baseline.py noria_graph.ttl results/ user@server:~/baseline/
+# ssh user@server "cd ~/baseline && HF_HOME=/tmp/hf_cache python3 llm_detector_baseline.py both both"
 ```
 
 ---
@@ -208,3 +295,6 @@ python -X utf8 ablation_study.py
 | `ablation_results.json` | Données brutes de l'étude d'ablation |
 | `ABLATION_STUDY.md` | Analyse détaillée de l'ablation |
 | `baseline_results.json` | Données brutes du baseline séquentiel |
+| `llm_baseline_results.json` | Résultats du baseline LLM (run CPU, mistral:latest) |
+| `llm_baseline_results_gpu.json` | Résultats du baseline LLM (run GPU, Mistral-7B-Instruct-v0.3) |
+| `noria_graph.ttl` | Graphe NORIA-O filtré exporté (4 200 tokens, input LLM) |

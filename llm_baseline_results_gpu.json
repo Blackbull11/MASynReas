@@ -1,0 +1,424 @@
+{
+  "apriori": {
+    "guided": {
+      "mode": "apriori",
+      "strategy": "guided",
+      "model": "mistralai/Mistral-7B-Instruct-v0.3",
+      "elapsed_s": 187.7,
+      "prompt_tokens": 4952,
+      "raw_response": "[\n  {\n    \"anomaly_type\": \"Structural Weakness\",\n    \"entity\": \"ns3:NL_TOY_pe_1_1_pe_2_1\",\n    \"family\": \"structural\",\n    \"explanation\": \"The network link connecting pe_1_1 and pe_2_1 does not have a redundant path, potentially causing a single point of failure.\",\n    \"severity\": \"MEDIUM\"\n  },\n  {\n    \"anomaly_type\": \"Structural Weakness\",\n    \"entity\": \"ns3:NL_TOY_pe_1_2_pe_3_2\",\n    \"family\": \"structural\",\n    \"explanation\": \"The network link connecting pe_1_2 and pe_3_2 does not have a redundant path, potentially causing a single point of failure.\",\n    \"severity\": \"MEDIUM\"\n  },\n  {\n    \"anomaly_type\": \"Structural Weakness\",\n    \"entity\": \"ns3:NL_TOY_pe_2_1_pe_4_2\",\n    \"family\": \"structural\",\n    \"explanation\": \"The network link connecting pe_2_1 and pe_4_2 does not have a redundant path, potentially causing a single point of failure.\",\n    \"severity\": \"MEDIUM\"\n  },\n  {\n    \"anomaly_type\": \"Structural Weakness\",\n    \"entity\": \"ns3:NL_TOY_pe_3_1_pe_4_1\",\n    \"family\": \"structural\",\n    \"explanation\": \"The network link connecting pe_3_1 and pe_4_1 does not have a redundant path, potentially causing a single point of failure.\",\n    \"severity\": \"MEDIUM\"\n  },\n  {\n    \"anomaly_type\": \"Functional Gap\",\n    \"entity\": \"ns3:APP_TOY_DC01\",\n    \"family\": \"functional\",\n    \"explanation\": \"The infrastructure application APP_TOY_DC01 does not have any redundancy, potentially causing service disruptions if any of its supporting resources fail.\",\n    \"severity\": \"MEDIUM\"\n  },\n  {\n    \"anomaly_type\": \"Functional Gap\",\n    \"entity\": \"ns3:APP_TOY_DC02\",\n    \"family\": \"functional\",\n    \"explanation\": \"The infrastructure application APP_TOY_DC02 does not have any redundancy, potentially causing service disruptions if any of its supporting resources fail.\",\n    \"severity\": \"MEDIUM\"\n  },\n  {\n    \"anomaly_type\": \"Functional Gap\",\n    \"entity\": \"ns3:APP_TOY_INF01\",\n    \"family\": \"functional\",\n    \"explanation\": \"The infrastructure application APP_TOY_INF01 does not have any redundancy, potentially causing service disruptions if any of its supporting resources fail.\",\n    \"severity\": \"MEDIUM\"\n  },\n  {\n    \"anomaly_type\": \"Procedural Gap\",\n    \"entity\": \"ns1:TEAM_TOY_Support01\",\n    \"family\": \"procedural\",\n    \"explanation\": \"The support team responsible for resources in rack_01 (TEAM_TOY_Support01) also manages resources in rack_02, potentially leading to inefficient resource allocation and increased response time.\",\n    \"severity\": \"LOW\"\n  },\n  {\n    \"anomaly_type\": \"Procedural Gap\",\n    \"entity\": \"ns1:TEAM_TOY_Support02\",\n    \"family\": \"procedural\",\n    \"explanation\": \"The support team responsible for resources in rack_02 (TEAM_TOY_Support02) also manages resources in rack_01, potentially leading to inefficient resource allocation and increased response time.\",\n    \"severity\": \"LOW\"\n  },\n  {\n    \"anomaly_type\": \"Procedural Gap\",\n    \"entity\": \"ns1:TEAM_TOY_Support03\",\n    \"family\": \"procedural\",\n    \"explanation\": \"The support team responsible for resources in both racks (TEAM_TOY_Support03) may have increased workload and response time due to managing resources in multiple locations.\",\n    \"severity\": \"LOW\"\n  },\n  {\n    \"anomaly_type\": \"Procedural Gap\",\n    \"entity\": \"ns1:TEAM_TOY_Support04\",\n    \"family\": \"procedural\",\n    \"explanation\": \"The support team responsible for both racks (TEAM_TOY_Support04) may have increased workload and response time due to managing resources in multiple locations.\",\n    \"severity\": \"LOW\"\n  }\n]",
+      "detections": [
+        {
+          "anomaly_type": "Structural Weakness",
+          "entity": "ns3:NL_TOY_pe_1_1_pe_2_1",
+          "family": "structural",
+          "explanation": "The network link connecting pe_1_1 and pe_2_1 does not have a redundant path, potentially causing a single point of failure.",
+          "severity": "MEDIUM"
+        },
+        {
+          "anomaly_type": "Structural Weakness",
+          "entity": "ns3:NL_TOY_pe_1_2_pe_3_2",
+          "family": "structural",
+          "explanation": "The network link connecting pe_1_2 and pe_3_2 does not have a redundant path, potentially causing a single point of failure.",
+          "severity": "MEDIUM"
+        },
+        {
+          "anomaly_type": "Structural Weakness",
+          "entity": "ns3:NL_TOY_pe_2_1_pe_4_2",
+          "family": "structural",
+          "explanation": "The network link connecting pe_2_1 and pe_4_2 does not have a redundant path, potentially causing a single point of failure.",
+          "severity": "MEDIUM"
+        },
+        {
+          "anomaly_type": "Structural Weakness",
+          "entity": "ns3:NL_TOY_pe_3_1_pe_4_1",
+          "family": "structural",
+          "explanation": "The network link connecting pe_3_1 and pe_4_1 does not have a redundant path, potentially causing a single point of failure.",
+          "severity": "MEDIUM"
+        },
+        {
+          "anomaly_type": "Functional Gap",
+          "entity": "ns3:APP_TOY_DC01",
+          "family": "functional",
+          "explanation": "The infrastructure application APP_TOY_DC01 does not have any redundancy, potentially causing service disruptions if any of its supporting resources fail.",
+          "severity": "MEDIUM"
+        },
+        {
+          "anomaly_type": "Functional Gap",
+          "entity": "ns3:APP_TOY_DC02",
+          "family": "functional",
+          "explanation": "The infrastructure application APP_TOY_DC02 does not have any redundancy, potentially causing service disruptions if any of its supporting resources fail.",
+          "severity": "MEDIUM"
+        },
+        {
+          "anomaly_type": "Functional Gap",
+          "entity": "ns3:APP_TOY_INF01",
+          "family": "functional",
+          "explanation": "The infrastructure application APP_TOY_INF01 does not have any redundancy, potentially causing service disruptions if any of its supporting resources fail.",
+          "severity": "MEDIUM"
+        },
+        {
+          "anomaly_type": "Procedural Gap",
+          "entity": "ns1:TEAM_TOY_Support01",
+          "family": "procedural",
+          "explanation": "The support team responsible for resources in rack_01 (TEAM_TOY_Support01) also manages resources in rack_02, potentially leading to inefficient resource allocation and increased response time.",
+          "severity": "LOW"
+        },
+        {
+          "anomaly_type": "Procedural Gap",
+          "entity": "ns1:TEAM_TOY_Support02",
+          "family": "procedural",
+          "explanation": "The support team responsible for resources in rack_02 (TEAM_TOY_Support02) also manages resources in rack_01, potentially leading to inefficient resource allocation and increased response time.",
+          "severity": "LOW"
+        },
+        {
+          "anomaly_type": "Procedural Gap",
+          "entity": "ns1:TEAM_TOY_Support03",
+          "family": "procedural",
+          "explanation": "The support team responsible for resources in both racks (TEAM_TOY_Support03) may have increased workload and response time due to managing resources in multiple locations.",
+          "severity": "LOW"
+        },
+        {
+          "anomaly_type": "Procedural Gap",
+          "entity": "ns1:TEAM_TOY_Support04",
+          "family": "procedural",
+          "explanation": "The support team responsible for both racks (TEAM_TOY_Support04) may have increased workload and response time due to managing resources in multiple locations.",
+          "severity": "LOW"
+        }
+      ],
+      "metrics": {
+        "n_llm_detections": 11,
+        "n_mas_entities": 33,
+        "recall": 0.061,
+        "precision": 0.182,
+        "hallucination_rate": 0.091,
+        "agents_covered": 2,
+        "agents_total": 6,
+        "agent_recall": 0.333,
+        "per_agent_hit": {
+          "application_without_resource_results": true,
+          "application_without_support_results": true,
+          "event_without_related_element_results": false,
+          "inconsistent_service_hierarchy_results": false,
+          "missing_interface_results": false,
+          "ticket_without_assigned_procedure_results": false
+        },
+        "found_entities": [
+          "APP_TOY_DC01",
+          "APP_TOY_DC02"
+        ],
+        "missed_entities": [
+          "APPM_TOY_APP01_M01",
+          "APPM_TOY_INF01_M01",
+          "APPM_TOY_PFS01_M01",
+          "APPM_TOY_PFS02_M01",
+          "APP_TOY_MON01",
+          "LOG_TOY_TT_TOY2022TT02_STATUS_Closed",
+          "LOG_TOY_TT_TOY2022TT02_STATUS_Current",
+          "LOG_TOY_TT_TOY2022TT02_STATUS_Restored",
+          "LOG_TOY_TT_TOY2022TT_STATUS_Current",
+          "LOG_TOY_as2_2022-04-26%2011%3A57%3A00.000",
+          "LOG_TOY_as2_2022-04-26%2012%3A06%3A00.000",
+          "LOG_TOY_pe_1_1_2022-02-12T22-58-00Z",
+          "LOG_TOY_srv1_2022-04-26%2011%3A58%3A00.000",
+          "LOG_TOY_srv1_2022-04-26%2012%3A06%3A30.000",
+          "LOG_TOY_term1_2022-04-26%2011%3A58%3A00.000",
+          "RES_TOY_as1",
+          "RES_TOY_as3",
+          "RES_TOY_pe_1_1",
+          "RES_TOY_pe_1_2",
+          "RES_TOY_pe_2_1",
+          "RES_TOY_pe_2_2",
+          "RES_TOY_pe_3_1",
+          "RES_TOY_pe_3_2",
+          "RES_TOY_pe_4_1",
+          "RES_TOY_pe_4_2",
+          "RES_TOY_rack_01",
+          "RES_TOY_rack_02",
+          "RES_TOY_srv2",
+          "RES_TOY_term1",
+          "TT_TOY2022TT",
+          "TT_TOY2022TT02"
+        ],
+        "hallucinated": [
+          "ns3:NL_TOY_pe_2_1_pe_4_2"
+        ]
+      }
+    },
+    "open": {
+      "mode": "apriori",
+      "strategy": "open",
+      "model": "mistralai/Mistral-7B-Instruct-v0.3",
+      "elapsed_s": 27.8,
+      "prompt_tokens": 4336,
+      "raw_response": "[\n  {\n    \"anomaly_type\": \"Single Point of Failure\",\n    \"entity\": \"ns3:RES_TOY_as2\",\n    \"family\": \"structural\",\n    \"explanation\": \"The resource representing the AS2 device is connected to only one server (ns3:RES_TOY_srv1).\",\n    \"severity\": \"MEDIUM\"\n  },\n  {\n    \"anomaly_type\": \"Lack of Redundancy\",\n    \"entity\": \"ns3:APP_TOY_PFS01\",\n    \"family\": \"functional\",\n    \"explanation\": \"The application PFS01 has no redundant application modules.\",\n    \"severity\": \"MEDIUM\"\n  },\n  {\n    \"anomaly_type\": \"Inconsistent Management\",\n    \"entity\": \"ns1:TEAM_TOY_Support02\",\n    \"family\": \"procedural\",\n    \"explanation\": \"The resource representing the AS2 device is managed by two different support teams (TEAM_TOY_Support01 and TEAM_TOY_Support02).\",\n    \"severity\": \"LOW\"\n  },\n  {\n    \"anomaly_type\": \"Lack of Documentation\",\n    \"entity\": \"ns3:APP_TOY_APP01\",\n    \"family\": \"procedural\",\n    \"explanation\": \"There is no documentation related to the application APP01.\",\n    \"severity\": \"LOW\"\n  },\n  {\n    \"anomaly_type\": \"Potential Network Issue\",\n    \"entity\": \"ns3:NL_TOY_as2_srv1\",\n    \"family\": \"dynamic\",\n    \"explanation\": \"The network link connecting AS2 and server SRV1 has no redundant links.\",\n    \"severity\": \"MEDIUM\"\n  }\n]",
+      "detections": [
+        {
+          "anomaly_type": "Single Point of Failure",
+          "entity": "ns3:RES_TOY_as2",
+          "family": "structural",
+          "explanation": "The resource representing the AS2 device is connected to only one server (ns3:RES_TOY_srv1).",
+          "severity": "MEDIUM"
+        },
+        {
+          "anomaly_type": "Lack of Redundancy",
+          "entity": "ns3:APP_TOY_PFS01",
+          "family": "functional",
+          "explanation": "The application PFS01 has no redundant application modules.",
+          "severity": "MEDIUM"
+        },
+        {
+          "anomaly_type": "Inconsistent Management",
+          "entity": "ns1:TEAM_TOY_Support02",
+          "family": "procedural",
+          "explanation": "The resource representing the AS2 device is managed by two different support teams (TEAM_TOY_Support01 and TEAM_TOY_Support02).",
+          "severity": "LOW"
+        },
+        {
+          "anomaly_type": "Lack of Documentation",
+          "entity": "ns3:APP_TOY_APP01",
+          "family": "procedural",
+          "explanation": "There is no documentation related to the application APP01.",
+          "severity": "LOW"
+        },
+        {
+          "anomaly_type": "Potential Network Issue",
+          "entity": "ns3:NL_TOY_as2_srv1",
+          "family": "dynamic",
+          "explanation": "The network link connecting AS2 and server SRV1 has no redundant links.",
+          "severity": "MEDIUM"
+        }
+      ],
+      "metrics": {
+        "n_llm_detections": 5,
+        "n_mas_entities": 33,
+        "recall": 0.0,
+        "precision": 0.0,
+        "hallucination_rate": 0.0,
+        "agents_covered": 0,
+        "agents_total": 6,
+        "agent_recall": 0.0,
+        "per_agent_hit": {
+          "application_without_resource_results": false,
+          "application_without_support_results": false,
+          "event_without_related_element_results": false,
+          "inconsistent_service_hierarchy_results": false,
+          "missing_interface_results": false,
+          "ticket_without_assigned_procedure_results": false
+        },
+        "found_entities": [],
+        "missed_entities": [
+          "APPM_TOY_APP01_M01",
+          "APPM_TOY_INF01_M01",
+          "APPM_TOY_PFS01_M01",
+          "APPM_TOY_PFS02_M01",
+          "APP_TOY_DC01",
+          "APP_TOY_DC02",
+          "APP_TOY_MON01",
+          "LOG_TOY_TT_TOY2022TT02_STATUS_Closed",
+          "LOG_TOY_TT_TOY2022TT02_STATUS_Current",
+          "LOG_TOY_TT_TOY2022TT02_STATUS_Restored",
+          "LOG_TOY_TT_TOY2022TT_STATUS_Current",
+          "LOG_TOY_as2_2022-04-26%2011%3A57%3A00.000",
+          "LOG_TOY_as2_2022-04-26%2012%3A06%3A00.000",
+          "LOG_TOY_pe_1_1_2022-02-12T22-58-00Z",
+          "LOG_TOY_srv1_2022-04-26%2011%3A58%3A00.000",
+          "LOG_TOY_srv1_2022-04-26%2012%3A06%3A30.000",
+          "LOG_TOY_term1_2022-04-26%2011%3A58%3A00.000",
+          "RES_TOY_as1",
+          "RES_TOY_as3",
+          "RES_TOY_pe_1_1",
+          "RES_TOY_pe_1_2",
+          "RES_TOY_pe_2_1",
+          "RES_TOY_pe_2_2",
+          "RES_TOY_pe_3_1",
+          "RES_TOY_pe_3_2",
+          "RES_TOY_pe_4_1",
+          "RES_TOY_pe_4_2",
+          "RES_TOY_rack_01",
+          "RES_TOY_rack_02",
+          "RES_TOY_srv2",
+          "RES_TOY_term1",
+          "TT_TOY2022TT",
+          "TT_TOY2022TT02"
+        ],
+        "hallucinated": []
+      }
+    }
+  },
+  "aposteriori": {
+    "guided": {
+      "mode": "aposteriori",
+      "strategy": "guided",
+      "model": "mistralai/Mistral-7B-Instruct-v0.3",
+      "elapsed_s": 22.8,
+      "prompt_tokens": 4957,
+      "raw_response": "[\n  {\n    \"anomaly_type\": \"Single Point of Failure\",\n    \"entity\": \"ns3:RES_TOY_term1\",\n    \"family\": \"structural\",\n    \"explanation\": \"The termination point of the network link connecting the application server and the access switch is a single point of failure.\",\n    \"severity\": \"MEDIUM\"\n  },\n  {\n    \"anomaly_type\": \"Cascading Failure\",\n    \"entity\": \"ns3:RES_TOY_srv1\",\n    \"family\": \"dynamic\",\n    \"explanation\": \"The failure of the network link connecting the application server and the access switch caused a cascading failure of the application server.\",\n    \"severity\": \"HIGH\"\n  },\n  {\n    \"anomaly_type\": \"Lack of Redundancy\",\n    \"entity\": \"ns3:APP_TOY_PFS01\",\n    \"family\": \"structural\",\n    \"explanation\": \"The application platform has no redundant resources to handle the failure of the network link and the application server.\",\n    \"severity\": \"CRITICAL\"\n  },\n  {\n    \"anomaly_type\": \"Incomplete Operational Traceability\",\n    \"entity\": \"ns8:TT_TOY2022TT\",\n    \"family\": \"procedural\",\n    \"explanation\": \"The trouble ticket does not have a related repair procedure.\",\n    \"severity\": \"LOW\"\n  }\n]",
+      "detections": [
+        {
+          "anomaly_type": "Single Point of Failure",
+          "entity": "ns3:RES_TOY_term1",
+          "family": "structural",
+          "explanation": "The termination point of the network link connecting the application server and the access switch is a single point of failure.",
+          "severity": "MEDIUM"
+        },
+        {
+          "anomaly_type": "Cascading Failure",
+          "entity": "ns3:RES_TOY_srv1",
+          "family": "dynamic",
+          "explanation": "The failure of the network link connecting the application server and the access switch caused a cascading failure of the application server.",
+          "severity": "HIGH"
+        },
+        {
+          "anomaly_type": "Lack of Redundancy",
+          "entity": "ns3:APP_TOY_PFS01",
+          "family": "structural",
+          "explanation": "The application platform has no redundant resources to handle the failure of the network link and the application server.",
+          "severity": "CRITICAL"
+        },
+        {
+          "anomaly_type": "Incomplete Operational Traceability",
+          "entity": "ns8:TT_TOY2022TT",
+          "family": "procedural",
+          "explanation": "The trouble ticket does not have a related repair procedure.",
+          "severity": "LOW"
+        }
+      ],
+      "metrics": {
+        "n_llm_detections": 4,
+        "n_mas_entities": 19,
+        "recall": 0.211,
+        "precision": 1.0,
+        "hallucination_rate": 0.0,
+        "agents_covered": 3,
+        "agents_total": 9,
+        "agent_recall": 0.333,
+        "per_agent_hit": {
+          "application_incident_without_resource_results": false,
+          "cascading_service_failure_results": false,
+          "hidden_service_dependency_results": false,
+          "isolated_incident_resource_results": true,
+          "module_level_incident_aggregation_results": true,
+          "no_redundancy_incident_results": true,
+          "service_impacted_by_multiple_resources_results": false,
+          "service_with_repeated_incident_results": false,
+          "service_without_ticket_escalation_results": false
+        },
+        "found_entities": [
+          "APP_TOY_PFS01",
+          "RES_TOY_srv1",
+          "RES_TOY_term1",
+          "TT_TOY2022TT"
+        ],
+        "missed_entities": [
+          "APPM_TOY_INF01_M01",
+          "APPM_TOY_PFS01_M01",
+          "APP_TOY_INF01",
+          "APP_TOY_MON01",
+          "LOG_TOY_TT_TOY2022TT02_STATUS_Closed",
+          "LOG_TOY_TT_TOY2022TT02_STATUS_Current",
+          "LOG_TOY_TT_TOY2022TT02_STATUS_Restored",
+          "LOG_TOY_TT_TOY2022TT_STATUS_Current",
+          "LOG_TOY_pe_1_1_2022-02-12T22-58-00Z",
+          "RES_TOY_as2",
+          "RES_TOY_pe_1_1",
+          "SVC_TOY_DBAccess",
+          "SVC_TOY_TimeServer",
+          "TT_TOY2022TT02",
+          "stateChange"
+        ],
+        "hallucinated": []
+      }
+    },
+    "open": {
+      "mode": "aposteriori",
+      "strategy": "open",
+      "model": "mistralai/Mistral-7B-Instruct-v0.3",
+      "elapsed_s": 24.4,
+      "prompt_tokens": 4337,
+      "raw_response": "[\n  {\n    \"anomaly_type\": \"Service Access Failure\",\n    \"entity\": \"ns3:RES_TOY_term1\",\n    \"family\": \"functional\",\n    \"explanation\": \"No route to srv1 from term1\",\n    \"severity\": \"MEDIUM\"\n  },\n  {\n    \"anomaly_type\": \"Interface Failure\",\n    \"entity\": \"ns3:NI_as2_ge-2-1\",\n    \"family\": \"structural\",\n    \"explanation\": \"Probable cause of backbone network route flap\",\n    \"severity\": \"CRITICAL\"\n  },\n  {\n    \"anomaly_type\": \"Equipment Alarm\",\n    \"entity\": \"ns3:RES_TOY_as2\",\n    \"family\": \"procedural\",\n    \"explanation\": \"Alarm: interface card on as2 needs reset\",\n    \"severity\": \"HIGH\"\n  },\n  {\n    \"anomaly_type\": \"Communications Alarm\",\n    \"entity\": \"ns3:RES_TOY_pe_1_1\",\n    \"family\": \"dynamic\",\n    \"explanation\": \"Alarm: communication issue on pe_1_1\",\n    \"severity\": \"MEDIUM\"\n  },\n  {\n    \"anomaly_type\": \"Communications Alarm\",\n    \"entity\": \"ns3:RES_TOY_term1\",\n    \"family\": \"dynamic\",\n    \"explanation\": \"Alarm: communication issue on term1\",\n    \"severity\": \"MEDIUM\"\n  }\n]",
+      "detections": [
+        {
+          "anomaly_type": "Service Access Failure",
+          "entity": "ns3:RES_TOY_term1",
+          "family": "functional",
+          "explanation": "No route to srv1 from term1",
+          "severity": "MEDIUM"
+        },
+        {
+          "anomaly_type": "Interface Failure",
+          "entity": "ns3:NI_as2_ge-2-1",
+          "family": "structural",
+          "explanation": "Probable cause of backbone network route flap",
+          "severity": "CRITICAL"
+        },
+        {
+          "anomaly_type": "Equipment Alarm",
+          "entity": "ns3:RES_TOY_as2",
+          "family": "procedural",
+          "explanation": "Alarm: interface card on as2 needs reset",
+          "severity": "HIGH"
+        },
+        {
+          "anomaly_type": "Communications Alarm",
+          "entity": "ns3:RES_TOY_pe_1_1",
+          "family": "dynamic",
+          "explanation": "Alarm: communication issue on pe_1_1",
+          "severity": "MEDIUM"
+        },
+        {
+          "anomaly_type": "Communications Alarm",
+          "entity": "ns3:RES_TOY_term1",
+          "family": "dynamic",
+          "explanation": "Alarm: communication issue on term1",
+          "severity": "MEDIUM"
+        }
+      ],
+      "metrics": {
+        "n_llm_detections": 5,
+        "n_mas_entities": 19,
+        "recall": 0.158,
+        "precision": 0.75,
+        "hallucination_rate": 0.0,
+        "agents_covered": 4,
+        "agents_total": 9,
+        "agent_recall": 0.444,
+        "per_agent_hit": {
+          "application_incident_without_resource_results": false,
+          "cascading_service_failure_results": true,
+          "hidden_service_dependency_results": true,
+          "isolated_incident_resource_results": true,
+          "module_level_incident_aggregation_results": false,
+          "no_redundancy_incident_results": true,
+          "service_impacted_by_multiple_resources_results": false,
+          "service_with_repeated_incident_results": false,
+          "service_without_ticket_escalation_results": false
+        },
+        "found_entities": [
+          "RES_TOY_as2",
+          "RES_TOY_pe_1_1",
+          "RES_TOY_term1"
+        ],
+        "missed_entities": [
+          "APPM_TOY_INF01_M01",
+          "APPM_TOY_PFS01_M01",
+          "APP_TOY_INF01",
+          "APP_TOY_MON01",
+          "APP_TOY_PFS01",
+          "LOG_TOY_TT_TOY2022TT02_STATUS_Closed",
+          "LOG_TOY_TT_TOY2022TT02_STATUS_Current",
+          "LOG_TOY_TT_TOY2022TT02_STATUS_Restored",
+          "LOG_TOY_TT_TOY2022TT_STATUS_Current",
+          "LOG_TOY_pe_1_1_2022-02-12T22-58-00Z",
+          "RES_TOY_srv1",
+          "SVC_TOY_DBAccess",
+          "SVC_TOY_TimeServer",
+          "TT_TOY2022TT",
+          "TT_TOY2022TT02",
+          "stateChange"
+        ],
+        "hallucinated": []
+      }
+    }
+  }
+}
