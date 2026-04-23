@@ -383,7 +383,7 @@ def compute_metrics(
 # MAIN
 # ─────────────────────────────────────────────────────────────────────────────
 
-def run_one(mode: str, strategy: str, graph_turtle: str) -> dict:
+def run_one(mode: str, strategy: str, graph_turtle: str, graph_names: set[str] | None = None) -> dict:
     print(f"\n  [{mode.upper()} / {strategy.upper()}]")
 
     if strategy == "guided":
@@ -409,7 +409,8 @@ def run_one(mode: str, strategy: str, graph_turtle: str) -> dict:
     print(f"  {len(detections)} detections in {elapsed}s")
 
     mas_entities  = load_mas_entities(mode)
-    graph_names   = extract_graph_entity_names(graph_turtle)
+    if graph_names is None:
+        graph_names = extract_graph_entity_names(graph_turtle)
     metrics       = compute_metrics(detections, mas_entities, graph_names)
 
     print(
@@ -466,19 +467,30 @@ def main() -> None:
         except Exception:
             results = {}
 
+    graph_names = extract_graph_entity_names(graph_turtle)
+
     for mode in modes:
         results.setdefault(mode, {})
         for strategy in strategies:
-            if strategy in results[mode] and "error" not in results[mode][strategy]:
-                print(f"\n  [{mode.upper()} / {strategy.upper()}]  skipped (already done)")
-                m = results[mode][strategy]["metrics"]
+            existing = results[mode].get(strategy)
+            if existing and "error" not in existing:
+                # Always recompute metrics from stored detections so a fix to
+                # compute_metrics is reflected without re-running the LLM.
+                mas_entities = load_mas_entities(mode)
+                existing["metrics"] = compute_metrics(
+                    existing.get("detections", []), mas_entities, graph_names
+                )
+                results[mode][strategy] = existing
+                m = existing["metrics"]
+                print(f"\n  [{mode.upper()} / {strategy.upper()}]  skipped (already done, metrics refreshed)")
                 print(
                     f"  recall={m['recall']:.2f}  precision={m['precision']:.2f}  "
                     f"halluc={m['hallucination_rate']:.2f}  "
                     f"agents hit={m['agents_covered']}/{m['agents_total']}"
                 )
+                out.write_text(json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")
                 continue
-            results[mode][strategy] = run_one(mode, strategy, graph_turtle)
+            results[mode][strategy] = run_one(mode, strategy, graph_turtle, graph_names)
             # Save after each combo so a crash doesn't lose work
             out.write_text(json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")
 
