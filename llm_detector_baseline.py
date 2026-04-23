@@ -102,6 +102,11 @@ WHERE {
 """
 
 def export_graph_turtle() -> str:
+    # If noria_graph.ttl already exists locally, use it directly (no Virtuoso needed).
+    ttl_path = PROJECT_ROOT / "noria_graph.ttl"
+    if ttl_path.exists():
+        print(f"  (reading cached {ttl_path.name})")
+        return ttl_path.read_text(encoding="utf-8")
     r = requests.get(
         SPARQL_ENDPOINT,
         params={"query": GRAPH_QUERY, "format": "text/turtle"},
@@ -443,7 +448,7 @@ def main() -> None:
     print(f"  LLM DETECTOR BASELINE  ({MODEL})")
     print("=" * 60)
 
-    print("\n  Exporting knowledge graph from Virtuoso...")
+    print("\n  Exporting knowledge graph...")
     try:
         graph_turtle = export_graph_turtle()
     except Exception as exc:
@@ -453,10 +458,10 @@ def main() -> None:
     token_est = len(graph_turtle) // 4
     print(f"  {len(graph_turtle):,} chars  (~{token_est:,} tokens)")
 
-    # Save .ttl for manual use in Claude/GPT chat
     ttl_path = PROJECT_ROOT / "noria_graph.ttl"
-    ttl_path.write_text(graph_turtle, encoding="utf-8")
-    print(f"  Graph saved to {ttl_path.name}  (attach to Claude/GPT chat for manual tests)")
+    if not ttl_path.exists():
+        ttl_path.write_text(graph_turtle, encoding="utf-8")
+        print(f"  Graph saved to {ttl_path.name}")
 
     # Load any previously completed results so reruns can skip finished combos
     out = PROJECT_ROOT / "llm_baseline_results.json"
