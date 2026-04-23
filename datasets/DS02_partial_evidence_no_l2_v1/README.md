@@ -1,46 +1,60 @@
-﻿# DS02 Partial Evidence No L2 V1
+# DS02_partial_evidence_no_l2_v1
 
 ## Purpose
 
-This scenario introduces a very small number of isolated weak signals. It is intended to verify that level 1 can react locally while level 2 remains silent because there is no convergent diagnostic anchor.
+Weak isolated evidence without convergent level-2 diagnosis. This scenario is part of the MASynReas benchmark catalogue and is intended to be used as a controlled, reproducible experiment.
 
-## Relation to the Reference Graphs
+## Scenario Profile
 
-This scenario is derived from:
-- [Base A](C:/Users/rdesb/psc/MASynReas/datasets/baseA/README.md)
+- Reference graph: [Base A](C:/Users/rdesb/psc/MASynReas/datasets/baseA/README.md)
+- Source variant: `quiescentA`
+- Execution mode: `both`
+- Mutation type: `weak_partial_signals`
 
-Mode:
-- both
+## Why This Scenario Exists
 
-## Mutation Profile
+This scenario provides a documented mutation of a healthy reference graph so that Level-1 signals, Level-2 diagnoses, and benchmark KPIs can be interpreted against a known expected outcome. It is useful both for debugging the MAS and for producing comparable evaluation results across future runs.
 
-- Remove the actual end time of one change request.
-- Add one event record without a related element.
-- Keep the rest of the graph healthy and incident-free.
+## Mutation Summary
 
-## Contents
+### Injected Anomalies
+- `baseA:event_partial_signal`
 
-Files:
-- dataset.ttl
-- manifest.json
-- expected_level1.json
-- expected_level2.json
+### Removed Entities
+- No entity removal in this scenario.
 
-## KPI Targets
+### Removed Relations
+- `noria:changeRequestActualEndTime on baseA:change_switch_firmware_window`
 
-- activation_correctness
-- false_positive_resistance
+### Noise Additions
+- No noise is intentionally added in this scenario.
 
-## Expected Level 1 Signals
+## Expected Diagnostic Footprint
 
-- apriori/dynamic/change_without_effective_time_detector
-- apriori/dynamic/event_without_related_element_detector
+- Expected non-zero Level-1 bindings: `2`
+- Expected Level-2 diagnoses: `0`
 
-## Expected Level 2 Diagnoses
+### Expected Level-1 Agents
+- `apriori/dynamic/change_without_effective_time_detector`
+- `apriori/dynamic/event_without_related_element_detector`
 
-- no level-2 diagnoser should emit a diagnosis
+### Expected Level-2 Diagnosers
+- No Level-2 diagnoser should emit a diagnosis.
+
+## KPI Objectives
+
+- Primary focus: `l2_activation_correctness` and correct non-activation on weak evidence.
+- Reference target: `false_positive_resistance`.
+
+## Files
+
+- [dataset.ttl](C:/Users/rdesb/psc/MASynReas/datasets/DS02_partial_evidence_no_l2_v1/dataset.ttl)
+- [manifest.json](C:/Users/rdesb/psc/MASynReas/datasets/DS02_partial_evidence_no_l2_v1/manifest.json)
+- [expected_level1.json](C:/Users/rdesb/psc/MASynReas/datasets/DS02_partial_evidence_no_l2_v1/expected_level1.json)
+- [expected_level2.json](C:/Users/rdesb/psc/MASynReas/datasets/DS02_partial_evidence_no_l2_v1/expected_level2.json)
 
 ## Notes
 
-- Only two level-1 agents should react.
-- No level-2 diagnoser should activate.
+- The companion JSON files are the authoritative machine-readable reference for automated evaluation scripts.
+- This README is intentionally written for human inspection and benchmark orientation.
+- The file is stored as UTF-8 without BOM to avoid the encoding artefacts seen in earlier generated documentation.

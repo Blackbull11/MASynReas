@@ -1,46 +1,62 @@
-﻿# DS16 Application Support Failure Basic
+# DS16_application_support_failure_basic
 
 ## Purpose
 
-This scenario removes the visible support resources of one application while keeping its incident chain. The resulting ambiguity should support the application-support-failure diagnosis.
+An incidented application loses its visible technical support mapping. This scenario is part of the MASynReas benchmark catalogue and is intended to be used as a controlled, reproducible experiment.
 
-## Relation to the Reference Graphs
+## Scenario Profile
 
-This scenario is derived from:
-- [Base B](C:/Users/rdesb/psc/MASynReas/datasets/baseB/README.md)
+- Reference graph: [Base B](C:/Users/rdesb/psc/MASynReas/datasets/baseB/README.md)
+- Source variant: `baseB`
+- Execution mode: `aposteriori`
+- Mutation type: `application_support_failure`
 
-Mode:
-- aposteriori
+## Why This Scenario Exists
 
-## Mutation Profile
+This scenario provides a documented mutation of a healthy reference graph so that Level-1 signals, Level-2 diagnoses, and benchmark KPIs can be interpreted against a known expected outcome. It is useful both for debugging the MAS and for producing comparable evaluation results across future runs.
 
-- Remove both support relations from the billing application nodes.
-- Keep the billing event and ticket chain intact.
+## Mutation Summary
 
-## Contents
+### Injected Anomalies
+- No anomaly entity is directly injected; the effect comes from structural or relational mutation.
 
-Files:
-- dataset.ttl
-- manifest.json
-- expected_level1.json
-- expected_level2.json
+### Removed Entities
+- No entity removal in this scenario.
 
-## KPI Targets
+### Removed Relations
+- `noria:resourceForApplication on baseB:res_billing_api_01`
+- `noria:resourceForApplication on baseB:res_billing_api_02`
 
-- precision_at_l2
-- recall_at_l2
-- family_contribution_analysis
+### Noise Additions
+- No noise is intentionally added in this scenario.
 
-## Expected Level 1 Signals
+## Expected Diagnostic Footprint
 
-- aposteriori/structural/application_mapping_inconsistency_detector
-- aposteriori/functional/application_incident_without_resource_detector
+- Expected non-zero Level-1 bindings: `2`
+- Expected Level-2 diagnoses: `1`
 
-## Expected Level 2 Diagnoses
+### Expected Level-1 Agents
+- `aposteriori/structural/application_mapping_inconsistency_detector`
+- `aposteriori/functional/application_incident_without_resource_detector`
 
-- aposteriori/application_support_failure_diagnoser
+### Expected Level-2 Diagnosers
+- `aposteriori/application_support_failure_diagnoser`
+
+## KPI Objectives
+
+- Primary focus: `precision_l2`, with diagnosis matching against the expected Level-2 outputs.
+- In the current profile, this is mostly followed through `diagnosis_hit` and the list of missed expected diagnoses.
+- Reference target: `family_contribution_analysis`.
+
+## Files
+
+- [dataset.ttl](C:/Users/rdesb/psc/MASynReas/datasets/DS16_application_support_failure_basic/dataset.ttl)
+- [manifest.json](C:/Users/rdesb/psc/MASynReas/datasets/DS16_application_support_failure_basic/manifest.json)
+- [expected_level1.json](C:/Users/rdesb/psc/MASynReas/datasets/DS16_application_support_failure_basic/expected_level1.json)
+- [expected_level2.json](C:/Users/rdesb/psc/MASynReas/datasets/DS16_application_support_failure_basic/expected_level2.json)
 
 ## Notes
 
-- The billing application remains incidented but unsupported in the visible graph.
-- This should activate both structural and functional aposteriori families.
+- The companion JSON files are the authoritative machine-readable reference for automated evaluation scripts.
+- This README is intentionally written for human inspection and benchmark orientation.
+- The file is stored as UTF-8 without BOM to avoid the encoding artefacts seen in earlier generated documentation.

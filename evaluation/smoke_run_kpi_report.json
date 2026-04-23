@@ -1,0 +1,504 @@
+{
+  "dataset_id": "DS01_clean_baseA",
+  "mode": "apriori",
+  "run_context": {},
+  "selected_relevant_metrics": [
+    "l2_activation_correctness",
+    "precision_l2",
+    "top1_accuracy",
+    "ranking_mrr",
+    "end_to_end_runtime",
+    "mean_runtime_l1",
+    "mean_runtime_l2",
+    "controller_waiting_overhead",
+    "traceability_rate",
+    "evidence_completeness_ratio",
+    "mean_evidence_count",
+    "structured_evidence_ratio"
+  ],
+  "helper_metrics": [
+    "l1_expectation_match_rate",
+    "diagnosis_hit",
+    "clean_control_success"
+  ],
+  "details": {
+    "manifest": {
+      "dataset_id": "DS01_clean_baseA",
+      "title": "Clean control scenario derived from Base A",
+      "base_graph": "baseA",
+      "source_variant": "quiescentA",
+      "mode": "both",
+      "graph_files": [
+        "dataset.ttl"
+      ],
+      "mutation_profile": {
+        "type": "quiescent_clean_slice",
+        "injected_anomalies": [],
+        "removed_entities": [
+          "baseA:event_customer_warning",
+          "baseA:event_monitoring_warning",
+          "baseA:ticket_customer_warning",
+          "baseA:ticket_monitoring_warning"
+        ],
+        "removed_relations": [],
+        "noise_additions": []
+      },
+      "kpi_targets": [
+        "false_positive_control",
+        "activation_correctness",
+        "baseline_runtime",
+        "traceability_sanity_check"
+      ],
+      "expected_summary": {
+        "nonzero_level1_agents": {},
+        "nonzero_level2_diagnosers": {},
+        "level1_total_bindings": 0,
+        "level2_total_diagnoses": 0
+      }
+    },
+    "expected_level2_keys": [],
+    "actual_level2_keys": [],
+    "matched_level2_keys": [],
+    "missed_level2_keys": [],
+    "unexpected_level2_keys": [],
+    "actual_flat_diagnoses": [],
+    "runtime_summary": {
+      "end_to_end_runtime_ms": null,
+      "mean_runtime_l1_ms": null,
+      "mean_runtime_l2_ms": null,
+      "controller_waiting_overhead_ms": null,
+      "detector_breakdown_ms": {},
+      "diagnoser_breakdown_ms": {}
+    }
+  },
+  "metrics": [
+    {
+      "metric_name": "l1_expectation_match_rate",
+      "scope": "level1_proxy",
+      "dataset_id": "DS01_clean_baseA",
+      "mode": "apriori",
+      "value": 0.8695652173913043,
+      "unit": "ratio",
+      "counts": {
+        "correct": 40,
+        "total": 46
+      },
+      "breakdown": {
+        "application_without_module": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "application_without_module_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "application_without_resource": {
+          "expected_count": 0,
+          "actual_count": 3,
+          "decision_correct": false
+        },
+        "application_without_resource_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "application_without_support": {
+          "expected_count": 0,
+          "actual_count": 3,
+          "decision_correct": false
+        },
+        "application_without_support_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "change_request_without_scheduled_time": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "change_request_without_scheduled_time_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "change_without_effective_time": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "change_without_effective_time_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "criticality_structural_weakness": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "criticality_structural_weakness_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "duplicated_functional_mapping": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "duplicated_functional_mapping_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "event_without_related_element": {
+          "expected_count": 0,
+          "actual_count": 10,
+          "decision_correct": false
+        },
+        "event_without_related_element_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "event_without_timestamp": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "event_without_timestamp_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "incomplete_network_link": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "incomplete_network_link_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "inconsistent_service_hierarchy": {
+          "expected_count": 0,
+          "actual_count": 4,
+          "decision_correct": false
+        },
+        "inconsistent_service_hierarchy_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "missing_interface": {
+          "expected_count": 0,
+          "actual_count": 14,
+          "decision_correct": false
+        },
+        "missing_interface_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "missing_parent_resource": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "missing_parent_resource_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "missing_redundancy": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "missing_redundancy_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "orphan_interface": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "orphan_interface_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "orphan_resource": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "orphan_resource_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "over_concentrated_service": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "over_concentrated_service_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "procedure_not_linked_to_resource_type": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "procedure_not_linked_to_resource_type_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "service_without_application": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "service_without_application_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "service_without_resource_coverage": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "service_without_resource_coverage_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "ticket_without_assigned_procedure": {
+          "expected_count": 0,
+          "actual_count": 2,
+          "decision_correct": false
+        },
+        "ticket_without_assigned_procedure_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "unconnected_interface": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "unconnected_interface_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "unmanaged_resource": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        },
+        "unmanaged_resource_detector": {
+          "expected_count": 0,
+          "actual_count": 0,
+          "decision_correct": true
+        }
+      }
+    },
+    {
+      "metric_name": "l2_activation_correctness",
+      "scope": "level2",
+      "dataset_id": "DS01_clean_baseA",
+      "mode": "apriori",
+      "value": 1.0,
+      "unit": "ratio",
+      "counts": {
+        "correct": 5,
+        "total": 5
+      },
+      "breakdown": {
+        "critical_service_exposure_diagnoser": {
+          "expected_active": false,
+          "actual_active": false,
+          "diagnosis_count": 0,
+          "activation_status": "missing",
+          "decision_correct": true
+        },
+        "functional_mapping_gap_diagnoser": {
+          "expected_active": false,
+          "actual_active": false,
+          "diagnosis_count": 0,
+          "activation_status": "missing",
+          "decision_correct": true
+        },
+        "observability_gap_diagnoser": {
+          "expected_active": false,
+          "actual_active": false,
+          "diagnosis_count": 0,
+          "activation_status": "missing",
+          "decision_correct": true
+        },
+        "procedural_unreadiness_diagnoser": {
+          "expected_active": false,
+          "actual_active": false,
+          "diagnosis_count": 0,
+          "activation_status": "missing",
+          "decision_correct": true
+        },
+        "structural_fragility_diagnoser": {
+          "expected_active": false,
+          "actual_active": false,
+          "diagnosis_count": 0,
+          "activation_status": "missing",
+          "decision_correct": true
+        }
+      }
+    },
+    {
+      "metric_name": "precision_l2",
+      "scope": "level2",
+      "dataset_id": "DS01_clean_baseA",
+      "mode": "apriori",
+      "value": null,
+      "unit": "ratio",
+      "counts": {
+        "tp": 0,
+        "fp": 0,
+        "expected": 0,
+        "actual": 0
+      },
+      "parameters": {
+        "matching_policy": "diagnoser_agent+target_id"
+      }
+    },
+    {
+      "metric_name": "diagnosis_hit",
+      "scope": "level2_helper",
+      "dataset_id": "DS01_clean_baseA",
+      "mode": "apriori",
+      "value": null,
+      "unit": "ratio",
+      "counts": {
+        "tp": 0,
+        "expected": 0
+      }
+    },
+    {
+      "metric_name": "clean_control_success",
+      "scope": "level2_helper",
+      "dataset_id": "DS01_clean_baseA",
+      "mode": "apriori",
+      "value": 1.0,
+      "unit": "ratio",
+      "counts": {
+        "actual_diagnoses": 0,
+        "expected_diagnoses": 0
+      }
+    },
+    {
+      "metric_name": "top1_accuracy",
+      "scope": "level2",
+      "dataset_id": "DS01_clean_baseA",
+      "mode": "apriori",
+      "value": null,
+      "unit": "ratio"
+    },
+    {
+      "metric_name": "ranking_mrr",
+      "scope": "level2",
+      "dataset_id": "DS01_clean_baseA",
+      "mode": "apriori",
+      "value": null,
+      "unit": "ratio"
+    },
+    {
+      "metric_name": "end_to_end_runtime",
+      "scope": "time_complexity",
+      "dataset_id": "DS01_clean_baseA",
+      "mode": "apriori",
+      "value": null,
+      "unit": "milliseconds"
+    },
+    {
+      "metric_name": "mean_runtime_l1",
+      "scope": "time_complexity",
+      "dataset_id": "DS01_clean_baseA",
+      "mode": "apriori",
+      "value": null,
+      "unit": "milliseconds",
+      "breakdown": {}
+    },
+    {
+      "metric_name": "mean_runtime_l2",
+      "scope": "time_complexity",
+      "dataset_id": "DS01_clean_baseA",
+      "mode": "apriori",
+      "value": null,
+      "unit": "milliseconds",
+      "breakdown": {}
+    },
+    {
+      "metric_name": "controller_waiting_overhead",
+      "scope": "time_complexity",
+      "dataset_id": "DS01_clean_baseA",
+      "mode": "apriori",
+      "value": null,
+      "unit": "milliseconds"
+    },
+    {
+      "metric_name": "traceability_rate",
+      "scope": "explainability",
+      "dataset_id": "DS01_clean_baseA",
+      "mode": "apriori",
+      "value": null,
+      "unit": "ratio",
+      "counts": {
+        "diagnoses": 0
+      }
+    },
+    {
+      "metric_name": "evidence_completeness_ratio",
+      "scope": "explainability",
+      "dataset_id": "DS01_clean_baseA",
+      "mode": "apriori",
+      "value": null,
+      "unit": "ratio",
+      "counts": {
+        "diagnoses": 0
+      }
+    },
+    {
+      "metric_name": "mean_evidence_count",
+      "scope": "explainability",
+      "dataset_id": "DS01_clean_baseA",
+      "mode": "apriori",
+      "value": null,
+      "unit": "count",
+      "counts": {
+        "diagnoses": 0
+      }
+    },
+    {
+      "metric_name": "structured_evidence_ratio",
+      "scope": "explainability",
+      "dataset_id": "DS01_clean_baseA",
+      "mode": "apriori",
+      "value": null,
+      "unit": "ratio",
+      "counts": {
+        "diagnoses": 0
+      }
+    }
+  ]
+}

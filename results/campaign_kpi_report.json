@@ -1,0 +1,20 @@
+{
+  "report_count": 1,
+  "reports": [
+    "C:\\Users\\rdesb\\psc\\MASynReas\\results\\metrics\\run_kpi_report.json"
+  ],
+  "metrics": {
+    "diagnosis_success_rate": null,
+    "clean_control_success_rate": 1.0,
+    "top1_accuracy": null,
+    "ranking_mrr": null,
+    "precision_l2_micro": null,
+    "l2_activation_correctness_micro": 1.0,
+    "traceability_rate_mean": null,
+    "end_to_end_runtime_mean_ms": null,
+    "mean_runtime_l1_mean_ms": null,
+    "mean_runtime_l2_mean_ms": null,
+    "controller_waiting_overhead_mean_ms": null
+  },
+  "diagnoser_frequency_rate": {}
+}

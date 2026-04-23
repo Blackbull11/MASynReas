@@ -1,49 +1,67 @@
-﻿# DS11 Single Point Of Failure Basic
+# DS11_single_point_of_failure_basic
 
 ## Purpose
 
-This scenario concentrates several structural aposteriori clues on one infrastructure element so the MAS can recognize a single point of failure.
+An incident reveals a structurally exposed single point of failure. This scenario is part of the MASynReas benchmark catalogue and is intended to be used as a controlled, reproducible experiment.
 
-## Relation to the Reference Graphs
+## Scenario Profile
 
-This scenario is derived from:
-- [Base B](C:/Users/rdesb/psc/MASynReas/datasets/baseB/README.md)
+- Reference graph: [Base B](C:/Users/rdesb/psc/MASynReas/datasets/baseB/README.md)
+- Source variant: `baseB`
+- Execution mode: `aposteriori`
+- Mutation type: `single_point_of_failure`
 
-Mode:
-- aposteriori
+## Why This Scenario Exists
 
-## Mutation Profile
+This scenario provides a documented mutation of a healthy reference graph so that Level-1 signals, Level-2 diagnoses, and benchmark KPIs can be interpreted against a known expected outcome. It is useful both for debugging the MAS and for producing comparable evaluation results across future runs.
 
-- Reduce aseB:res_firewall_01 to a single incomplete visible link.
-- Add dependent child resources under aseB:res_firewall_01 to make it high impact.
-- Add one high-severity open ticket directly impacting aseB:res_firewall_01.
+## Mutation Summary
 
-## Contents
+### Injected Anomalies
+- `baseB:event_firewall_major`
+- `baseB:ticket_firewall_major`
 
-Files:
-- dataset.ttl
-- manifest.json
-- expected_level1.json
-- expected_level2.json
+### Removed Entities
+- `baseB:if_workforce_vm_01`
+- `baseB:if_firewall_01_port_02`
+- `baseB:link_workforce_vm_01_to_firewall_01`
+- `baseB:if_monitor_vm_01`
 
-## KPI Targets
+### Removed Relations
+- No relation removal in this scenario.
 
-- precision_at_l2
-- recall_at_l2
-- top1_diagnosis_accuracy
+### Noise Additions
+- No noise is intentionally added in this scenario.
 
-## Expected Level 1 Signals
+## Expected Diagnostic Footprint
 
-- aposteriori/structural/high_impact_resource_detector
-- aposteriori/structural/incident_on_incomplete_link_detector
-- aposteriori/structural/isolated_incident_resource_detector
-- aposteriori/structural/no_redundancy_incident_detector
+- Expected non-zero Level-1 bindings: `4`
+- Expected Level-2 diagnoses: `1`
 
-## Expected Level 2 Diagnoses
+### Expected Level-1 Agents
+- `aposteriori/structural/high_impact_resource_detector`
+- `aposteriori/structural/incident_on_incomplete_link_detector`
+- `aposteriori/structural/isolated_incident_resource_detector`
+- `aposteriori/structural/no_redundancy_incident_detector`
 
-- aposteriori/single_point_of_failure_diagnoser
+### Expected Level-2 Diagnosers
+- `aposteriori/single_point_of_failure_diagnoser`
+
+## KPI Objectives
+
+- Primary focus: `precision_l2`, with diagnosis matching against the expected Level-2 outputs.
+- In the current profile, this is mostly followed through `diagnosis_hit` and the list of missed expected diagnoses.
+- Primary focus: `top1_accuracy`.
+
+## Files
+
+- [dataset.ttl](C:/Users/rdesb/psc/MASynReas/datasets/DS11_single_point_of_failure_basic/dataset.ttl)
+- [manifest.json](C:/Users/rdesb/psc/MASynReas/datasets/DS11_single_point_of_failure_basic/manifest.json)
+- [expected_level1.json](C:/Users/rdesb/psc/MASynReas/datasets/DS11_single_point_of_failure_basic/expected_level1.json)
+- [expected_level2.json](C:/Users/rdesb/psc/MASynReas/datasets/DS11_single_point_of_failure_basic/expected_level2.json)
 
 ## Notes
 
-- The target anchor is aseB:res_firewall_01.
-- This scenario is designed to support a single dominant level-2 diagnosis.
+- The companion JSON files are the authoritative machine-readable reference for automated evaluation scripts.
+- This README is intentionally written for human inspection and benchmark orientation.
+- The file is stored as UTF-8 without BOM to avoid the encoding artefacts seen in earlier generated documentation.

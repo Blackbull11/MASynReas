@@ -1,46 +1,62 @@
-﻿# DS21 Noisy Irrelevant Events
+# DS21_noisy_irrelevant_events
 
 ## Purpose
 
-This robustness scenario adds extra benign operational events on a resource outside the service support chains. The expected outcome is weak local noise, not a meaningful diagnosis.
+Benign extra events are injected without strong diagnosis value. This scenario is part of the MASynReas benchmark catalogue and is intended to be used as a controlled, reproducible experiment.
 
-## Relation to the Reference Graphs
+## Scenario Profile
 
-This scenario is derived from:
-- [Base B](C:/Users/rdesb/psc/MASynReas/datasets/baseB/README.md)
+- Reference graph: [Base B](C:/Users/rdesb/psc/MASynReas/datasets/baseB/README.md)
+- Source variant: `quiescentB`
+- Execution mode: `aposteriori`
+- Mutation type: `noise_irrelevant_events`
 
-Mode:
-- aposteriori
+## Why This Scenario Exists
 
-## Mutation Profile
+This scenario provides a documented mutation of a healthy reference graph so that Level-1 signals, Level-2 diagnoses, and benchmark KPIs can be interpreted against a known expected outcome. It is useful both for debugging the MAS and for producing comparable evaluation results across future runs.
 
-- Use the quiescent healthy slice of Base B.
-- Add three benign events on aseB:res_firewall_02.
-- Keep the events far enough apart to avoid burst-style interpretations.
+## Mutation Summary
 
-## Contents
+### Injected Anomalies
+- `baseB:event_noise_probe_01`
+- `baseB:event_noise_probe_02`
+- `baseB:event_noise_probe_03`
 
-Files:
-- dataset.ttl
-- manifest.json
-- expected_level1.json
-- expected_level2.json
+### Removed Entities
+- No entity removal in this scenario.
 
-## KPI Targets
+### Removed Relations
+- No relation removal in this scenario.
 
-- noise_robustness
-- ranking_stability
-- sparql_efficiency_under_noise
+### Noise Additions
+- `Three benign events on a non-service resource`
 
-## Expected Level 1 Signals
+## Expected Diagnostic Footprint
 
-- aposteriori/functional/resource_event_without_service_impact_detector
+- Expected non-zero Level-1 bindings: `1`
+- Expected Level-2 diagnoses: `0`
 
-## Expected Level 2 Diagnoses
+### Expected Level-1 Agents
+- `aposteriori/functional/resource_event_without_service_impact_detector`
 
-- no level-2 diagnoser should emit a diagnosis
+### Expected Level-2 Diagnosers
+- No Level-2 diagnoser should emit a diagnosis.
+
+## KPI Objectives
+
+- Campaign-level focus: compare this noisy scenario with its cleaner counterpart.
+- Reference target: `ranking_stability`.
+- Secondary timing focus: noisy graphs should remain operationally manageable.
+
+## Files
+
+- [dataset.ttl](C:/Users/rdesb/psc/MASynReas/datasets/DS21_noisy_irrelevant_events/dataset.ttl)
+- [manifest.json](C:/Users/rdesb/psc/MASynReas/datasets/DS21_noisy_irrelevant_events/manifest.json)
+- [expected_level1.json](C:/Users/rdesb/psc/MASynReas/datasets/DS21_noisy_irrelevant_events/expected_level1.json)
+- [expected_level2.json](C:/Users/rdesb/psc/MASynReas/datasets/DS21_noisy_irrelevant_events/expected_level2.json)
 
 ## Notes
 
-- The expected output is a weak functional aposteriori signal only.
-- No level-2 diagnosis should be emitted.
+- The companion JSON files are the authoritative machine-readable reference for automated evaluation scripts.
+- This README is intentionally written for human inspection and benchmark orientation.
+- The file is stored as UTF-8 without BOM to avoid the encoding artefacts seen in earlier generated documentation.

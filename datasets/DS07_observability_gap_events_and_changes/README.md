@@ -1,48 +1,64 @@
-﻿# DS07 Observability Gap Events And Changes
+# DS07_observability_gap_events_and_changes
 
 ## Purpose
 
-This scenario targets the observability-gap diagnoser by combining incomplete change timing with event records that lack core observability fields.
+Observability and temporal completeness are degraded across events and changes. This scenario is part of the MASynReas benchmark catalogue and is intended to be used as a controlled, reproducible experiment.
 
-## Relation to the Reference Graphs
+## Scenario Profile
 
-This scenario is derived from:
-- [Base A](C:/Users/rdesb/psc/MASynReas/datasets/baseA/README.md)
+- Reference graph: [Base A](C:/Users/rdesb/psc/MASynReas/datasets/baseA/README.md)
+- Source variant: `quiescentA`
+- Execution mode: `apriori`
+- Mutation type: `observability_gap`
 
-Mode:
-- apriori
+## Why This Scenario Exists
 
-## Mutation Profile
+This scenario provides a documented mutation of a healthy reference graph so that Level-1 signals, Level-2 diagnoses, and benchmark KPIs can be interpreted against a known expected outcome. It is useful both for debugging the MAS and for producing comparable evaluation results across future runs.
 
-- Remove the actual end time of both change requests.
-- Add one event without timestamp.
-- Add one event without related element.
+## Mutation Summary
 
-## Contents
+### Injected Anomalies
+- `baseA:event_obs_missing_timestamp`
+- `baseA:event_obs_missing_related`
 
-Files:
-- dataset.ttl
-- manifest.json
-- expected_level1.json
-- expected_level2.json
+### Removed Entities
+- No entity removal in this scenario.
 
-## KPI Targets
+### Removed Relations
+- `noria:changeRequestActualEndTime on baseA:change_switch_firmware_window`
+- `noria:changeRequestActualEndTime on baseA:change_monitoring_patch`
 
-- precision_at_l2
-- recall_at_l2
-- reliability_score_calibration
+### Noise Additions
+- No noise is intentionally added in this scenario.
 
-## Expected Level 1 Signals
+## Expected Diagnostic Footprint
 
-- apriori/dynamic/change_without_effective_time_detector
-- apriori/dynamic/event_without_related_element_detector
-- apriori/dynamic/event_without_timestamp_detector
+- Expected non-zero Level-1 bindings: `4`
+- Expected Level-2 diagnoses: `1`
 
-## Expected Level 2 Diagnoses
+### Expected Level-1 Agents
+- `apriori/dynamic/change_without_effective_time_detector`
+- `apriori/dynamic/event_without_related_element_detector`
+- `apriori/dynamic/event_without_timestamp_detector`
 
-- apriori/observability_gap_diagnoser
+### Expected Level-2 Diagnosers
+- `apriori/observability_gap_diagnoser`
+
+## KPI Objectives
+
+- Primary focus: `precision_l2`, with diagnosis matching against the expected Level-2 outputs.
+- In the current profile, this is mostly followed through `diagnosis_hit` and the list of missed expected diagnoses.
+- Campaign-level focus: future calibration of `reliability_score` once enough runs are accumulated.
+
+## Files
+
+- [dataset.ttl](C:/Users/rdesb/psc/MASynReas/datasets/DS07_observability_gap_events_and_changes/dataset.ttl)
+- [manifest.json](C:/Users/rdesb/psc/MASynReas/datasets/DS07_observability_gap_events_and_changes/manifest.json)
+- [expected_level1.json](C:/Users/rdesb/psc/MASynReas/datasets/DS07_observability_gap_events_and_changes/expected_level1.json)
+- [expected_level2.json](C:/Users/rdesb/psc/MASynReas/datasets/DS07_observability_gap_events_and_changes/expected_level2.json)
 
 ## Notes
 
-- This scenario concentrates on observability, not on service fragility.
-- The expected level-2 outcome is a single observability-gap diagnosis.
+- The companion JSON files are the authoritative machine-readable reference for automated evaluation scripts.
+- This README is intentionally written for human inspection and benchmark orientation.
+- The file is stored as UTF-8 without BOM to avoid the encoding artefacts seen in earlier generated documentation.

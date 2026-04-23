@@ -1,47 +1,62 @@
-﻿# DS03 Partial Evidence No L2 V2
+# DS03_partial_evidence_no_l2_v2
 
 ## Purpose
 
-This scenario extends the partial-evidence family with several weak signals on distinct anchors. It checks that the MAS does not overdiagnose when evidence remains fragmented.
+Multi-signal weak evidence without coherent level-2 anchor. This scenario is part of the MASynReas benchmark catalogue and is intended to be used as a controlled, reproducible experiment.
 
-## Relation to the Reference Graphs
+## Scenario Profile
 
-This scenario is derived from:
-- [Base A](C:/Users/rdesb/psc/MASynReas/datasets/baseA/README.md)
+- Reference graph: [Base A](C:/Users/rdesb/psc/MASynReas/datasets/baseA/README.md)
+- Source variant: `quiescentA`
+- Execution mode: `both`
+- Mutation type: `multi_signal_weak_evidence`
 
-Mode:
-- both
+## Why This Scenario Exists
 
-## Mutation Profile
+This scenario provides a documented mutation of a healthy reference graph so that Level-1 signals, Level-2 diagnoses, and benchmark KPIs can be interpreted against a known expected outcome. It is useful both for debugging the MAS and for producing comparable evaluation results across future runs.
 
-- Remove the management link of one switch resource.
-- Remove the actual end time of a different change request.
-- Add one event record without timestamp.
+## Mutation Summary
 
-## Contents
+### Injected Anomalies
+- `baseA:event_missing_timestamp`
 
-Files:
-- dataset.ttl
-- manifest.json
-- expected_level1.json
-- expected_level2.json
+### Removed Entities
+- No entity removal in this scenario.
 
-## KPI Targets
+### Removed Relations
+- `noria:resourceManagedBy on baseA:res_access_switch_02`
+- `noria:changeRequestActualEndTime on baseA:change_monitoring_patch`
 
-- activation_correctness
-- false_positive_resistance_under_multi_signal_conditions
+### Noise Additions
+- No noise is intentionally added in this scenario.
 
-## Expected Level 1 Signals
+## Expected Diagnostic Footprint
 
-- apriori/structural/unmanaged_resource_detector
-- apriori/dynamic/change_without_effective_time_detector
-- apriori/dynamic/event_without_timestamp_detector
+- Expected non-zero Level-1 bindings: `3`
+- Expected Level-2 diagnoses: `0`
 
-## Expected Level 2 Diagnoses
+### Expected Level-1 Agents
+- `apriori/structural/unmanaged_resource_detector`
+- `apriori/dynamic/change_without_effective_time_detector`
+- `apriori/dynamic/event_without_timestamp_detector`
 
-- no level-2 diagnoser should emit a diagnosis
+### Expected Level-2 Diagnosers
+- No Level-2 diagnoser should emit a diagnosis.
+
+## KPI Objectives
+
+- Primary focus: `l2_activation_correctness` and correct non-activation on weak evidence.
+- Reference target: `false_positive_resistance_under_multi_signal_conditions`.
+
+## Files
+
+- [dataset.ttl](C:/Users/rdesb/psc/MASynReas/datasets/DS03_partial_evidence_no_l2_v2/dataset.ttl)
+- [manifest.json](C:/Users/rdesb/psc/MASynReas/datasets/DS03_partial_evidence_no_l2_v2/manifest.json)
+- [expected_level1.json](C:/Users/rdesb/psc/MASynReas/datasets/DS03_partial_evidence_no_l2_v2/expected_level1.json)
+- [expected_level2.json](C:/Users/rdesb/psc/MASynReas/datasets/DS03_partial_evidence_no_l2_v2/expected_level2.json)
 
 ## Notes
 
-- Signals are intentionally distributed across unrelated anchors.
-- No level-2 diagnoser should aggregate them into a diagnosis.
+- The companion JSON files are the authoritative machine-readable reference for automated evaluation scripts.
+- This README is intentionally written for human inspection and benchmark orientation.
+- The file is stored as UTF-8 without BOM to avoid the encoding artefacts seen in earlier generated documentation.

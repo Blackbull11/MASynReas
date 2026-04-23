@@ -1,60 +1,77 @@
-﻿# DS24 Reliability Calibration Bundle
+# DS24_reliability_calibration_bundle
 
 ## Purpose
 
-This scenario deliberately mixes a weak observability gap, a medium critical service exposure, and a strong structural fragility case. It is intended for reliability-calibration experiments.
+Several diagnosis candidates are present with different evidence strengths. This scenario is part of the MASynReas benchmark catalogue and is intended to be used as a controlled, reproducible experiment.
 
-## Relation to the Reference Graphs
+## Scenario Profile
 
-This scenario is derived from:
-- [Base B](C:/Users/rdesb/psc/MASynReas/datasets/baseB/README.md)
+- Reference graph: [Base B](C:/Users/rdesb/psc/MASynReas/datasets/baseB/README.md)
+- Source variant: `quiescentB`
+- Execution mode: `both`
+- Mutation type: `reliability_calibration_bundle`
 
-Mode:
-- both
+## Why This Scenario Exists
 
-## Mutation Profile
+This scenario provides a documented mutation of a healthy reference graph so that Level-1 signals, Level-2 diagnoses, and benchmark KPIs can be interpreted against a known expected outcome. It is useful both for debugging the MAS and for producing comparable evaluation results across future runs.
 
-- Add one event without related element and remove one change actual end time.
-- Reduce the customer portal support chain to one resource.
-- Create a strongly fragile firewall resource by removing its interfaces, parent, and management.
+## Mutation Summary
 
-## Contents
+### Injected Anomalies
+- `baseB:event_reliability_gap`
 
-Files:
-- dataset.ttl
-- manifest.json
-- expected_level1.json
-- expected_level2.json
+### Removed Entities
+- `baseB:if_firewall_02_port_01`
+- `baseB:if_firewall_02_port_02`
 
-## KPI Targets
+### Removed Relations
+- `noria:changeRequestActualEndTime on baseB:change_switch_maintenance`
+- `noria:resourceForApplication on baseB:res_customer_vm_02`
+- `noria:resourceManagedBy on baseB:res_firewall_02`
+- `seas:subSystemOf on baseB:res_firewall_02`
 
-- reliability_score_calibration
-- activation_threshold_sanity
+### Noise Additions
+- No noise is intentionally added in this scenario.
 
-## Expected Level 1 Signals
+## Expected Diagnostic Footprint
 
-- apriori/structural/criticality_structural_weakness_detector
-- apriori/structural/missing_interface_detector
-- apriori/structural/missing_parent_resource_detector
-- apriori/structural/missing_redundancy_detector
-- apriori/structural/unmanaged_resource_detector
-- apriori/dynamic/change_without_effective_time_detector
-- apriori/dynamic/event_without_related_element_detector
-- apriori/functional/over_concentrated_service_detector
+- Expected non-zero Level-1 bindings: `8`
+- Expected Level-2 diagnoses: `3`
 
-## Expected Level 2 Diagnoses
+### Expected Level-1 Agents
+- `apriori/structural/criticality_structural_weakness_detector`
+- `apriori/structural/missing_interface_detector`
+- `apriori/structural/missing_parent_resource_detector`
+- `apriori/structural/missing_redundancy_detector`
+- `apriori/structural/unmanaged_resource_detector`
+- `apriori/dynamic/change_without_effective_time_detector`
+- `apriori/dynamic/event_without_related_element_detector`
+- `apriori/functional/over_concentrated_service_detector`
 
-- apriori/critical_service_exposure_diagnoser
-- apriori/observability_gap_diagnoser
-- apriori/structural_fragility_diagnoser
+### Expected Level-2 Diagnosers
+- `apriori/critical_service_exposure_diagnoser`
+- `apriori/observability_gap_diagnoser`
+- `apriori/structural_fragility_diagnoser`
 
-## Ranking Expectation
+### Ranking Expectation
+- `apriori/structural_fragility_diagnoser`
+- `apriori/critical_service_exposure_diagnoser`
+- `apriori/observability_gap_diagnoser`
 
-- apriori/structural_fragility_diagnoser
-- apriori/critical_service_exposure_diagnoser
-- apriori/observability_gap_diagnoser
+## KPI Objectives
+
+- Campaign-level focus: future calibration of `reliability_score` once enough runs are accumulated.
+- Focus: diagnoses should activate with appropriately graded evidence, not too early or too late.
+
+## Files
+
+- [dataset.ttl](C:/Users/rdesb/psc/MASynReas/datasets/DS24_reliability_calibration_bundle/dataset.ttl)
+- [manifest.json](C:/Users/rdesb/psc/MASynReas/datasets/DS24_reliability_calibration_bundle/manifest.json)
+- [expected_level1.json](C:/Users/rdesb/psc/MASynReas/datasets/DS24_reliability_calibration_bundle/expected_level1.json)
+- [expected_level2.json](C:/Users/rdesb/psc/MASynReas/datasets/DS24_reliability_calibration_bundle/expected_level2.json)
 
 ## Notes
 
-- This scenario is not about urgency but about evidence strength.
-- The structural fragility case is intended to have the strongest support.
+- The companion JSON files are the authoritative machine-readable reference for automated evaluation scripts.
+- This README is intentionally written for human inspection and benchmark orientation.
+- The file is stored as UTF-8 without BOM to avoid the encoding artefacts seen in earlier generated documentation.

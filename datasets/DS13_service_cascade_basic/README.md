@@ -1,46 +1,61 @@
-﻿# DS13 Service Cascade Basic
+# DS13_service_cascade_basic
 
 ## Purpose
 
-This scenario creates a hidden service dependency by attaching the same module to two services. Existing monitoring events should then support a service-cascade diagnosis.
+A shared functional dependency lets one technical issue affect several services. This scenario is part of the MASynReas benchmark catalogue and is intended to be used as a controlled, reproducible experiment.
 
-## Relation to the Reference Graphs
+## Scenario Profile
 
-This scenario is derived from:
-- [Base B](C:/Users/rdesb/psc/MASynReas/datasets/baseB/README.md)
+- Reference graph: [Base B](C:/Users/rdesb/psc/MASynReas/datasets/baseB/README.md)
+- Source variant: `baseB`
+- Execution mode: `aposteriori`
+- Mutation type: `service_cascade`
 
-Mode:
-- aposteriori
+## Why This Scenario Exists
 
-## Mutation Profile
+This scenario provides a documented mutation of a healthy reference graph so that Level-1 signals, Level-2 diagnoses, and benchmark KPIs can be interpreted against a known expected outcome. It is useful both for debugging the MAS and for producing comparable evaluation results across future runs.
 
-- Add a second service parent to aseB:module_monitoring_dashboard.
-- Reuse the existing monitoring event chain.
+## Mutation Summary
 
-## Contents
+### Injected Anomalies
+- No anomaly entity is directly injected; the effect comes from structural or relational mutation.
 
-Files:
-- dataset.ttl
-- manifest.json
-- expected_level1.json
-- expected_level2.json
+### Removed Entities
+- No entity removal in this scenario.
 
-## KPI Targets
+### Removed Relations
+- No relation removal in this scenario.
 
-- precision_at_l2
-- recall_at_l2
-- family_contribution_analysis
+### Noise Additions
+- No noise is intentionally added in this scenario.
 
-## Expected Level 1 Signals
+## Expected Diagnostic Footprint
 
-- aposteriori/functional/cascading_service_failure_detector
-- aposteriori/functional/hidden_service_dependency_detector
+- Expected non-zero Level-1 bindings: `2`
+- Expected Level-2 diagnoses: `1`
 
-## Expected Level 2 Diagnoses
+### Expected Level-1 Agents
+- `aposteriori/functional/cascading_service_failure_detector`
+- `aposteriori/functional/hidden_service_dependency_detector`
 
-- aposteriori/service_cascade_diagnoser
+### Expected Level-2 Diagnosers
+- `aposteriori/service_cascade_diagnoser`
+
+## KPI Objectives
+
+- Primary focus: `precision_l2`, with diagnosis matching against the expected Level-2 outputs.
+- In the current profile, this is mostly followed through `diagnosis_hit` and the list of missed expected diagnoses.
+- Reference target: `family_contribution_analysis`.
+
+## Files
+
+- [dataset.ttl](C:/Users/rdesb/psc/MASynReas/datasets/DS13_service_cascade_basic/dataset.ttl)
+- [manifest.json](C:/Users/rdesb/psc/MASynReas/datasets/DS13_service_cascade_basic/manifest.json)
+- [expected_level1.json](C:/Users/rdesb/psc/MASynReas/datasets/DS13_service_cascade_basic/expected_level1.json)
+- [expected_level2.json](C:/Users/rdesb/psc/MASynReas/datasets/DS13_service_cascade_basic/expected_level2.json)
 
 ## Notes
 
-- The scenario intentionally reuses healthy operational data from Base B.
-- The diagnosis comes from hidden functional coupling, not from extra noise.
+- The companion JSON files are the authoritative machine-readable reference for automated evaluation scripts.
+- This README is intentionally written for human inspection and benchmark orientation.
+- The file is stored as UTF-8 without BOM to avoid the encoding artefacts seen in earlier generated documentation.

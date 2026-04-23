@@ -1,48 +1,64 @@
-﻿# DS08 Procedural Unreadiness Basic
+# DS08_procedural_unreadiness_basic
 
 ## Purpose
 
-This scenario combines missing scheduled change metadata, a ticket without assigned procedure, and unused procedures. Together these signals should activate the procedural unreadiness diagnoser.
+Operational process readiness is incomplete before any incident diagnosis. This scenario is part of the MASynReas benchmark catalogue and is intended to be used as a controlled, reproducible experiment.
 
-## Relation to the Reference Graphs
+## Scenario Profile
 
-This scenario is derived from:
-- [Base A](C:/Users/rdesb/psc/MASynReas/datasets/baseA/README.md)
+- Reference graph: [Base A](C:/Users/rdesb/psc/MASynReas/datasets/baseA/README.md)
+- Source variant: `quiescentA`
+- Execution mode: `apriori`
+- Mutation type: `procedural_unreadiness`
 
-Mode:
-- apriori
+## Why This Scenario Exists
 
-## Mutation Profile
+This scenario provides a documented mutation of a healthy reference graph so that Level-1 signals, Level-2 diagnoses, and benchmark KPIs can be interpreted against a known expected outcome. It is useful both for debugging the MAS and for producing comparable evaluation results across future runs.
 
-- Remove both scheduled time fields from aseA:change_switch_firmware_window.
-- Add one event linked to a new ticket but without proposed repair action.
-- Keep the existing procedures unused from the event perspective.
+## Mutation Summary
 
-## Contents
+### Injected Anomalies
+- `baseA:event_procedural_gap`
+- `baseA:ticket_procedural_gap`
 
-Files:
-- dataset.ttl
-- manifest.json
-- expected_level1.json
-- expected_level2.json
+### Removed Entities
+- No entity removal in this scenario.
 
-## KPI Targets
+### Removed Relations
+- `noria:plannedStartDate on baseA:change_switch_firmware_window`
+- `noria:plannedEndDate on baseA:change_switch_firmware_window`
 
-- precision_at_l2
-- recall_at_l2
-- family_contribution_analysis
+### Noise Additions
+- No noise is intentionally added in this scenario.
 
-## Expected Level 1 Signals
+## Expected Diagnostic Footprint
 
-- apriori/procedural/change_request_without_scheduled_time_detector
-- apriori/procedural/procedure_not_linked_to_resource_type_detector
-- apriori/procedural/ticket_without_assigned_procedure_detector
+- Expected non-zero Level-1 bindings: `4`
+- Expected Level-2 diagnoses: `1`
 
-## Expected Level 2 Diagnoses
+### Expected Level-1 Agents
+- `apriori/procedural/change_request_without_scheduled_time_detector`
+- `apriori/procedural/procedure_not_linked_to_resource_type_detector`
+- `apriori/procedural/ticket_without_assigned_procedure_detector`
 
-- apriori/procedural_unreadiness_diagnoser
+### Expected Level-2 Diagnosers
+- `apriori/procedural_unreadiness_diagnoser`
+
+## KPI Objectives
+
+- Primary focus: `precision_l2`, with diagnosis matching against the expected Level-2 outputs.
+- In the current profile, this is mostly followed through `diagnosis_hit` and the list of missed expected diagnoses.
+- Reference target: `family_contribution_analysis`.
+
+## Files
+
+- [dataset.ttl](C:/Users/rdesb/psc/MASynReas/datasets/DS08_procedural_unreadiness_basic/dataset.ttl)
+- [manifest.json](C:/Users/rdesb/psc/MASynReas/datasets/DS08_procedural_unreadiness_basic/manifest.json)
+- [expected_level1.json](C:/Users/rdesb/psc/MASynReas/datasets/DS08_procedural_unreadiness_basic/expected_level1.json)
+- [expected_level2.json](C:/Users/rdesb/psc/MASynReas/datasets/DS08_procedural_unreadiness_basic/expected_level2.json)
 
 ## Notes
 
-- This is an apriori scenario with a lightweight ticketing artifact.
-- The target diagnosis is procedural unreadiness.
+- The companion JSON files are the authoritative machine-readable reference for automated evaluation scripts.
+- This README is intentionally written for human inspection and benchmark orientation.
+- The file is stored as UTF-8 without BOM to avoid the encoding artefacts seen in earlier generated documentation.
