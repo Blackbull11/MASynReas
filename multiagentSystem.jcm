@@ -1,9 +1,5 @@
 mas multiagentSystem {
 
-    agent apriori_test_controller {
-        focus: w.pyexec
-    }
-
     agent orphan_resource_detector {
         focus: w.pyexec
     }
