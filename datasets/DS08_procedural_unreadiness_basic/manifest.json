@@ -1,0 +1,42 @@
+﻿{
+    "dataset_id":  "DS08_procedural_unreadiness_basic",
+    "title":  "Operational process readiness is incomplete before any incident diagnosis",
+    "base_graph":  "baseA",
+    "source_variant":  "quiescentA",
+    "mode":  "apriori",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "procedural_unreadiness",
+                             "injected_anomalies":  [
+                                                        "baseA:event_procedural_gap",
+                                                        "baseA:ticket_procedural_gap"
+                                                    ],
+                             "removed_entities":  [
+
+                                                  ],
+                             "removed_relations":  [
+                                                       "noria:plannedStartDate on baseA:change_switch_firmware_window",
+                                                       "noria:plannedEndDate on baseA:change_switch_firmware_window"
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "precision_at_l2",
+                        "recall_at_l2",
+                        "family_contribution_analysis"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "apriori/procedural/change_request_without_scheduled_time_detector",
+                                                           "apriori/procedural/procedure_not_linked_to_resource_type_detector",
+                                                           "apriori/procedural/ticket_without_assigned_procedure_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  "apriori/procedural_unreadiness_diagnoser",
+                             "level1_total_bindings":  4,
+                             "level2_total_diagnoses":  1
+                         }
+}

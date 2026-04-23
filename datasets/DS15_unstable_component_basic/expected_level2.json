@@ -36,7 +36,11 @@
 
                                                              ],
                         "unstable_component_diagnoser":  [
-
+                                                             {
+                                                                 "anchor":  "baseB:res_monitor_vm_01",
+                                                                 "reliability":  "high",
+                                                                 "severity":  "medium"
+                                                             }
                                                          ]
                     }
 }

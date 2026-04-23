@@ -45,7 +45,9 @@
                                 },
                     "functional":  {
                                        "application_without_module_detector":  [
-
+                                                                                   {
+                                                                                       "application":  "baseA:app_customer_portal"
+                                                                                   }
                                                                                ],
                                        "application_without_resource_detector":  [
 
@@ -60,10 +62,14 @@
 
                                                                               ],
                                        "service_without_application_detector":  [
-
+                                                                                    {
+                                                                                        "service":  "baseA:service_customer_access"
+                                                                                    }
                                                                                 ],
                                        "service_without_resource_coverage_detector":  [
-
+                                                                                          {
+                                                                                              "service":  "baseA:service_customer_access"
+                                                                                          }
                                                                                       ]
                                    },
                     "procedural":  {

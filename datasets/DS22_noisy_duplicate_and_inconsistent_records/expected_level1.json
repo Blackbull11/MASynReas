@@ -51,10 +51,14 @@
 
                                                                                  ],
                                        "duplicated_functional_mapping_detector":  [
-
+                                                                                      {
+                                                                                          "resource":  "baseB:res_shadow_probe"
+                                                                                      }
                                                                                   ],
                                        "inconsistent_service_hierarchy_detector":  [
-
+                                                                                       {
+                                                                                           "module":  "baseB:module_shadow_ops"
+                                                                                       }
                                                                                    ],
                                        "over_concentrated_service_detector":  [
 

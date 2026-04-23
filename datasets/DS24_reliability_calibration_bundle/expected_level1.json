@@ -5,19 +5,27 @@
 
                                                                                 ],
                                        "criticality_structural_weakness_detector":  [
-
+                                                                                        {
+                                                                                            "application":  "baseB:app_customer_portal"
+                                                                                        }
                                                                                     ],
                                        "incomplete_network_link_detector":  [
 
                                                                             ],
                                        "missing_interface_detector":  [
-
+                                                                          {
+                                                                              "resource":  "baseB:res_firewall_02"
+                                                                          }
                                                                       ],
                                        "missing_parent_resource_detector":  [
-
+                                                                                {
+                                                                                    "resource":  "baseB:res_firewall_02"
+                                                                                }
                                                                             ],
                                        "missing_redundancy_detector":  [
-
+                                                                           {
+                                                                               "application":  "baseB:app_customer_portal"
+                                                                           }
                                                                        ],
                                        "orphan_interface_detector":  [
 
@@ -29,15 +37,21 @@
 
                                                                           ],
                                        "unmanaged_resource_detector":  [
-
+                                                                           {
+                                                                               "resource":  "baseB:res_firewall_02"
+                                                                           }
                                                                        ]
                                    },
                     "dynamic":  {
                                     "change_without_effective_time_detector":  [
-
+                                                                                   {
+                                                                                       "change":  "baseB:change_switch_maintenance"
+                                                                                   }
                                                                                ],
                                     "event_without_related_element_detector":  [
-
+                                                                                   {
+                                                                                       "event":  "baseB:event_reliability_gap"
+                                                                                   }
                                                                                ],
                                     "event_without_timestamp_detector":  [
 
@@ -57,7 +71,9 @@
 
                                                                                    ],
                                        "over_concentrated_service_detector":  [
-
+                                                                                  {
+                                                                                      "service":  "baseB:service_customer_access"
+                                                                                  }
                                                                               ],
                                        "service_without_application_detector":  [
 

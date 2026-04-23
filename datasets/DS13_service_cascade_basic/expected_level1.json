@@ -145,13 +145,19 @@
 
                                                                                               ],
                                            "cascading_service_failure_detector":  [
-
+                                                                                      {
+                                                                                          "module":  "baseB:module_monitoring_dashboard",
+                                                                                          "resource":  "baseB:res_monitor_vm_01"
+                                                                                      }
                                                                                   ],
                                            "conflicting_application_state_detector":  [
 
                                                                                       ],
                                            "hidden_service_dependency_detector":  [
-
+                                                                                      {
+                                                                                          "service_a":  "baseB:service_network_monitoring",
+                                                                                          "service_b":  "baseB:service_workforce_portal"
+                                                                                      }
                                                                                   ],
                                            "module_level_incident_aggregation_detector":  [
 

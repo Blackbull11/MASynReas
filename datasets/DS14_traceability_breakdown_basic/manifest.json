@@ -1,0 +1,40 @@
+﻿{
+    "dataset_id":  "DS14_traceability_breakdown_basic",
+    "title":  "The event-to-ticket traceability chain is broken for one incident",
+    "base_graph":  "baseB",
+    "source_variant":  "baseB",
+    "mode":  "aposteriori",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "traceability_breakdown",
+                             "injected_anomalies":  [
+
+                                                    ],
+                             "removed_entities":  [
+
+                                                  ],
+                             "removed_relations":  [
+                                                       "noria:troubleTicketTrigger on baseB:ticket_billing_warning",
+                                                       "dcterms:relation on baseB:ticket_billing_warning"
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "precision_at_l2",
+                        "recall_at_l2",
+                        "traceability_sanity_check"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "aposteriori/procedural/incident_without_ticket_detector",
+                                                           "aposteriori/procedural/ticket_without_linked_event_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  "aposteriori/traceability_breakdown_diagnoser",
+                             "level1_total_bindings":  2,
+                             "level2_total_diagnoses":  1
+                         }
+}

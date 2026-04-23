@@ -113,10 +113,14 @@
 
                                                                                       ],
                                         "event_burst_detector":  [
-
+                                                                     {
+                                                                         "element":  "baseB:res_monitor_vm_01"
+                                                                     }
                                                                  ],
                                         "flapping_state_detector":  [
-
+                                                                        {
+                                                                            "element":  "baseB:res_monitor_vm_01"
+                                                                        }
                                                                     ],
                                         "incident_propagation_detector":  [
 
@@ -128,16 +132,22 @@
 
                                                                                    ],
                                         "reopened_incident_detector":  [
-
+                                                                           {
+                                                                               "relatedElement":  "baseB:res_monitor_vm_01"
+                                                                           }
                                                                        ],
                                         "repeated_similar_event_detector":  [
-
+                                                                                {
+                                                                                    "element":  "baseB:res_monitor_vm_01"
+                                                                                }
                                                                             ],
                                         "silent_degradation_after_change_detector":  [
 
                                                                                      ],
                                         "stale_incident_detector":  [
-
+                                                                        {
+                                                                            "relatedElement":  "baseB:res_monitor_vm_01"
+                                                                        }
                                                                     ]
                                     },
                         "functional":  {

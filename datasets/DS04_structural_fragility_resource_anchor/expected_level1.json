@@ -11,10 +11,14 @@
 
                                                                             ],
                                        "missing_interface_detector":  [
-
+                                                                          {
+                                                                              "resource":  "baseA:res_access_switch_02"
+                                                                          }
                                                                       ],
                                        "missing_parent_resource_detector":  [
-
+                                                                                {
+                                                                                    "resource":  "baseA:res_access_switch_02"
+                                                                                }
                                                                             ],
                                        "missing_redundancy_detector":  [
 
@@ -29,7 +33,9 @@
 
                                                                           ],
                                        "unmanaged_resource_detector":  [
-
+                                                                           {
+                                                                               "resource":  "baseA:res_access_switch_02"
+                                                                           }
                                                                        ]
                                    },
                     "dynamic":  {

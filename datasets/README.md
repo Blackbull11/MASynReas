@@ -22,6 +22,16 @@ The catalogue is designed to support the KPI framework defined for the project, 
 
 The guiding principle is to build datasets from a small number of coherent reference graphs, then derive scenario datasets by controlled anomaly injection, data removal, or noise addition.
 
+Current materialization status:
+- the full scenario catalogue `DS01` to `DS27` is now present on disk
+- each scenario folder contains:
+- `dataset.ttl`
+- `README.md`
+- `manifest.json`
+- `expected_level1.json`
+- `expected_level2.json`
+- the catalogue can be regenerated with [generate_catalogue.ps1](C:/Users/rdesb/psc/MASynReas/datasets/generate_catalogue.ps1)
+
 ## Reference Graphs
 
 ### Base A

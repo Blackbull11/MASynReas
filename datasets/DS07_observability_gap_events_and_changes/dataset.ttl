@@ -254,7 +254,6 @@ baseA:change_switch_firmware_window
     noria:plannedStartDate "2026-01-05T08:00:00Z"^^xsd:dateTime ;
     noria:plannedEndDate "2026-01-05T08:30:00Z"^^xsd:dateTime ;
     noria:changeRequestActualStartTime "2026-01-05T08:05:00Z"^^xsd:dateTime ;
-    noria:changeRequestActualEndTime "2026-01-05T08:20:00Z"^^xsd:dateTime .
 
 baseA:change_monitoring_patch
     a noria:ChangeRequest ;
@@ -263,5 +262,21 @@ baseA:change_monitoring_patch
     noria:plannedStartDate "2026-01-07T09:00:00Z"^^xsd:dateTime ;
     noria:plannedEndDate "2026-01-07T09:45:00Z"^^xsd:dateTime ;
     noria:changeRequestActualStartTime "2026-01-07T09:05:00Z"^^xsd:dateTime ;
-    noria:changeRequestActualEndTime "2026-01-07T09:30:00Z"^^xsd:dateTime .
+
+baseA:event_obs_missing_timestamp
+    a noria:EventRecord ;
+    rdfs:label "Observability event without timestamp"@en ;
+    noria:eventRelatedElement baseA:res_customer_vm_02 ;
+    noria:logOriginatingManagedObject baseA:res_customer_vm_02 ;
+    noria:logOriginatingManagementSystem baseA:app_customer_portal ;
+    noria:alarmProposedRepairAction baseA:procedure_restart_customer_portal ;
+    noria:logText "Observability degraded: event ingested without timestamp."@en ;
+    dcterms:type baseA:event_type_warning .
+
+baseA:event_obs_missing_related
+    a noria:EventRecord ;
+    rdfs:label "Observability event without related element"@en ;
+    noria:loggingTime "2026-01-08T08:00:00Z"^^xsd:dateTime ;
+    noria:logText "Observability degraded: event missing related element."@en ;
+    dcterms:type baseA:event_type_warning .
 

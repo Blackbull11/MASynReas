@@ -34,13 +34,22 @@
                                    },
                     "dynamic":  {
                                     "change_without_effective_time_detector":  [
-
+                                                                                   {
+                                                                                       "change":  "baseA:change_switch_firmware_window"
+                                                                                   },
+                                                                                   {
+                                                                                       "change":  "baseA:change_monitoring_patch"
+                                                                                   }
                                                                                ],
                                     "event_without_related_element_detector":  [
-
+                                                                                   {
+                                                                                       "event":  "baseA:event_obs_missing_related"
+                                                                                   }
                                                                                ],
                                     "event_without_timestamp_detector":  [
-
+                                                                             {
+                                                                                 "event":  "baseA:event_obs_missing_timestamp"
+                                                                             }
                                                                          ]
                                 },
                     "functional":  {

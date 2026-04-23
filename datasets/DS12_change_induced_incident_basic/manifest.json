@@ -1,0 +1,42 @@
+﻿{
+    "dataset_id":  "DS12_change_induced_incident_basic",
+    "title":  "A recent change is followed by a high-severity incident on the same element",
+    "base_graph":  "baseB",
+    "source_variant":  "baseB",
+    "mode":  "aposteriori",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "change_induced_incident",
+                             "injected_anomalies":  [
+                                                        "baseB:change_customer_hotfix",
+                                                        "baseB:event_customer_post_change",
+                                                        "baseB:ticket_customer_post_change"
+                                                    ],
+                             "removed_entities":  [
+
+                                                  ],
+                             "removed_relations":  [
+
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "precision_at_l2",
+                        "recall_at_l2",
+                        "top1_diagnosis_accuracy"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "aposteriori/dynamic/change_followed_by_incident_detector",
+                                                           "aposteriori/dynamic/change_overlap_conflict",
+                                                           "aposteriori/dynamic/critical_event_ticket_escalation_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  "aposteriori/change_induced_incident_diagnoser",
+                             "level1_total_bindings":  3,
+                             "level2_total_diagnoses":  1
+                         }
+}

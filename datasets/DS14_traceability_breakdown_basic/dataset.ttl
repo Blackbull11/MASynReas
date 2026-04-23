@@ -1,0 +1,513 @@
+﻿@prefix baseB: <https://example.org/masynreas/datasets/baseB/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix pep: <https://w3id.org/pep/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+baseB:dataset
+    a noria:Dataset ;
+    rdfs:label "MASynReas Base B"@en ;
+    dcterms:description "Richer healthy NORIA-O reference graph for MASynReas."@en .
+
+baseB:team_platform
+    a foaf:Agent ;
+    rdfs:label "Platform Operations Team"@en .
+
+baseB:team_network
+    a foaf:Agent ;
+    rdfs:label "Network Operations Team"@en .
+
+baseB:team_business_apps
+    a foaf:Agent ;
+    rdfs:label "Business Applications Team"@en .
+
+baseB:type_virtual_machine
+    a skos:Concept ;
+    rdfs:label "Virtual machine"@en .
+
+baseB:type_api_node
+    a skos:Concept ;
+    rdfs:label "API node"@en .
+
+baseB:type_switch
+    a skos:Concept ;
+    rdfs:label "Network switch"@en .
+
+baseB:type_firewall
+    a skos:Concept ;
+    rdfs:label "Firewall"@en .
+
+baseB:criticality_medium
+    a skos:Concept ;
+    rdfs:label "Medium"@en .
+
+baseB:severity_minor
+    a skos:Concept ;
+    rdfs:label "Minor"@en .
+
+baseB:priority_normal
+    a skos:Concept ;
+    rdfs:label "Normal"@en .
+
+baseB:urgency_normal
+    a skos:Concept ;
+    rdfs:label "Normal"@en .
+
+baseB:status_closed
+    a skos:Concept ;
+    rdfs:label "Closed"@en .
+
+baseB:event_type_warning
+    a skos:Concept ;
+    rdfs:label "Warning event"@en .
+
+baseB:site_paris_dc
+    rdfs:label "Paris DC"@en .
+
+baseB:room_dc1
+    rdfs:label "Paris DC room 1"@en .
+
+baseB:room_dc2
+    rdfs:label "Paris DC room 2"@en .
+
+baseB:zone_customer
+    rdfs:label "Customer application zone"@en .
+
+baseB:zone_billing
+    rdfs:label "Billing application zone"@en .
+
+baseB:zone_monitoring
+    rdfs:label "Monitoring application zone"@en .
+
+baseB:zone_workforce
+    rdfs:label "Workforce application zone"@en .
+
+baseB:zone_network
+    rdfs:label "Shared network zone"@en .
+
+baseB:service_customer_access
+    a noria:Service ;
+    rdfs:label "Customer Access Service"@en ;
+    prov:wasDerivedFrom "MASynReas-baseB" .
+
+baseB:service_billing_api
+    a noria:Service ;
+    rdfs:label "Billing API Service"@en ;
+    prov:wasDerivedFrom "MASynReas-baseB" .
+
+baseB:service_network_monitoring
+    a noria:Service ;
+    rdfs:label "Network Monitoring Service"@en ;
+    prov:wasDerivedFrom "MASynReas-baseB" .
+
+baseB:service_workforce_portal
+    a noria:Service ;
+    rdfs:label "Workforce Portal Service"@en ;
+    prov:wasDerivedFrom "MASynReas-baseB" .
+
+baseB:module_customer_portal
+    a noria:ApplicationModule ;
+    rdfs:label "Customer Portal Module"@en ;
+    seas:subSystemOf baseB:service_customer_access ;
+    noria:applicationModuleOf baseB:app_customer_portal .
+
+baseB:module_billing_gateway
+    a noria:ApplicationModule ;
+    rdfs:label "Billing Gateway Module"@en ;
+    seas:subSystemOf baseB:service_billing_api ;
+    noria:applicationModuleOf baseB:app_billing_gateway .
+
+baseB:module_monitoring_dashboard
+    a noria:ApplicationModule ;
+    rdfs:label "Monitoring Dashboard Module"@en ;
+    seas:subSystemOf baseB:service_network_monitoring ;
+    noria:applicationModuleOf baseB:app_monitoring_dashboard .
+
+baseB:module_workforce_console
+    a noria:ApplicationModule ;
+    rdfs:label "Workforce Console Module"@en ;
+    seas:subSystemOf baseB:service_workforce_portal ;
+    noria:applicationModuleOf baseB:app_workforce_console .
+
+baseB:app_customer_portal
+    a noria:Application ;
+    rdfs:label "Customer Portal"@en ;
+    noria:businessCriticality <https://w3id.org/noria/kos/application/criticality/high-critical> .
+
+baseB:app_billing_gateway
+    a noria:Application ;
+    rdfs:label "Billing Gateway"@en ;
+    noria:businessCriticality <https://w3id.org/noria/kos/application/criticality/critical> .
+
+baseB:app_monitoring_dashboard
+    a noria:Application ;
+    rdfs:label "Monitoring Dashboard"@en ;
+    noria:businessCriticality baseB:criticality_medium .
+
+baseB:app_workforce_console
+    a noria:Application ;
+    rdfs:label "Workforce Console"@en ;
+    noria:businessCriticality baseB:criticality_medium .
+
+baseB:res_customer_vm_01
+    a noria:Resource ;
+    rdfs:label "Customer VM 01"@en ;
+    noria:resourceType baseB:type_virtual_machine ;
+    noria:resourceManagedBy baseB:team_platform ;
+    noria:resourceForApplication baseB:app_customer_portal ;
+    noria:locatedIn baseB:room_dc1 ;
+    seas:subSystemOf baseB:zone_customer .
+
+baseB:res_customer_vm_02
+    a noria:Resource ;
+    rdfs:label "Customer VM 02"@en ;
+    noria:resourceType baseB:type_virtual_machine ;
+    noria:resourceManagedBy baseB:team_platform ;
+    noria:resourceForApplication baseB:app_customer_portal ;
+    noria:locatedIn baseB:room_dc2 ;
+    seas:subSystemOf baseB:zone_customer .
+
+baseB:res_billing_api_01
+    a noria:Resource ;
+    rdfs:label "Billing API Node 01"@en ;
+    noria:resourceType baseB:type_api_node ;
+    noria:resourceManagedBy baseB:team_business_apps ;
+    noria:resourceForApplication baseB:app_billing_gateway ;
+    noria:locatedIn baseB:room_dc1 ;
+    seas:subSystemOf baseB:zone_billing .
+
+baseB:res_billing_api_02
+    a noria:Resource ;
+    rdfs:label "Billing API Node 02"@en ;
+    noria:resourceType baseB:type_api_node ;
+    noria:resourceManagedBy baseB:team_business_apps ;
+    noria:resourceForApplication baseB:app_billing_gateway ;
+    noria:locatedIn baseB:room_dc2 ;
+    seas:subSystemOf baseB:zone_billing .
+
+baseB:res_monitor_vm_01
+    a noria:Resource ;
+    rdfs:label "Monitoring VM 01"@en ;
+    noria:resourceType baseB:type_virtual_machine ;
+    noria:resourceManagedBy baseB:team_platform ;
+    noria:resourceForApplication baseB:app_monitoring_dashboard ;
+    noria:locatedIn baseB:room_dc1 ;
+    seas:subSystemOf baseB:zone_monitoring .
+
+baseB:res_monitor_vm_02
+    a noria:Resource ;
+    rdfs:label "Monitoring VM 02"@en ;
+    noria:resourceType baseB:type_virtual_machine ;
+    noria:resourceManagedBy baseB:team_platform ;
+    noria:resourceForApplication baseB:app_monitoring_dashboard ;
+    noria:locatedIn baseB:room_dc2 ;
+    seas:subSystemOf baseB:zone_monitoring .
+
+baseB:res_workforce_vm_01
+    a noria:Resource ;
+    rdfs:label "Workforce VM 01"@en ;
+    noria:resourceType baseB:type_virtual_machine ;
+    noria:resourceManagedBy baseB:team_platform ;
+    noria:resourceForApplication baseB:app_workforce_console ;
+    noria:locatedIn baseB:room_dc1 ;
+    seas:subSystemOf baseB:zone_workforce .
+
+baseB:res_workforce_vm_02
+    a noria:Resource ;
+    rdfs:label "Workforce VM 02"@en ;
+    noria:resourceType baseB:type_virtual_machine ;
+    noria:resourceManagedBy baseB:team_platform ;
+    noria:resourceForApplication baseB:app_workforce_console ;
+    noria:locatedIn baseB:room_dc2 ;
+    seas:subSystemOf baseB:zone_workforce .
+
+baseB:res_access_switch_01
+    a noria:Resource ;
+    rdfs:label "Access Switch 01"@en ;
+    noria:resourceType baseB:type_switch ;
+    noria:resourceManagedBy baseB:team_network ;
+    noria:locatedIn baseB:room_dc1 ;
+    seas:subSystemOf baseB:zone_network .
+
+baseB:res_access_switch_02
+    a noria:Resource ;
+    rdfs:label "Access Switch 02"@en ;
+    noria:resourceType baseB:type_switch ;
+    noria:resourceManagedBy baseB:team_network ;
+    noria:locatedIn baseB:room_dc2 ;
+    seas:subSystemOf baseB:zone_network .
+
+baseB:res_firewall_01
+    a noria:Resource ;
+    rdfs:label "Firewall 01"@en ;
+    noria:resourceType baseB:type_firewall ;
+    noria:resourceManagedBy baseB:team_network ;
+    noria:locatedIn baseB:room_dc1 ;
+    seas:subSystemOf baseB:zone_network .
+
+baseB:res_firewall_02
+    a noria:Resource ;
+    rdfs:label "Firewall 02"@en ;
+    noria:resourceType baseB:type_firewall ;
+    noria:resourceManagedBy baseB:team_network ;
+    noria:locatedIn baseB:room_dc2 ;
+    seas:subSystemOf baseB:zone_network .
+
+baseB:if_customer_vm_01
+    a noria:NetworkInterface ;
+    noria:networkInterfaceOf baseB:res_customer_vm_01 ;
+    noria:networkInterfaceConnects baseB:link_customer_vm_01_to_switch_01 .
+
+baseB:if_customer_vm_02
+    a noria:NetworkInterface ;
+    noria:networkInterfaceOf baseB:res_customer_vm_02 ;
+    noria:networkInterfaceConnects baseB:link_customer_vm_02_to_switch_02 .
+
+baseB:if_billing_api_01
+    a noria:NetworkInterface ;
+    noria:networkInterfaceOf baseB:res_billing_api_01 ;
+    noria:networkInterfaceConnects baseB:link_billing_api_01_to_switch_01 .
+
+baseB:if_billing_api_02
+    a noria:NetworkInterface ;
+    noria:networkInterfaceOf baseB:res_billing_api_02 ;
+    noria:networkInterfaceConnects baseB:link_billing_api_02_to_switch_02 .
+
+baseB:if_monitor_vm_01
+    a noria:NetworkInterface ;
+    noria:networkInterfaceOf baseB:res_monitor_vm_01 ;
+    noria:networkInterfaceConnects baseB:link_monitor_vm_01_to_firewall_01 .
+
+baseB:if_monitor_vm_02
+    a noria:NetworkInterface ;
+    noria:networkInterfaceOf baseB:res_monitor_vm_02 ;
+    noria:networkInterfaceConnects baseB:link_monitor_vm_02_to_firewall_02 .
+
+baseB:if_workforce_vm_01
+    a noria:NetworkInterface ;
+    noria:networkInterfaceOf baseB:res_workforce_vm_01 ;
+    noria:networkInterfaceConnects baseB:link_workforce_vm_01_to_firewall_01 .
+
+baseB:if_workforce_vm_02
+    a noria:NetworkInterface ;
+    noria:networkInterfaceOf baseB:res_workforce_vm_02 ;
+    noria:networkInterfaceConnects baseB:link_workforce_vm_02_to_firewall_02 .
+
+baseB:if_switch_01_port_01
+    a noria:NetworkInterface ;
+    noria:networkInterfaceOf baseB:res_access_switch_01 ;
+    noria:networkInterfaceConnects baseB:link_customer_vm_01_to_switch_01 .
+
+baseB:if_switch_01_port_02
+    a noria:NetworkInterface ;
+    noria:networkInterfaceOf baseB:res_access_switch_01 ;
+    noria:networkInterfaceConnects baseB:link_billing_api_01_to_switch_01 .
+
+baseB:if_switch_02_port_01
+    a noria:NetworkInterface ;
+    noria:networkInterfaceOf baseB:res_access_switch_02 ;
+    noria:networkInterfaceConnects baseB:link_customer_vm_02_to_switch_02 .
+
+baseB:if_switch_02_port_02
+    a noria:NetworkInterface ;
+    noria:networkInterfaceOf baseB:res_access_switch_02 ;
+    noria:networkInterfaceConnects baseB:link_billing_api_02_to_switch_02 .
+
+baseB:if_firewall_01_port_01
+    a noria:NetworkInterface ;
+    noria:networkInterfaceOf baseB:res_firewall_01 ;
+    noria:networkInterfaceConnects baseB:link_monitor_vm_01_to_firewall_01 .
+
+baseB:if_firewall_01_port_02
+    a noria:NetworkInterface ;
+    noria:networkInterfaceOf baseB:res_firewall_01 ;
+    noria:networkInterfaceConnects baseB:link_workforce_vm_01_to_firewall_01 .
+
+baseB:if_firewall_02_port_01
+    a noria:NetworkInterface ;
+    noria:networkInterfaceOf baseB:res_firewall_02 ;
+    noria:networkInterfaceConnects baseB:link_monitor_vm_02_to_firewall_02 .
+
+baseB:if_firewall_02_port_02
+    a noria:NetworkInterface ;
+    noria:networkInterfaceOf baseB:res_firewall_02 ;
+    noria:networkInterfaceConnects baseB:link_workforce_vm_02_to_firewall_02 .
+
+baseB:link_customer_vm_01_to_switch_01
+    a noria:NetworkLink ;
+    noria:networkLinkTerminationResource baseB:res_customer_vm_01, baseB:res_access_switch_01 .
+
+baseB:link_customer_vm_02_to_switch_02
+    a noria:NetworkLink ;
+    noria:networkLinkTerminationResource baseB:res_customer_vm_02, baseB:res_access_switch_02 .
+
+baseB:link_billing_api_01_to_switch_01
+    a noria:NetworkLink ;
+    noria:networkLinkTerminationResource baseB:res_billing_api_01, baseB:res_access_switch_01 .
+
+baseB:link_billing_api_02_to_switch_02
+    a noria:NetworkLink ;
+    noria:networkLinkTerminationResource baseB:res_billing_api_02, baseB:res_access_switch_02 .
+
+baseB:link_monitor_vm_01_to_firewall_01
+    a noria:NetworkLink ;
+    noria:networkLinkTerminationResource baseB:res_monitor_vm_01, baseB:res_firewall_01 .
+
+baseB:link_monitor_vm_02_to_firewall_02
+    a noria:NetworkLink ;
+    noria:networkLinkTerminationResource baseB:res_monitor_vm_02, baseB:res_firewall_02 .
+
+baseB:link_workforce_vm_01_to_firewall_01
+    a noria:NetworkLink ;
+    noria:networkLinkTerminationResource baseB:res_workforce_vm_01, baseB:res_firewall_01 .
+
+baseB:link_workforce_vm_02_to_firewall_02
+    a noria:NetworkLink ;
+    noria:networkLinkTerminationResource baseB:res_workforce_vm_02, baseB:res_firewall_02 .
+
+baseB:procedure_restart_customer_portal
+    a pep:Procedure ;
+    rdfs:label "Restart customer portal node"@en .
+
+baseB:procedure_clear_billing_queue
+    a pep:Procedure ;
+    rdfs:label "Clear billing queue"@en .
+
+baseB:procedure_restart_monitoring_agent
+    a pep:Procedure ;
+    rdfs:label "Restart monitoring agent"@en .
+
+baseB:procedure_restart_workforce_api
+    a pep:Procedure ;
+    rdfs:label "Restart workforce API"@en .
+
+baseB:change_switch_maintenance
+    a noria:ChangeRequest ;
+    rdfs:label "Access switch maintenance"@en ;
+    noria:eventRelatedElement baseB:res_access_switch_01 ;
+    noria:plannedStartDate "2026-02-01T07:00:00Z"^^xsd:dateTime ;
+    noria:plannedEndDate "2026-02-01T07:45:00Z"^^xsd:dateTime ;
+    noria:changeRequestActualStartTime "2026-02-01T07:05:00Z"^^xsd:dateTime ;
+    noria:changeRequestActualEndTime "2026-02-01T07:30:00Z"^^xsd:dateTime .
+
+baseB:change_firewall_policy_review
+    a noria:ChangeRequest ;
+    rdfs:label "Firewall policy review"@en ;
+    noria:eventRelatedElement baseB:res_firewall_02 ;
+    noria:plannedStartDate "2026-02-03T08:00:00Z"^^xsd:dateTime ;
+    noria:plannedEndDate "2026-02-03T08:30:00Z"^^xsd:dateTime ;
+    noria:changeRequestActualStartTime "2026-02-03T08:05:00Z"^^xsd:dateTime ;
+    noria:changeRequestActualEndTime "2026-02-03T08:20:00Z"^^xsd:dateTime .
+
+baseB:change_customer_release
+    a noria:ChangeRequest ;
+    rdfs:label "Customer portal release deployment"@en ;
+    noria:eventRelatedElement baseB:app_customer_portal ;
+    noria:plannedStartDate "2026-02-06T09:00:00Z"^^xsd:dateTime ;
+    noria:plannedEndDate "2026-02-06T09:45:00Z"^^xsd:dateTime ;
+    noria:changeRequestActualStartTime "2026-02-06T09:10:00Z"^^xsd:dateTime ;
+    noria:changeRequestActualEndTime "2026-02-06T09:35:00Z"^^xsd:dateTime .
+
+baseB:event_customer_warning
+    a noria:EventRecord ;
+    rdfs:label "Customer portal warning event"@en ;
+    noria:eventRelatedElement baseB:res_customer_vm_01 ;
+    noria:logOriginatingManagedObject baseB:res_customer_vm_01 ;
+    noria:logOriginatingManagementSystem baseB:app_customer_portal ;
+    noria:loggingTime "2026-02-10T10:00:00Z"^^xsd:dateTime ;
+    noria:alarmSeverity baseB:severity_minor ;
+    noria:alarmProposedRepairAction baseB:procedure_restart_customer_portal ;
+    noria:logText "Customer portal warning detected on one node."@en ;
+    dcterms:type baseB:event_type_warning .
+
+baseB:event_billing_warning
+    a noria:EventRecord ;
+    rdfs:label "Billing gateway warning event"@en ;
+    noria:eventRelatedElement baseB:res_billing_api_01 ;
+    noria:logOriginatingManagedObject baseB:res_billing_api_01 ;
+    noria:logOriginatingManagementSystem baseB:app_billing_gateway ;
+    noria:loggingTime "2026-02-12T13:30:00Z"^^xsd:dateTime ;
+    noria:alarmSeverity baseB:severity_minor ;
+    noria:alarmProposedRepairAction baseB:procedure_clear_billing_queue ;
+    noria:logText "Billing gateway warning detected on one node."@en ;
+    dcterms:type baseB:event_type_warning .
+
+baseB:event_monitoring_warning
+    a noria:EventRecord ;
+    rdfs:label "Monitoring dashboard warning event"@en ;
+    noria:eventRelatedElement baseB:res_monitor_vm_01 ;
+    noria:logOriginatingManagedObject baseB:res_monitor_vm_01 ;
+    noria:logOriginatingManagementSystem baseB:app_monitoring_dashboard ;
+    noria:loggingTime "2026-02-15T09:20:00Z"^^xsd:dateTime ;
+    noria:alarmSeverity baseB:severity_minor ;
+    noria:alarmProposedRepairAction baseB:procedure_restart_monitoring_agent ;
+    noria:logText "Monitoring warning detected on one node."@en ;
+    dcterms:type baseB:event_type_warning .
+
+baseB:event_workforce_warning
+    a noria:EventRecord ;
+    rdfs:label "Workforce console warning event"@en ;
+    noria:eventRelatedElement baseB:res_workforce_vm_01 ;
+    noria:logOriginatingManagedObject baseB:res_workforce_vm_01 ;
+    noria:logOriginatingManagementSystem baseB:app_workforce_console ;
+    noria:loggingTime "2026-02-18T15:10:00Z"^^xsd:dateTime ;
+    noria:alarmSeverity baseB:severity_minor ;
+    noria:alarmProposedRepairAction baseB:procedure_restart_workforce_api ;
+    noria:logText "Workforce console warning detected on one node."@en ;
+    dcterms:type baseB:event_type_warning .
+
+baseB:ticket_customer_warning
+    a noria:TroubleTicket ;
+    rdfs:label "Customer portal warning ticket"@en ;
+    noria:troubleTicketTrigger baseB:event_customer_warning ;
+    dcterms:relation baseB:event_customer_warning ;
+    noria:troubleTicketImpacts baseB:app_customer_portal ;
+    noria:troubleTicketRelatedResource baseB:res_customer_vm_01 ;
+    noria:troubleTicketDetectionDateTime "2026-02-10T10:25:00Z"^^xsd:dateTime ;
+    noria:troubleTicketStatusCurrent baseB:status_closed ;
+    noria:troubleTicketSeverity baseB:severity_minor ;
+    noria:troubleTicketPriority baseB:priority_normal ;
+    noria:troubleTicketUrgency baseB:urgency_normal .
+
+baseB:ticket_monitoring_warning
+    a noria:TroubleTicket ;
+    rdfs:label "Monitoring warning ticket"@en ;
+    noria:troubleTicketTrigger baseB:event_monitoring_warning ;
+    dcterms:relation baseB:event_monitoring_warning ;
+    noria:troubleTicketImpacts baseB:app_monitoring_dashboard ;
+    noria:troubleTicketRelatedResource baseB:res_monitor_vm_01 ;
+    noria:troubleTicketDetectionDateTime "2026-02-15T09:45:00Z"^^xsd:dateTime ;
+    noria:troubleTicketStatusCurrent baseB:status_closed ;
+    noria:troubleTicketSeverity baseB:severity_minor ;
+    noria:troubleTicketPriority baseB:priority_normal ;
+    noria:troubleTicketUrgency baseB:urgency_normal .
+
+baseB:ticket_workforce_warning
+    a noria:TroubleTicket ;
+    rdfs:label "Workforce warning ticket"@en ;
+    noria:troubleTicketTrigger baseB:event_workforce_warning ;
+    dcterms:relation baseB:event_workforce_warning ;
+    noria:troubleTicketImpacts baseB:app_workforce_console ;
+    noria:troubleTicketRelatedResource baseB:res_workforce_vm_01 ;
+    noria:troubleTicketDetectionDateTime "2026-02-18T15:35:00Z"^^xsd:dateTime ;
+    noria:troubleTicketStatusCurrent baseB:status_closed ;
+    noria:troubleTicketSeverity baseB:severity_minor ;
+    noria:troubleTicketPriority baseB:priority_normal ;
+    noria:troubleTicketUrgency baseB:urgency_normal .
+
+baseB:ticket_billing_warning
+    a noria:TroubleTicket ;
+    rdfs:label "Billing gateway warning ticket"@en ;
+    noria:troubleTicketImpacts baseB:app_billing_gateway ;
+    noria:troubleTicketRelatedResource baseB:res_billing_api_01 ;
+    noria:troubleTicketDetectionDateTime "2026-02-12T13:55:00Z"^^xsd:dateTime ;
+    noria:troubleTicketStatusCurrent baseB:status_closed ;
+    noria:troubleTicketSeverity baseB:severity_minor ;
+    noria:troubleTicketPriority baseB:priority_normal ;
+    noria:troubleTicketUrgency baseB:urgency_normal .
+

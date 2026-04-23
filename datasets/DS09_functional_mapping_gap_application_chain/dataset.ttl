@@ -83,13 +83,6 @@ baseA:service_network_monitoring
     rdfs:label "Network Monitoring Service"@en ;
     prov:wasDerivedFrom "MASynReas-baseA" .
 
-baseA:module_customer_portal
-    a noria:ApplicationModule ;
-    rdfs:label "Customer Portal Module"@en ;
-    seas:subSystemOf baseA:service_customer_access ;
-    noria:applicationModuleOf baseA:app_customer_portal ;
-    prov:wasDerivedFrom "MASynReas-baseA" .
-
 baseA:module_monitoring_dashboard
     a noria:ApplicationModule ;
     rdfs:label "Monitoring Dashboard Module"@en ;

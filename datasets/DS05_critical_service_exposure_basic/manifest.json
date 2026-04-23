@@ -1,0 +1,39 @@
+﻿{
+    "dataset_id":  "DS05_critical_service_exposure_basic",
+    "title":  "A critical application is reduced to a single visible support resource",
+    "base_graph":  "baseA",
+    "source_variant":  "quiescentA",
+    "mode":  "apriori",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "critical_support_concentration",
+                             "injected_anomalies":  [
+
+                                                    ],
+                             "removed_entities":  [
+
+                                                  ],
+                             "removed_relations":  [
+                                                       "noria:resourceForApplication from baseA:res_customer_vm_02 to baseA:app_customer_portal"
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "precision_at_l2",
+                        "severity_score_comparison"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "apriori/structural/criticality_structural_weakness_detector",
+                                                           "apriori/structural/missing_redundancy_detector",
+                                                           "apriori/functional/over_concentrated_service_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  "apriori/critical_service_exposure_diagnoser",
+                             "level1_total_bindings":  3,
+                             "level2_total_diagnoses":  1
+                         }
+}

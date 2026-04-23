@@ -1,0 +1,42 @@
+﻿{
+    "dataset_id":  "DS07_observability_gap_events_and_changes",
+    "title":  "Observability and temporal completeness are degraded across events and changes",
+    "base_graph":  "baseA",
+    "source_variant":  "quiescentA",
+    "mode":  "apriori",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "observability_gap",
+                             "injected_anomalies":  [
+                                                        "baseA:event_obs_missing_timestamp",
+                                                        "baseA:event_obs_missing_related"
+                                                    ],
+                             "removed_entities":  [
+
+                                                  ],
+                             "removed_relations":  [
+                                                       "noria:changeRequestActualEndTime on baseA:change_switch_firmware_window",
+                                                       "noria:changeRequestActualEndTime on baseA:change_monitoring_patch"
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "precision_at_l2",
+                        "recall_at_l2",
+                        "reliability_score_calibration"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "apriori/dynamic/change_without_effective_time_detector",
+                                                           "apriori/dynamic/event_without_related_element_detector",
+                                                           "apriori/dynamic/event_without_timestamp_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  "apriori/observability_gap_diagnoser",
+                             "level1_total_bindings":  4,
+                             "level2_total_diagnoses":  1
+                         }
+}

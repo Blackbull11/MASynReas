@@ -11,7 +11,9 @@
 
                                                                             ],
                                        "missing_interface_detector":  [
-
+                                                                          {
+                                                                              "resource":  "baseB:res_billing_api_02"
+                                                                          }
                                                                       ],
                                        "missing_parent_resource_detector":  [
 
@@ -37,10 +39,14 @@
 
                                                                                ],
                                     "event_without_related_element_detector":  [
-
+                                                                                   {
+                                                                                       "event":  "baseB:event_workforce_warning"
+                                                                                   }
                                                                                ],
                                     "event_without_timestamp_detector":  [
-
+                                                                             {
+                                                                                 "event":  "baseB:event_monitoring_warning"
+                                                                             }
                                                                          ]
                                 },
                     "functional":  {

@@ -174,10 +174,20 @@
 
                                                                                             ],
                                            "incident_without_ticket_detector":  [
-
+                                                                                    {
+                                                                                        "event":  "baseB:event_customer_warning"
+                                                                                    },
+                                                                                    {
+                                                                                        "event":  "baseB:event_workforce_warning"
+                                                                                    }
                                                                                 ],
                                            "ticket_without_linked_event_detector":  [
-
+                                                                                        {
+                                                                                            "ticket":  "baseB:ticket_customer_warning"
+                                                                                        },
+                                                                                        {
+                                                                                            "ticket":  "baseB:ticket_workforce_warning"
+                                                                                        }
                                                                                     ]
                                        }
                     }

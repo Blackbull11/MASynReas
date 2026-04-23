@@ -13,7 +13,11 @@
 
                                                          ],
                     "structural_fragility_diagnoser":  [
-
+                                                           {
+                                                               "anchor":  "baseA:res_access_switch_02",
+                                                               "reliability":  "high",
+                                                               "severity":  "medium"
+                                                           }
                                                        ]
                 },
     "aposteriori":  {

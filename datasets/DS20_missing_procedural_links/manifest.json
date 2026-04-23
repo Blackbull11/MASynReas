@@ -1,0 +1,39 @@
+﻿{
+    "dataset_id":  "DS20_missing_procedural_links",
+    "title":  "Operational artifacts exist but key procedural links are missing",
+    "base_graph":  "baseB",
+    "source_variant":  "baseB",
+    "mode":  "aposteriori",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "missing_procedural_links",
+                             "injected_anomalies":  [
+
+                                                    ],
+                             "removed_entities":  [
+
+                                                  ],
+                             "removed_relations":  [
+                                                       "noria:troubleTicketTrigger and dcterms:relation on baseB:ticket_customer_warning",
+                                                       "noria:troubleTicketTrigger and dcterms:relation on baseB:ticket_workforce_warning"
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "missing_data_robustness",
+                        "traceability_robustness"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "aposteriori/procedural/incident_without_ticket_detector",
+                                                           "aposteriori/procedural/ticket_without_linked_event_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  "aposteriori/traceability_breakdown_diagnoser",
+                             "level1_total_bindings":  4,
+                             "level2_total_diagnoses":  1
+                         }
+}

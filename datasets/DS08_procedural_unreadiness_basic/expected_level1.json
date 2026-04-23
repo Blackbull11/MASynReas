@@ -68,13 +68,22 @@
                                    },
                     "procedural":  {
                                        "change_request_without_scheduled_time_detector":  [
-
+                                                                                              {
+                                                                                                  "change":  "baseA:change_switch_firmware_window"
+                                                                                              }
                                                                                           ],
                                        "procedure_not_linked_to_resource_type_detector":  [
-
+                                                                                              {
+                                                                                                  "procedure":  "baseA:procedure_restart_customer_portal"
+                                                                                              },
+                                                                                              {
+                                                                                                  "procedure":  "baseA:procedure_restart_monitoring_agent"
+                                                                                              }
                                                                                           ],
                                        "ticket_without_assigned_procedure_detector":  [
-
+                                                                                          {
+                                                                                              "ticket":  "baseA:ticket_procedural_gap"
+                                                                                          }
                                                                                       ]
                                    }
                 },

@@ -29,18 +29,24 @@
 
                                                                           ],
                                        "unmanaged_resource_detector":  [
-
+                                                                           {
+                                                                               "resource":  "baseA:res_access_switch_02"
+                                                                           }
                                                                        ]
                                    },
                     "dynamic":  {
                                     "change_without_effective_time_detector":  [
-
+                                                                                   {
+                                                                                       "change":  "baseA:change_monitoring_patch"
+                                                                                   }
                                                                                ],
                                     "event_without_related_element_detector":  [
 
                                                                                ],
                                     "event_without_timestamp_detector":  [
-
+                                                                             {
+                                                                                 "event":  "baseA:event_missing_timestamp"
+                                                                             }
                                                                          ]
                                 },
                     "functional":  {

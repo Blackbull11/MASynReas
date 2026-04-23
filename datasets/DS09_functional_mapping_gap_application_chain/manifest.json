@@ -1,0 +1,39 @@
+﻿{
+    "dataset_id":  "DS09_functional_mapping_gap_application_chain",
+    "title":  "A service loses its visible application-module mapping chain",
+    "base_graph":  "baseA",
+    "source_variant":  "quiescentA",
+    "mode":  "apriori",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "functional_mapping_gap",
+                             "injected_anomalies":  [
+
+                                                    ],
+                             "removed_entities":  [
+                                                      "baseA:module_customer_portal"
+                                                  ],
+                             "removed_relations":  [
+
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "precision_at_l2",
+                        "recall_at_l2"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "apriori/functional/application_without_module_detector",
+                                                           "apriori/functional/service_without_application_detector",
+                                                           "apriori/functional/service_without_resource_coverage_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  "apriori/functional_mapping_gap_diagnoser",
+                             "level1_total_bindings":  3,
+                             "level2_total_diagnoses":  1
+                         }
+}

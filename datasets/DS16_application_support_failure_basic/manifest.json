@@ -1,0 +1,40 @@
+﻿{
+    "dataset_id":  "DS16_application_support_failure_basic",
+    "title":  "An incidented application loses its visible technical support mapping",
+    "base_graph":  "baseB",
+    "source_variant":  "baseB",
+    "mode":  "aposteriori",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "application_support_failure",
+                             "injected_anomalies":  [
+
+                                                    ],
+                             "removed_entities":  [
+
+                                                  ],
+                             "removed_relations":  [
+                                                       "noria:resourceForApplication on baseB:res_billing_api_01",
+                                                       "noria:resourceForApplication on baseB:res_billing_api_02"
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "precision_at_l2",
+                        "recall_at_l2",
+                        "family_contribution_analysis"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "aposteriori/structural/application_mapping_inconsistency_detector",
+                                                           "aposteriori/functional/application_incident_without_resource_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  "aposteriori/application_support_failure_diagnoser",
+                             "level1_total_bindings":  2,
+                             "level2_total_diagnoses":  1
+                         }
+}

@@ -87,16 +87,25 @@
 
                                                                                             ],
                                            "high_impact_resource_detector":  [
-
+                                                                                 {
+                                                                                     "resource":  "baseB:res_firewall_01"
+                                                                                 }
                                                                              ],
                                            "incident_on_incomplete_link_detector":  [
-
+                                                                                        {
+                                                                                            "resource":  "baseB:res_firewall_01",
+                                                                                            "link":  "baseB:link_monitor_vm_01_to_firewall_01"
+                                                                                        }
                                                                                     ],
                                            "isolated_incident_resource_detector":  [
-
+                                                                                       {
+                                                                                           "resource":  "baseB:res_firewall_01"
+                                                                                       }
                                                                                    ],
                                            "no_redundancy_incident_detector":  [
-
+                                                                                   {
+                                                                                       "resource":  "baseB:res_firewall_01"
+                                                                                   }
                                                                                ],
                                            "spatial_incident_cluster_detector":  [
 

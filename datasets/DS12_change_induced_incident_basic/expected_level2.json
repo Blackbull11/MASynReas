@@ -21,7 +21,11 @@
 
                                                                   ],
                         "change_induced_incident_diagnoser":  [
-
+                                                                  {
+                                                                      "anchor":  "baseB:app_customer_portal",
+                                                                      "reliability":  "high",
+                                                                      "severity":  "high"
+                                                                  }
                                                               ],
                         "local_infrastructure_cluster_diagnoser":  [
 

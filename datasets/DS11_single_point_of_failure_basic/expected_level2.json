@@ -30,7 +30,11 @@
 
                                                       ],
                         "single_point_of_failure_diagnoser":  [
-
+                                                                  {
+                                                                      "anchor":  "baseB:res_firewall_01",
+                                                                      "reliability":  "high",
+                                                                      "severity":  "high"
+                                                                  }
                                                               ],
                         "traceability_breakdown_diagnoser":  [
 

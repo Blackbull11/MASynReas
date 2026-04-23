@@ -7,7 +7,11 @@
 
                                                          ],
                     "observability_gap_diagnoser":  [
-
+                                                        {
+                                                            "anchor":  "observability_bundle_baseA",
+                                                            "reliability":  "high",
+                                                            "severity":  "medium"
+                                                        }
                                                     ],
                     "procedural_unreadiness_diagnoser":  [
 

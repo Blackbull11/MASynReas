@@ -109,26 +109,6 @@ baseA:app_monitoring_dashboard
     noria:businessCriticality baseA:criticality_medium ;
     prov:wasDerivedFrom "MASynReas-baseA" .
 
-baseA:res_customer_vm_01
-    a noria:Resource ;
-    rdfs:label "Customer VM 01"@en ;
-    noria:resourceType baseA:type_virtual_machine ;
-    noria:resourceManagedBy baseA:team_platform ;
-    noria:resourceForApplication baseA:app_customer_portal ;
-    noria:locatedIn baseA:room_dc1 ;
-    seas:subSystemOf baseA:compute_zone_customer ;
-    prov:wasDerivedFrom "MASynReas-baseA" .
-
-baseA:res_customer_vm_02
-    a noria:Resource ;
-    rdfs:label "Customer VM 02"@en ;
-    noria:resourceType baseA:type_virtual_machine ;
-    noria:resourceManagedBy baseA:team_platform ;
-    noria:resourceForApplication baseA:app_customer_portal ;
-    noria:locatedIn baseA:room_dc1 ;
-    seas:subSystemOf baseA:compute_zone_customer ;
-    prov:wasDerivedFrom "MASynReas-baseA" .
-
 baseA:res_monitor_vm_01
     a noria:Resource ;
     rdfs:label "Monitoring VM 01"@en ;
@@ -166,12 +146,6 @@ baseA:res_access_switch_02
     noria:locatedIn baseA:room_dc1 ;
     seas:subSystemOf baseA:network_zone_access ;
     prov:wasDerivedFrom "MASynReas-baseA" .
-
-baseA:if_customer_vm_01
-    a noria:NetworkInterface ;
-    rdfs:label "Customer VM 01 interface"@en ;
-    noria:networkInterfaceOf baseA:res_customer_vm_01 ;
-    noria:networkInterfaceConnects baseA:link_customer_vm_01_to_switch_01 .
 
 baseA:if_customer_vm_02
     a noria:NetworkInterface ;
@@ -264,4 +238,22 @@ baseA:change_monitoring_patch
     noria:plannedEndDate "2026-01-07T09:45:00Z"^^xsd:dateTime ;
     noria:changeRequestActualStartTime "2026-01-07T09:05:00Z"^^xsd:dateTime ;
     noria:changeRequestActualEndTime "2026-01-07T09:30:00Z"^^xsd:dateTime .
+
+baseA:res_customer_vm_02
+    a noria:Resource ;
+    rdfs:label "Customer VM 02"@en ;
+    noria:resourceType baseA:type_virtual_machine ;
+    noria:resourceManagedBy baseA:team_platform ;
+    noria:locatedIn baseA:room_dc1 ;
+    seas:subSystemOf baseA:compute_zone_customer ;
+    prov:wasDerivedFrom "MASynReas-baseA" .
+
+baseA:res_customer_vm_01
+    a noria:Resource ;
+    rdfs:label "Customer VM 01"@en ;
+    noria:resourceType baseA:type_virtual_machine ;
+    noria:resourceForApplication baseA:app_customer_portal ;
+    noria:locatedIn baseA:room_dc1 ;
+    seas:subSystemOf baseA:compute_zone_customer ;
+    prov:wasDerivedFrom "MASynReas-baseA" .
 
