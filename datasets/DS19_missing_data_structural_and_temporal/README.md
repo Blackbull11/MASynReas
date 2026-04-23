@@ -1,47 +1,62 @@
-﻿# DS19 Missing Data Structural And Temporal
+# DS19_missing_data_structural_and_temporal
 
 ## Purpose
 
-This robustness scenario removes a few key structural and temporal facts from an otherwise healthy operational graph. The point is to observe graceful degradation rather than a strong diagnosis.
+Structural and temporal information is degraded without creating a full diagnosis. This scenario is part of the MASynReas benchmark catalogue and is intended to be used as a controlled, reproducible experiment.
 
-## Relation to the Reference Graphs
+## Scenario Profile
 
-This scenario is derived from:
-- [Base B](C:/Users/rdesb/psc/MASynReas/datasets/baseB/README.md)
+- Reference graph: [Base B](C:/Users/rdesb/psc/MASynReas/datasets/baseB/README.md)
+- Source variant: `baseB`
+- Execution mode: `both`
+- Mutation type: `missing_data_robustness`
 
-Mode:
-- both
+## Why This Scenario Exists
 
-## Mutation Profile
+This scenario provides a documented mutation of a healthy reference graph so that Level-1 signals, Level-2 diagnoses, and benchmark KPIs can be interpreted against a known expected outcome. It is useful both for debugging the MAS and for producing comparable evaluation results across future runs.
 
-- Remove the timestamp of aseB:event_monitoring_warning.
-- Remove the related element of aseB:event_workforce_warning.
-- Remove the explicit interface of aseB:res_billing_api_02.
+## Mutation Summary
 
-## Contents
+### Injected Anomalies
+- No anomaly entity is directly injected; the effect comes from structural or relational mutation.
 
-Files:
-- dataset.ttl
-- manifest.json
-- expected_level1.json
-- expected_level2.json
+### Removed Entities
+- `baseB:if_billing_api_02`
 
-## KPI Targets
+### Removed Relations
+- `noria:loggingTime on baseB:event_monitoring_warning`
+- `noria:eventRelatedElement on baseB:event_workforce_warning`
 
-- missing_data_robustness
-- activation_correctness
+### Noise Additions
+- No noise is intentionally added in this scenario.
 
-## Expected Level 1 Signals
+## Expected Diagnostic Footprint
 
-- apriori/structural/missing_interface_detector
-- apriori/dynamic/event_without_related_element_detector
-- apriori/dynamic/event_without_timestamp_detector
+- Expected non-zero Level-1 bindings: `3`
+- Expected Level-2 diagnoses: `0`
 
-## Expected Level 2 Diagnoses
+### Expected Level-1 Agents
+- `apriori/structural/missing_interface_detector`
+- `apriori/dynamic/event_without_related_element_detector`
+- `apriori/dynamic/event_without_timestamp_detector`
 
-- no level-2 diagnoser should emit a diagnosis
+### Expected Level-2 Diagnosers
+- No Level-2 diagnoser should emit a diagnosis.
+
+## KPI Objectives
+
+- Campaign-level focus: compare this degraded scenario with its fuller counterpart.
+- Primary focus: `l2_activation_correctness` and correct non-activation on weak evidence.
+
+## Files
+
+- [dataset.ttl](C:/Users/rdesb/psc/MASynReas/datasets/DS19_missing_data_structural_and_temporal/dataset.ttl)
+- [manifest.json](C:/Users/rdesb/psc/MASynReas/datasets/DS19_missing_data_structural_and_temporal/manifest.json)
+- [expected_level1.json](C:/Users/rdesb/psc/MASynReas/datasets/DS19_missing_data_structural_and_temporal/expected_level1.json)
+- [expected_level2.json](C:/Users/rdesb/psc/MASynReas/datasets/DS19_missing_data_structural_and_temporal/expected_level2.json)
 
 ## Notes
 
-- This scenario is intended to stay below a strong level-2 diagnosis threshold.
-- It is mainly a robustness probe for level-1 behavior.
+- The companion JSON files are the authoritative machine-readable reference for automated evaluation scripts.
+- This README is intentionally written for human inspection and benchmark orientation.
+- The file is stored as UTF-8 without BOM to avoid the encoding artefacts seen in earlier generated documentation.

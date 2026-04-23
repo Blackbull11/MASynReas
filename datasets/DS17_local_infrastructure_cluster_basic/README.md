@@ -1,46 +1,64 @@
-﻿# DS17 Local Infrastructure Cluster Basic
+# DS17_local_infrastructure_cluster_basic
 
 ## Purpose
 
-This scenario creates a local infrastructure cluster by adding several synchronous incident chains on elements co-located in the same room.
+Several incident signals concentrate in the same location and time window. This scenario is part of the MASynReas benchmark catalogue and is intended to be used as a controlled, reproducible experiment.
 
-## Relation to the Reference Graphs
+## Scenario Profile
 
-This scenario is derived from:
-- [Base B](C:/Users/rdesb/psc/MASynReas/datasets/baseB/README.md)
+- Reference graph: [Base B](C:/Users/rdesb/psc/MASynReas/datasets/baseB/README.md)
+- Source variant: `baseB`
+- Execution mode: `aposteriori`
+- Mutation type: `local_infrastructure_cluster`
 
-Mode:
-- aposteriori
+## Why This Scenario Exists
 
-## Mutation Profile
+This scenario provides a documented mutation of a healthy reference graph so that Level-1 signals, Level-2 diagnoses, and benchmark KPIs can be interpreted against a known expected outcome. It is useful both for debugging the MAS and for producing comparable evaluation results across future runs.
 
-- Reuse the existing customer warning event in room DC1.
-- Add billing and access-switch incident chains in the same room within the same short time window.
+## Mutation Summary
 
-## Contents
+### Injected Anomalies
+- `baseB:event_billing_cluster`
+- `baseB:event_switch_cluster`
+- `baseB:ticket_billing_cluster`
+- `baseB:ticket_switch_cluster`
 
-Files:
-- dataset.ttl
-- manifest.json
-- expected_level1.json
-- expected_level2.json
+### Removed Entities
+- No entity removal in this scenario.
 
-## KPI Targets
+### Removed Relations
+- No relation removal in this scenario.
 
-- precision_at_l2
-- recall_at_l2
-- top1_diagnosis_accuracy
+### Noise Additions
+- No noise is intentionally added in this scenario.
 
-## Expected Level 1 Signals
+## Expected Diagnostic Footprint
 
-- aposteriori/structural/spatial_incident_cluster_detector
-- aposteriori/dynamic/multi_element_synchronous_incident_detector
+- Expected non-zero Level-1 bindings: `2`
+- Expected Level-2 diagnoses: `1`
 
-## Expected Level 2 Diagnoses
+### Expected Level-1 Agents
+- `aposteriori/structural/spatial_incident_cluster_detector`
+- `aposteriori/dynamic/multi_element_synchronous_incident_detector`
 
-- aposteriori/local_infrastructure_cluster_diagnoser
+### Expected Level-2 Diagnosers
+- `aposteriori/local_infrastructure_cluster_diagnoser`
+
+## KPI Objectives
+
+- Primary focus: `precision_l2`, with diagnosis matching against the expected Level-2 outputs.
+- In the current profile, this is mostly followed through `diagnosis_hit` and the list of missed expected diagnoses.
+- Primary focus: `top1_accuracy`.
+
+## Files
+
+- [dataset.ttl](C:/Users/rdesb/psc/MASynReas/datasets/DS17_local_infrastructure_cluster_basic/dataset.ttl)
+- [manifest.json](C:/Users/rdesb/psc/MASynReas/datasets/DS17_local_infrastructure_cluster_basic/manifest.json)
+- [expected_level1.json](C:/Users/rdesb/psc/MASynReas/datasets/DS17_local_infrastructure_cluster_basic/expected_level1.json)
+- [expected_level2.json](C:/Users/rdesb/psc/MASynReas/datasets/DS17_local_infrastructure_cluster_basic/expected_level2.json)
 
 ## Notes
 
-- The main target is the location cluster in room DC1.
-- This scenario is useful for validating localization-aware diagnosis.
+- The companion JSON files are the authoritative machine-readable reference for automated evaluation scripts.
+- This README is intentionally written for human inspection and benchmark orientation.
+- The file is stored as UTF-8 without BOM to avoid the encoding artefacts seen in earlier generated documentation.

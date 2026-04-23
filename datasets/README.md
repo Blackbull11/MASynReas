@@ -1,461 +1,225 @@
 # Dataset Catalogue
 
-## Purpose
+## Overview
 
-This folder is intended to host the future toy dataset catalogue used to evaluate MASynReas.
+This folder contains the benchmark catalogue used to evaluate `MASynReas` on
+controlled NORIA-O knowledge graphs.
 
-The catalogue is designed to support the KPI framework defined for the project, especially:
-- false positive control
-- activation correctness
-- `Precision@L2`
+The catalogue is built around a simple idea: start from a small number of
+healthy reference graphs, then derive scenario datasets through explicit,
+documented mutations. Each scenario is intended to be inspectable by hand,
+traceable to a reference graph, and reusable across future MAS runs.
+
+The catalogue therefore supports three complementary needs:
+- validating that the MAS remains quiet on clean or weak-evidence cases
+- checking whether Level 2 produces the intended diagnoses on integrated cases
+- measuring runtime, ranking, traceability, robustness, and scalability on a
+  stable experimental base
+
+## Encoding Note
+
+All dataset `README.md` files in this catalogue are maintained as UTF-8 text
+without BOM so they render cleanly and avoid the encoding issues that appeared
+in earlier generated documentation.
+
+## Catalogue Philosophy
+
+The datasets are not random toy graphs. Each scenario is a compact experiment
+with:
+- a reference graph of origin
+- a mutation profile
+- expected Level-1 outputs
+- expected Level-2 outputs
+- KPI-oriented evaluation goals
+
+This keeps the benchmark reproducible and makes post-run analysis much easier.
+When a diagnosis is wrong, we can usually trace the deviation back to a
+specific mutation, detector family, or aggregation decision.
+
+## Evaluation Focus
+
+The KPI guideline is intentionally broad, but the current catalogue is best
+suited to the metrics that match the present MAS architecture and evaluation
+workflow.
+
+### Primary metrics for the current catalogue
+
+- `l2_activation_correctness`
+- `precision_l2`
+- `top1_accuracy`
+- `ranking_mrr`
+- `end_to_end_runtime`
+- `mean_runtime_l1`
+- `mean_runtime_l2`
+- `controller_waiting_overhead`
+- `traceability_rate`
+- `evidence_completeness_ratio`
+- `mean_evidence_count`
+- `structured_evidence_ratio`
+
+### Scenario-oriented helper metrics
+
+- `diagnosis_hit`
+- `clean_control_success`
+- `l1_expectation_match_rate`
+- diagnoser success frequency across a campaign
+
+### Metrics tracked later or mainly at campaign level
+
 - `Recall@L2`
 - `F1@L2`
-- `Top-1 Diagnosis Accuracy`
-- diagnosis ranking quality
-- reliability-score calibration
-- priority-score calibration
-- runtime and SPARQL efficiency
-- robustness to missing data
-- robustness to noise
-- family contribution analysis
-- scalability curves
+- reliability and priority calibration
+- robustness ratios under missing data or noise
+- family contribution through ablation
+- detailed SPARQL efficiency
 
-The guiding principle is to build datasets from a small number of coherent reference graphs, then derive scenario datasets by controlled anomaly injection, data removal, or noise addition.
+These remain meaningful, but they are better assessed after several runs or
+with dedicated experiment suites.
 
-Current materialization status:
-- the full scenario catalogue `DS01` to `DS27` is now present on disk
-- each scenario folder contains:
+## Folder Structure
+
+The catalogue currently contains:
+- 2 reference graphs: `baseA`, `baseB`
+- 27 scenario folders: `DS01` to `DS27`
+
+Each materialized scenario folder follows the same structure:
 - `dataset.ttl`
 - `README.md`
 - `manifest.json`
 - `expected_level1.json`
 - `expected_level2.json`
-- the catalogue can be regenerated with [generate_catalogue.ps1](C:/Users/rdesb/psc/MASynReas/datasets/generate_catalogue.ps1)
+
+The catalogue can be regenerated with
+[generate_catalogue.ps1](C:/Users/rdesb/psc/MASynReas/datasets/generate_catalogue.ps1).
 
 ## Reference Graphs
 
 ### Base A
 
-`Base A` is the main small coherent reference graph.
-
-It merges the roles that were initially planned for:
-- the clean `apriori` control graph
-- the clean `aposteriori` control graph
-
-So one same healthy graph will support:
-- clean `apriori` tests
-- clean `aposteriori` tests
+`Base A` is the compact healthy reference graph used for:
+- clean control runs
 - partial-evidence scenarios
-- several integrated anomaly scenarios derived by mutation
+- the first integrated mutation scenarios
 
-Materialized files:
+Files:
 - [Base A README](C:/Users/rdesb/psc/MASynReas/datasets/baseA/README.md)
 - [baseA.ttl](C:/Users/rdesb/psc/MASynReas/datasets/baseA/baseA.ttl)
+- [baseA.png](C:/Users/rdesb/psc/MASynReas/datasets/baseA/baseA.png)
 
 ### Base B
 
-`Base B` is a richer graph with more events, changes, tickets, services, and dependencies.
+`Base B` is the richer healthy reference graph used for:
+- complex integrated scenarios
+- ranking and calibration cases
+- robustness studies
+- scalability measurements
 
-It is intended mainly for:
-- more complex integrated scenarios
-- ranking scenarios
-- runtime measurements
-- robustness tests
-- scalability experiments
-
-Materialized files:
+Files:
 - [Base B README](C:/Users/rdesb/psc/MASynReas/datasets/baseB/README.md)
 - [baseB.ttl](C:/Users/rdesb/psc/MASynReas/datasets/baseB/baseB.ttl)
+- [baseB.png](C:/Users/rdesb/psc/MASynReas/datasets/baseB/baseB.png)
 
-## Catalogue Structure
+## Scenario Families
 
-The current planned catalogue contains 27 scenarios:
-- 3 control / activation scenarios
-- 7 integrated `apriori` diagnosis scenarios
-- 8 integrated `aposteriori` diagnosis scenarios
-- 4 robustness scenarios
-- 5 ranking / calibration / scalability scenarios
+### 1. Control and Activation Scenarios
 
-## Scenario Catalogue
+These scenarios verify that the MAS behaves conservatively when evidence is
+absent, weak, or insufficiently convergent.
 
-### Control / Activation Scenarios
+- `DS01_clean_baseA`
+- `DS02_partial_evidence_no_l2_v1`
+- `DS03_partial_evidence_no_l2_v2`
 
-#### `DS01_clean_baseA`
-
-Mode: `both`
-
-Idea:
-- healthy coherent graph derived directly from `Base A`
-- no intended anomaly
-
-Main KPI targets:
-- false positive control
+Main use:
+- clean-control validation
+- false-positive resistance
 - activation correctness
-- baseline runtime
-- traceability sanity check
 
-Materialized files:
-- [DS01 README](C:/Users/rdesb/psc/MASynReas/datasets/DS01_clean_baseA/README.md)
-- [DS01 graph](C:/Users/rdesb/psc/MASynReas/datasets/DS01_clean_baseA/dataset.ttl)
-- [DS01 manifest](C:/Users/rdesb/psc/MASynReas/datasets/DS01_clean_baseA/manifest.json)
+### 2. Integrated A Priori Diagnosis Scenarios
 
-#### `DS02_partial_evidence_no_l2_v1`
+These scenarios are designed to exercise the deterministic Level-2 diagnosers
+that reason about weaknesses and fragilities independently of a live anomaly.
 
-Mode: `both`
+- `DS04_structural_fragility_resource_anchor`
+- `DS05_critical_service_exposure_basic`
+- `DS06_critical_service_exposure_concentrated_service`
+- `DS07_observability_gap_events_and_changes`
+- `DS08_procedural_unreadiness_basic`
+- `DS09_functional_mapping_gap_application_chain`
+- `DS10_apriori_mixed_two_true_diagnoses`
 
-Idea:
-- weak or isolated level-1 signals
-- not enough convergence for any level-2 diagnosis
+Main use:
+- diagnosis correctness
+- ranking between several plausible apriori outcomes
+- severity and priority comparisons such as `DS05` vs `DS06`
 
-Main KPI targets:
-- activation correctness
-- false positive resistance
+### 3. Integrated A Posteriori Diagnosis Scenarios
 
-#### `DS03_partial_evidence_no_l2_v2`
+These scenarios model concrete operational anomalies and error situations.
 
-Mode: `both`
+- `DS11_single_point_of_failure_basic`
+- `DS12_change_induced_incident_basic`
+- `DS13_service_cascade_basic`
+- `DS14_traceability_breakdown_basic`
+- `DS15_unstable_component_basic`
+- `DS16_application_support_failure_basic`
+- `DS17_local_infrastructure_cluster_basic`
+- `DS18_aposteriori_mixed_two_true_diagnoses`
 
-Idea:
-- multi-signal scenario
-- several weak signals may coexist
-- still no coherent anchor or evidence combination should justify a level-2 diagnosis
+Main use:
+- Level-2 diagnosis correctness
+- top-1 diagnosis quality
+- ranking quality on multi-diagnosis cases
 
-Purpose:
-- second version of the partial-evidence family
-- justifies explicit testing of more complex false-positive resistance
+### 4. Robustness Scenarios
 
-Main KPI targets:
-- activation correctness
-- false positive resistance under multi-signal conditions
+These scenarios are meant to compare the MAS against degraded or noisy variants
+of otherwise meaningful cases.
 
-### Integrated A Priori Diagnosis Scenarios
+- `DS19_missing_data_structural_and_temporal`
+- `DS20_missing_procedural_links`
+- `DS21_noisy_irrelevant_events`
+- `DS22_noisy_duplicate_and_inconsistent_records`
 
-#### `DS04_structural_fragility_resource_anchor`
+Main use:
+- robustness studies
+- traceability degradation analysis
+- false-positive sensitivity under noise
 
-Mode: `apriori`
+### 5. Ranking, Calibration, and Scalability Scenarios
 
-Idea:
-- one resource accumulates missing interface, weak parentage, no management, or similar structural weaknesses
+These scenarios are intended for richer campaign-level analyses.
 
-Expected main diagnosis:
-- `structural_fragility_diagnoser`
+- `DS23_three_diagnoses_ranked_by_urgency`
+- `DS24_reliability_calibration_bundle`
+- `DS25_scalability_small`
+- `DS26_scalability_medium`
+- `DS27_scalability_large`
 
-#### `DS05_critical_service_exposure_basic`
-
-Mode: `apriori`
-
-Idea:
-- critical application or service with weak redundancy and poor resource coverage
-
-Expected main diagnosis:
-- `critical_service_exposure_diagnoser`
-
-#### `DS06_critical_service_exposure_concentrated_service`
-
-Mode: `apriori`
-
-Idea:
-- stronger or more concentrated version of `DS05`
-- intended specifically to compare the resulting severity score with `DS05`
-
-Expected main diagnosis:
-- `critical_service_exposure_diagnoser`
-
-Main KPI targets:
-- severity-score comparison
-- priority-score comparison
-
-#### `DS07_observability_gap_events_and_changes`
-
-Mode: `apriori`
-
-Idea:
-- missing timestamps
-- missing related elements
-- missing effective or scheduled change times
-
-Expected main diagnosis:
-- `observability_gap_diagnoser`
-
-#### `DS08_procedural_unreadiness_basic`
-
-Mode: `apriori`
-
-Idea:
-- tickets without procedures
-- procedures not linked to resource types
-- unscheduled changes
-
-Expected main diagnosis:
-- `procedural_unreadiness_diagnoser`
-
-#### `DS09_functional_mapping_gap_application_chain`
-
-Mode: `apriori`
-
-Idea:
-- incomplete or inconsistent service-application-resource mapping
-
-Expected main diagnosis:
-- `functional_mapping_gap_diagnoser`
-
-#### `DS10_apriori_mixed_two_true_diagnoses`
-
-Mode: `apriori`
-
-Idea:
-- one area of the graph should trigger one apriori diagnosis
-- another area should trigger a different apriori diagnosis
-
-Expected use:
-- multi-diagnosis ranking and family contribution
-
-### Integrated A Posteriori Diagnosis Scenarios
-
-#### `DS11_single_point_of_failure_basic`
-
-Mode: `aposteriori`
-
-Idea:
-- incident-related resource is isolated, non-redundant, incomplete-link attached, and high-impact
-
-Expected main diagnosis:
-- `single_point_of_failure_diagnoser`
-
-#### `DS12_change_induced_incident_basic`
-
-Mode: `aposteriori`
-
-Idea:
-- one change is followed by incident(s) with reinforcing change-related evidence
-
-Expected main diagnosis:
-- `change_induced_incident_diagnoser`
-
-#### `DS13_service_cascade_basic`
-
-Mode: `aposteriori`
-
-Idea:
-- one technical issue propagates through a shared dependency or module and affects several services
-
-Expected main diagnosis:
-- `service_cascade_diagnoser`
-
-#### `DS14_traceability_breakdown_basic`
-
-Mode: `aposteriori`
-
-Idea:
-- incidents without tickets
-- tickets without linked events
-- weak procedural escalation
-
-Expected main diagnosis:
-- `traceability_breakdown_diagnoser`
-
-#### `DS15_unstable_component_basic`
-
-Mode: `aposteriori`
-
-Idea:
-- repeated events
-- bursts
-- flapping
-- reopened or stale incidents around the same component
-
-Expected main diagnosis:
-- `unstable_component_diagnoser`
-
-#### `DS16_application_support_failure_basic`
-
-Mode: `aposteriori`
-
-Idea:
-- application anomaly combined with broken or inconsistent support mapping
-
-Expected main diagnosis:
-- `application_support_failure_diagnoser`
-
-#### `DS17_local_infrastructure_cluster_basic`
-
-Mode: `aposteriori`
-
-Idea:
-- local spatial cluster
-- propagation
-- synchronous incidents
-- local structural weakness
-
-Expected main diagnosis:
-- `local_infrastructure_cluster_diagnoser`
-
-#### `DS18_aposteriori_mixed_two_true_diagnoses`
-
-Mode: `aposteriori`
-
-Idea:
-- two true diagnosis families coexist in different areas of the graph
-
-Expected use:
-- `Precision@L2`
-- `Recall@L2`
+Main use:
 - ranking quality
-- family contribution
+- future calibration analysis
+- runtime curves as graph size increases
 
-### Robustness Scenarios
+## How To Use The Catalogue
 
-#### `DS19_missing_data_structural_and_temporal`
+For one benchmark run:
+1. Choose the scenario folder.
+2. Load `dataset.ttl` into Virtuoso.
+3. Set `mode` and `dataset.id` in [mas.properties](C:/Users/rdesb/psc/MASynReas/mas.properties).
+4. Run the MAS.
+5. Compute the run KPI report with the tools in [evaluation](C:/Users/rdesb/psc/MASynReas/evaluation/README.md).
 
-Mode: `both`
+For a campaign:
+1. Repeat the run on several scenario folders.
+2. Store each `run_kpi_report.json`.
+3. Aggregate them into campaign-level indicators.
 
-Idea:
-- remove timestamps, related elements, or adjacency information from an otherwise diagnosable scenario
+## Notes
 
-Main KPI targets:
-- `MissingDataRobustness`
+This catalogue is not a replacement for dedicated detector unit tests. It is an
+integrated evaluation asset for the whole MAS, especially Level 2.
 
-#### `DS20_missing_procedural_links`
-
-Mode: `aposteriori`
-
-Idea:
-- remove some ticket-event or ticket-procedure links from an otherwise coherent anomaly case
-
-Main KPI targets:
-- `MissingDataRobustness`
-- traceability robustness
-
-#### `DS21_noisy_irrelevant_events`
-
-Mode: `aposteriori`
-
-Idea:
-- inject irrelevant extra events, unrelated tickets, or benign extra records
-
-Main KPI targets:
-- `NoiseRobustness`
-- ranking stability
-- SPARQL efficiency under noise
-
-#### `DS22_noisy_duplicate_and_inconsistent_records`
-
-Mode: `both`
-
-Idea:
-- duplicate some records
-- inject weakly inconsistent but non-decisive links
-
-Main KPI targets:
-- `NoiseRobustness`
-- false positive sensitivity
-
-### Ranking / Calibration / Scalability Scenarios
-
-#### `DS23_three_diagnoses_ranked_by_urgency`
-
-Mode: `aposteriori`
-
-Idea:
-- same dataset contains several true diagnoses with different operational urgency
-
-Main KPI targets:
-- `Top-1 Diagnosis Accuracy`
-- diagnosis ranking quality
-- priority-score calibration
-
-#### `DS24_reliability_calibration_bundle`
-
-Mode: `both`
-
-Idea:
-- several diagnosis candidates intentionally built with weak, plausible, and strong evidence levels
-
-Main KPI targets:
-- reliability-score calibration
-- activation-threshold sanity
-
-#### `DS25_scalability_small`
-
-Mode: `both`
-
-Idea:
-- small version of a realistic mixed graph
-
-Main KPI targets:
-- end-to-end runtime
-- mean runtime per detector
-- mean runtime per diagnoser
-- SPARQL efficiency
-- first point of the scalability curve
-
-#### `DS26_scalability_medium`
-
-Mode: `both`
-
-Idea:
-- medium version of the same graph logic as `DS25`
-
-Main KPI targets:
-- second point of the scalability curve
-
-#### `DS27_scalability_large`
-
-Mode: `both`
-
-Idea:
-- large version of the same graph logic as `DS25` and `DS26`
-
-Main KPI targets:
-- third point of the scalability curve
-
-## Notes on Use
-
-### Rule Conformance at Level 1
-
-The main dataset catalogue is not intended to replace detector-level validation fixtures.
-
-For `Rule Conformance @L1`, a separate micro-suite should still be maintained with:
-- positive cases
-- negative cases
-- boundary cases
-
-The present catalogue is mainly intended for:
-- integrated level-2 evaluation
-- robustness analysis
-- runtime analysis
-- calibration analysis
-- family contribution analysis
-
-### Scenario Specification to Add Later
-
-For each dataset scenario, the future generated files should eventually be accompanied by:
-- a dataset identifier
-- the reference base graph used
-- the list of injected anomalies
-- the list of removed relations or attributes if relevant
-- the list of noisy additions if relevant
-- the expected level-1 outputs
-- the expected activated level-2 agents
-- the expected true level-2 diagnoses
-- the expected urgency ordering when relevant
-
-### Naming Convention
-
-The current dataset identifiers are stable scenario names.
-
-When datasets are materialized, a practical convention could be:
-
-```text
-datasets/
-  DS01_clean_baseA/
-  DS02_partial_evidence_no_l2_v1/
-  DS03_partial_evidence_no_l2_v2/
-  ...
-```
-
-Each scenario folder could then contain:
-- the graph files
-- a manifest
-- expected outputs
-- KPI annotations
+If later experiments require stricter Level-1 rule conformance measurement, the
+recommended approach is still to maintain a separate micro-suite with positive,
+negative, and boundary cases per detector.

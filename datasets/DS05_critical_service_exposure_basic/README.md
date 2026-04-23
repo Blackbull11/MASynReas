@@ -1,46 +1,61 @@
-﻿# DS05 Critical Service Exposure Basic
+# DS05_critical_service_exposure_basic
 
 ## Purpose
 
-This scenario creates the basic form of critical service exposure by reducing a critical application and its service chain to a single visible support resource.
+A critical application is reduced to a single visible support resource. This scenario is part of the MASynReas benchmark catalogue and is intended to be used as a controlled, reproducible experiment.
 
-## Relation to the Reference Graphs
+## Scenario Profile
 
-This scenario is derived from:
-- [Base A](C:/Users/rdesb/psc/MASynReas/datasets/baseA/README.md)
+- Reference graph: [Base A](C:/Users/rdesb/psc/MASynReas/datasets/baseA/README.md)
+- Source variant: `quiescentA`
+- Execution mode: `apriori`
+- Mutation type: `critical_support_concentration`
 
-Mode:
-- apriori
+## Why This Scenario Exists
 
-## Mutation Profile
+This scenario provides a documented mutation of a healthy reference graph so that Level-1 signals, Level-2 diagnoses, and benchmark KPIs can be interpreted against a known expected outcome. It is useful both for debugging the MAS and for producing comparable evaluation results across future runs.
 
-- Remove the application support relation from aseA:res_customer_vm_02 to aseA:app_customer_portal.
-- Keep the service and module chain otherwise healthy.
+## Mutation Summary
 
-## Contents
+### Injected Anomalies
+- No anomaly entity is directly injected; the effect comes from structural or relational mutation.
 
-Files:
-- dataset.ttl
-- manifest.json
-- expected_level1.json
-- expected_level2.json
+### Removed Entities
+- No entity removal in this scenario.
 
-## KPI Targets
+### Removed Relations
+- `noria:resourceForApplication from baseA:res_customer_vm_02 to baseA:app_customer_portal`
 
-- precision_at_l2
-- severity_score_comparison
+### Noise Additions
+- No noise is intentionally added in this scenario.
 
-## Expected Level 1 Signals
+## Expected Diagnostic Footprint
 
-- apriori/structural/criticality_structural_weakness_detector
-- apriori/structural/missing_redundancy_detector
-- apriori/functional/over_concentrated_service_detector
+- Expected non-zero Level-1 bindings: `3`
+- Expected Level-2 diagnoses: `1`
 
-## Expected Level 2 Diagnoses
+### Expected Level-1 Agents
+- `apriori/structural/criticality_structural_weakness_detector`
+- `apriori/structural/missing_redundancy_detector`
+- `apriori/functional/over_concentrated_service_detector`
 
-- apriori/critical_service_exposure_diagnoser
+### Expected Level-2 Diagnosers
+- `apriori/critical_service_exposure_diagnoser`
+
+## KPI Objectives
+
+- Primary focus: `precision_l2`, with diagnosis matching against the expected Level-2 outputs.
+- Comparative focus: severity differences should be visible across paired scenarios.
+
+## Files
+
+- [dataset.ttl](C:/Users/rdesb/psc/MASynReas/datasets/DS05_critical_service_exposure_basic/dataset.ttl)
+- [manifest.json](C:/Users/rdesb/psc/MASynReas/datasets/DS05_critical_service_exposure_basic/manifest.json)
+- [expected_level1.json](C:/Users/rdesb/psc/MASynReas/datasets/DS05_critical_service_exposure_basic/expected_level1.json)
+- [expected_level2.json](C:/Users/rdesb/psc/MASynReas/datasets/DS05_critical_service_exposure_basic/expected_level2.json)
 
 ## Notes
 
-- This is the reference case for the critical service exposure severity comparison.
-- The diagnosis remains focused on the customer portal support chain.
+- The companion JSON files are the authoritative machine-readable reference for automated evaluation scripts.
+- This README is intentionally written for human inspection and benchmark orientation.
+- The file is stored as UTF-8 without BOM to avoid the encoding artefacts seen in earlier generated documentation.

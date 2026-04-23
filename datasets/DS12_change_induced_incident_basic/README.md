@@ -1,48 +1,64 @@
-﻿# DS12 Change Induced Incident Basic
+# DS12_change_induced_incident_basic
 
 ## Purpose
 
-This scenario creates a clear post-change anomaly pattern: overlapping changes on one application are followed by a critical event and an escalated ticket on that same application.
+A recent change is followed by a high-severity incident on the same element. This scenario is part of the MASynReas benchmark catalogue and is intended to be used as a controlled, reproducible experiment.
 
-## Relation to the Reference Graphs
+## Scenario Profile
 
-This scenario is derived from:
-- [Base B](C:/Users/rdesb/psc/MASynReas/datasets/baseB/README.md)
+- Reference graph: [Base B](C:/Users/rdesb/psc/MASynReas/datasets/baseB/README.md)
+- Source variant: `baseB`
+- Execution mode: `aposteriori`
+- Mutation type: `change_induced_incident`
 
-Mode:
-- aposteriori
+## Why This Scenario Exists
 
-## Mutation Profile
+This scenario provides a documented mutation of a healthy reference graph so that Level-1 signals, Level-2 diagnoses, and benchmark KPIs can be interpreted against a known expected outcome. It is useful both for debugging the MAS and for producing comparable evaluation results across future runs.
 
-- Add an overlapping hotfix change on aseB:app_customer_portal.
-- Add a critical event shortly after the end of the release change.
-- Add an open high-priority ticket triggered by that event.
+## Mutation Summary
 
-## Contents
+### Injected Anomalies
+- `baseB:change_customer_hotfix`
+- `baseB:event_customer_post_change`
+- `baseB:ticket_customer_post_change`
 
-Files:
-- dataset.ttl
-- manifest.json
-- expected_level1.json
-- expected_level2.json
+### Removed Entities
+- No entity removal in this scenario.
 
-## KPI Targets
+### Removed Relations
+- No relation removal in this scenario.
 
-- precision_at_l2
-- recall_at_l2
-- top1_diagnosis_accuracy
+### Noise Additions
+- No noise is intentionally added in this scenario.
 
-## Expected Level 1 Signals
+## Expected Diagnostic Footprint
 
-- aposteriori/dynamic/change_followed_by_incident_detector
-- aposteriori/dynamic/change_overlap_conflict
-- aposteriori/dynamic/critical_event_ticket_escalation_detector
+- Expected non-zero Level-1 bindings: `3`
+- Expected Level-2 diagnoses: `1`
 
-## Expected Level 2 Diagnoses
+### Expected Level-1 Agents
+- `aposteriori/dynamic/change_followed_by_incident_detector`
+- `aposteriori/dynamic/change_overlap_conflict`
+- `aposteriori/dynamic/critical_event_ticket_escalation_detector`
 
-- aposteriori/change_induced_incident_diagnoser
+### Expected Level-2 Diagnosers
+- `aposteriori/change_induced_incident_diagnoser`
+
+## KPI Objectives
+
+- Primary focus: `precision_l2`, with diagnosis matching against the expected Level-2 outputs.
+- In the current profile, this is mostly followed through `diagnosis_hit` and the list of missed expected diagnoses.
+- Primary focus: `top1_accuracy`.
+
+## Files
+
+- [dataset.ttl](C:/Users/rdesb/psc/MASynReas/datasets/DS12_change_induced_incident_basic/dataset.ttl)
+- [manifest.json](C:/Users/rdesb/psc/MASynReas/datasets/DS12_change_induced_incident_basic/manifest.json)
+- [expected_level1.json](C:/Users/rdesb/psc/MASynReas/datasets/DS12_change_induced_incident_basic/expected_level1.json)
+- [expected_level2.json](C:/Users/rdesb/psc/MASynReas/datasets/DS12_change_induced_incident_basic/expected_level2.json)
 
 ## Notes
 
-- The target diagnosis is change-induced incident.
-- This scenario is suitable for validating temporal explanation chains.
+- The companion JSON files are the authoritative machine-readable reference for automated evaluation scripts.
+- This README is intentionally written for human inspection and benchmark orientation.
+- The file is stored as UTF-8 without BOM to avoid the encoding artefacts seen in earlier generated documentation.

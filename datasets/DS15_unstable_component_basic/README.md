@@ -1,50 +1,69 @@
-﻿# DS15 Unstable Component Basic
+# DS15_unstable_component_basic
 
 ## Purpose
 
-This scenario creates a classic unstable-component pattern with bursts of follow-up events, contradictory states, and recurrent ticketing on the same anchor.
+Repeated and contradictory symptoms accumulate on one monitored component. This scenario is part of the MASynReas benchmark catalogue and is intended to be used as a controlled, reproducible experiment.
 
-## Relation to the Reference Graphs
+## Scenario Profile
 
-This scenario is derived from:
-- [Base B](C:/Users/rdesb/psc/MASynReas/datasets/baseB/README.md)
+- Reference graph: [Base B](C:/Users/rdesb/psc/MASynReas/datasets/baseB/README.md)
+- Source variant: `baseB`
+- Execution mode: `aposteriori`
+- Mutation type: `unstable_component`
 
-Mode:
-- aposteriori
+## Why This Scenario Exists
 
-## Mutation Profile
+This scenario provides a documented mutation of a healthy reference graph so that Level-1 signals, Level-2 diagnoses, and benchmark KPIs can be interpreted against a known expected outcome. It is useful both for debugging the MAS and for producing comparable evaluation results across future runs.
 
-- Add several close-in-time monitoring events on aseB:res_monitor_vm_01.
-- Add one resolved ticket followed by a new open ticket on the same element.
-- Keep timestamps old enough to satisfy the stale-incident heuristic.
+## Mutation Summary
 
-## Contents
+### Injected Anomalies
+- `baseB:event_monitor_down`
+- `baseB:event_monitor_up`
+- `baseB:event_monitor_timeout`
+- `baseB:event_monitor_timeout_repeat`
+- `baseB:ticket_monitor_resolved_old`
+- `baseB:ticket_monitor_active_new`
 
-Files:
-- dataset.ttl
-- manifest.json
-- expected_level1.json
-- expected_level2.json
+### Removed Entities
+- No entity removal in this scenario.
 
-## KPI Targets
+### Removed Relations
+- No relation removal in this scenario.
 
-- precision_at_l2
-- recall_at_l2
-- priority_score_calibration
+### Noise Additions
+- No noise is intentionally added in this scenario.
 
-## Expected Level 1 Signals
+## Expected Diagnostic Footprint
 
-- aposteriori/dynamic/event_burst_detector
-- aposteriori/dynamic/flapping_state_detector
-- aposteriori/dynamic/reopened_incident_detector
-- aposteriori/dynamic/repeated_similar_event_detector
-- aposteriori/dynamic/stale_incident_detector
+- Expected non-zero Level-1 bindings: `5`
+- Expected Level-2 diagnoses: `1`
 
-## Expected Level 2 Diagnoses
+### Expected Level-1 Agents
+- `aposteriori/dynamic/event_burst_detector`
+- `aposteriori/dynamic/flapping_state_detector`
+- `aposteriori/dynamic/reopened_incident_detector`
+- `aposteriori/dynamic/repeated_similar_event_detector`
+- `aposteriori/dynamic/stale_incident_detector`
 
-- aposteriori/unstable_component_diagnoser
+### Expected Level-2 Diagnosers
+- `aposteriori/unstable_component_diagnoser`
+
+## KPI Objectives
+
+- Primary focus: `precision_l2`, with diagnosis matching against the expected Level-2 outputs.
+- In the current profile, this is mostly followed through `diagnosis_hit` and the list of missed expected diagnoses.
+- Campaign-level focus: future calibration of `priority_score` and urgency ordering.
+
+## Files
+
+- [dataset.ttl](C:/Users/rdesb/psc/MASynReas/datasets/DS15_unstable_component_basic/dataset.ttl)
+- [manifest.json](C:/Users/rdesb/psc/MASynReas/datasets/DS15_unstable_component_basic/manifest.json)
+- [expected_level1.json](C:/Users/rdesb/psc/MASynReas/datasets/DS15_unstable_component_basic/expected_level1.json)
+- [expected_level2.json](C:/Users/rdesb/psc/MASynReas/datasets/DS15_unstable_component_basic/expected_level2.json)
 
 ## Notes
 
-- The target anchor is aseB:res_monitor_vm_01.
-- This scenario is useful for validating temporal instability aggregation.
+- The companion JSON files are the authoritative machine-readable reference for automated evaluation scripts.
+- This README is intentionally written for human inspection and benchmark orientation.
+- The file is stored as UTF-8 without BOM to avoid the encoding artefacts seen in earlier generated documentation.

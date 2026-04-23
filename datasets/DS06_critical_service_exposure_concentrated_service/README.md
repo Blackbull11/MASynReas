@@ -1,49 +1,64 @@
-﻿# DS06 Critical Service Exposure Concentrated Service
+# DS06_critical_service_exposure_concentrated_service
 
 ## Purpose
 
-This scenario is a stronger version of DS05. The same critical application is left with a single support resource and that remaining support resource is itself structurally weakened.
+A stronger critical service exposure case on the same business chain. This scenario is part of the MASynReas benchmark catalogue and is intended to be used as a controlled, reproducible experiment.
 
-## Relation to the Reference Graphs
+## Scenario Profile
 
-This scenario is derived from:
-- [Base A](C:/Users/rdesb/psc/MASynReas/datasets/baseA/README.md)
+- Reference graph: [Base A](C:/Users/rdesb/psc/MASynReas/datasets/baseA/README.md)
+- Source variant: `quiescentA`
+- Execution mode: `apriori`
+- Mutation type: `critical_support_concentration_strong`
 
-Mode:
-- apriori
+## Why This Scenario Exists
 
-## Mutation Profile
+This scenario provides a documented mutation of a healthy reference graph so that Level-1 signals, Level-2 diagnoses, and benchmark KPIs can be interpreted against a known expected outcome. It is useful both for debugging the MAS and for producing comparable evaluation results across future runs.
 
-- Reuse the single-support mutation of DS05.
-- Remove the explicit interface of aseA:res_customer_vm_01.
-- Remove its management assignment.
+## Mutation Summary
 
-## Contents
+### Injected Anomalies
+- No anomaly entity is directly injected; the effect comes from structural or relational mutation.
 
-Files:
-- dataset.ttl
-- manifest.json
-- expected_level1.json
-- expected_level2.json
+### Removed Entities
+- `baseA:if_customer_vm_01`
 
-## KPI Targets
+### Removed Relations
+- `noria:resourceForApplication from baseA:res_customer_vm_02 to baseA:app_customer_portal`
+- `noria:resourceManagedBy on baseA:res_customer_vm_01`
 
-- severity_score_comparison
-- priority_score_comparison
+### Noise Additions
+- No noise is intentionally added in this scenario.
 
-## Expected Level 1 Signals
+## Expected Diagnostic Footprint
 
-- apriori/structural/criticality_structural_weakness_detector
-- apriori/structural/missing_interface_detector
-- apriori/structural/missing_redundancy_detector
-- apriori/structural/unmanaged_resource_detector
-- apriori/functional/over_concentrated_service_detector
+- Expected non-zero Level-1 bindings: `5`
+- Expected Level-2 diagnoses: `1`
 
-## Expected Level 2 Diagnoses
+### Expected Level-1 Agents
+- `apriori/structural/criticality_structural_weakness_detector`
+- `apriori/structural/missing_interface_detector`
+- `apriori/structural/missing_redundancy_detector`
+- `apriori/structural/unmanaged_resource_detector`
+- `apriori/functional/over_concentrated_service_detector`
 
-- apriori/critical_service_exposure_diagnoser
+### Expected Level-2 Diagnosers
+- `apriori/critical_service_exposure_diagnoser`
+
+## KPI Objectives
+
+- Comparative focus: severity differences should be visible across paired scenarios.
+- Comparative focus: priority ordering should remain consistent across paired scenarios.
+
+## Files
+
+- [dataset.ttl](C:/Users/rdesb/psc/MASynReas/datasets/DS06_critical_service_exposure_concentrated_service/dataset.ttl)
+- [manifest.json](C:/Users/rdesb/psc/MASynReas/datasets/DS06_critical_service_exposure_concentrated_service/manifest.json)
+- [expected_level1.json](C:/Users/rdesb/psc/MASynReas/datasets/DS06_critical_service_exposure_concentrated_service/expected_level1.json)
+- [expected_level2.json](C:/Users/rdesb/psc/MASynReas/datasets/DS06_critical_service_exposure_concentrated_service/expected_level2.json)
 
 ## Notes
 
-- The expected level-2 diagnosis remains critical service exposure.
-- Its severity should be higher than in DS05 because the remaining support is also fragile.
+- The companion JSON files are the authoritative machine-readable reference for automated evaluation scripts.
+- This README is intentionally written for human inspection and benchmark orientation.
+- The file is stored as UTF-8 without BOM to avoid the encoding artefacts seen in earlier generated documentation.
