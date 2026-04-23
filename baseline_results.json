@@ -1,0 +1,292 @@
+{
+  "apriori": {
+    "mode": "apriori",
+    "n_scripts": 23,
+    "scripts": [
+      {
+        "script": "src\\agt\\dynamic\\apriori\\change_without_effective_time_detector.py",
+        "duration_ms": 385.5,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\dynamic\\apriori\\event_without_related_element_detector.py",
+        "duration_ms": 216.8,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\dynamic\\apriori\\event_without_timestamp_detector.py",
+        "duration_ms": 197.1,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\functional\\apriori\\application_without_module_detector.py",
+        "duration_ms": 218.4,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\functional\\apriori\\application_without_resource_detector.py",
+        "duration_ms": 218.8,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\functional\\apriori\\duplicated_functional_mapping_detector.py",
+        "duration_ms": 220.4,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\functional\\apriori\\inconsistent_service_hierarchy_detector.py",
+        "duration_ms": 193.9,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\functional\\apriori\\over_concentrated_service_detector.py",
+        "duration_ms": 212.3,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\functional\\apriori\\service_without_application_detector.py",
+        "duration_ms": 245.7,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\functional\\apriori\\service_without_resource_coverage_detector.py",
+        "duration_ms": 229.2,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\procedural\\apriori\\change_request_without_scheduled_time_detector.py",
+        "duration_ms": 220.0,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\procedural\\apriori\\procedure_not_linked_to_resource_type_detector.py",
+        "duration_ms": 200.5,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\procedural\\apriori\\ticket_without_assigned_procedure_detector.py",
+        "duration_ms": 202.8,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\structural\\apriori\\application_without_support_detector.py",
+        "duration_ms": 196.9,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\structural\\apriori\\criticality_structural_weakness_detector.py",
+        "duration_ms": 177.2,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\structural\\apriori\\incomplete_network_link_detector.py",
+        "duration_ms": 179.4,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\structural\\apriori\\missing_interface_detector.py",
+        "duration_ms": 207.7,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\structural\\apriori\\missing_parent_resource_detector.py",
+        "duration_ms": 198.7,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\structural\\apriori\\missing_redundancy_detector.py",
+        "duration_ms": 175.7,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\structural\\apriori\\orphan_interface_detector.py",
+        "duration_ms": 193.4,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\structural\\apriori\\orphan_resource_detector.py",
+        "duration_ms": 186.0,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\structural\\apriori\\unconnected_interface_detector.py",
+        "duration_ms": 191.1,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\structural\\apriori\\unmanaged_resource_detector.py",
+        "duration_ms": 198.7,
+        "ok": true
+      }
+    ],
+    "sequential_ms": 4866.2,
+    "theoretical_parallel_ms": 385.5,
+    "speedup": 12.62,
+    "slowest_script": "src\\agt\\dynamic\\apriori\\change_without_effective_time_detector.py"
+  },
+  "aposteriori": {
+    "mode": "aposteriori",
+    "n_scripts": 31,
+    "scripts": [
+      {
+        "script": "src\\agt\\dynamic\\aposteriori\\change_followed_by_incident_detector.py",
+        "duration_ms": 201.9,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\dynamic\\aposteriori\\change_overlap_conflict.py",
+        "duration_ms": 181.9,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\dynamic\\aposteriori\\critical_event_ticket_escalation_detector.py",
+        "duration_ms": 201.8,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\dynamic\\aposteriori\\event_burst_detector.py",
+        "duration_ms": 348.6,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\dynamic\\aposteriori\\flapping_state_detector.py",
+        "duration_ms": 329.0,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\dynamic\\aposteriori\\incident_propagation_detector.py",
+        "duration_ms": 185.7,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\dynamic\\aposteriori\\multi_element_synchronous_incident_detector.py",
+        "duration_ms": 200.0,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\dynamic\\aposteriori\\parent_child_event_escalation_detector.py",
+        "duration_ms": 271.7,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\dynamic\\aposteriori\\reopened_incident_detector.py",
+        "duration_ms": 245.6,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\dynamic\\aposteriori\\repeated_similar_event_detector.py",
+        "duration_ms": 198.1,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\dynamic\\aposteriori\\silent_degradation_after_change_detector.py",
+        "duration_ms": 257.3,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\dynamic\\aposteriori\\stale_incident_detector.py",
+        "duration_ms": 190.7,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\functional\\aposteriori\\application_incident_without_resource_detector.py",
+        "duration_ms": 173.1,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\functional\\aposteriori\\cascading_service_failure_detector.py",
+        "duration_ms": 200.2,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\functional\\aposteriori\\conflicting_application_state_detector.py",
+        "duration_ms": 196.8,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\functional\\aposteriori\\hidden_service_dependency_detector.py",
+        "duration_ms": 181.3,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\functional\\aposteriori\\module_level_incident_aggregation_detector.py",
+        "duration_ms": 191.9,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\functional\\aposteriori\\resource_event_without_service_impact_detector.py",
+        "duration_ms": 188.1,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\functional\\aposteriori\\service_impacted_by_multiple_resources_detector.py",
+        "duration_ms": 176.4,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\functional\\aposteriori\\service_with_repeated_incident_detector.py",
+        "duration_ms": 209.8,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\functional\\aposteriori\\service_without_ticket_escalation_detector.py",
+        "duration_ms": 235.0,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\procedural\\aposteriori\\change_linked_to_multiple_incidents_detector.py",
+        "duration_ms": 194.8,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\procedural\\aposteriori\\incident_without_ticket_detector.py",
+        "duration_ms": 176.4,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\procedural\\aposteriori\\ticket_without_linked_event_detector.py",
+        "duration_ms": 201.6,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\structural\\aposteriori\\application_mapping_inconsistency_detector.py",
+        "duration_ms": 200.3,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\structural\\aposteriori\\child_component_incident_escalation_detector.py",
+        "duration_ms": 201.5,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\structural\\aposteriori\\high_impact_resource_detector.py",
+        "duration_ms": 186.2,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\structural\\aposteriori\\incident_on_incomple_link_detector.py",
+        "duration_ms": 188.9,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\structural\\aposteriori\\isolated_incident_resource_detector.py",
+        "duration_ms": 210.0,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\structural\\aposteriori\\no_redundancy_detector.py",
+        "duration_ms": 192.2,
+        "ok": true
+      },
+      {
+        "script": "src\\agt\\structural\\aposteriori\\spatial_incident_cluster_detector.py",
+        "duration_ms": 197.3,
+        "ok": true
+      }
+    ],
+    "sequential_ms": 6514.1,
+    "theoretical_parallel_ms": 348.6,
+    "speedup": 18.69,
+    "slowest_script": "src\\agt\\dynamic\\aposteriori\\event_burst_detector.py"
+  }
+}
