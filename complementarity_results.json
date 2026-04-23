@@ -1,0 +1,84 @@
+{
+  "apriori": {
+    "families": {
+      "structural": {
+        "active_agents": [
+          "application_without_support",
+          "missing_interface"
+        ],
+        "total_detections": 17
+      },
+      "dynamic": {
+        "active_agents": [
+          "event_without_related_element"
+        ],
+        "total_detections": 10
+      },
+      "functional": {
+        "active_agents": [
+          "application_without_resource",
+          "inconsistent_service_hierarchy"
+        ],
+        "total_detections": 7
+      },
+      "procedural": {
+        "active_agents": [
+          "ticket_without_assigned_procedure"
+        ],
+        "total_detections": 2
+      }
+    },
+    "synergy_cases": [
+      {
+        "entity": "APP_TOY_DC01",
+        "families": [
+          "structural",
+          "functional"
+        ]
+      },
+      {
+        "entity": "APP_TOY_DC02",
+        "families": [
+          "structural",
+          "functional"
+        ]
+      },
+      {
+        "entity": "APP_TOY_MON01",
+        "families": [
+          "structural",
+          "functional"
+        ]
+      }
+    ]
+  },
+  "aposteriori": {
+    "families": {
+      "structural": {
+        "active_agents": [],
+        "total_detections": 0
+      },
+      "dynamic": {
+        "active_agents": [],
+        "total_detections": 0
+      },
+      "functional": {
+        "active_agents": [
+          "application_incident_without_resource",
+          "cascading_service_failure",
+          "hidden_service_dependency",
+          "module_level_incident_aggregation",
+          "service_impacted_by_multiple_resources",
+          "service_with_repeated_incident",
+          "service_without_ticket_escalation"
+        ],
+        "total_detections": 19
+      },
+      "procedural": {
+        "active_agents": [],
+        "total_detections": 0
+      }
+    },
+    "synergy_cases": []
+  }
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "application": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/APP_TOY_DC01"
+    }
+  },
+  {
+    "application": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/APP_TOY_DC02"
+    }
+  },
+  {
+    "application": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/APP_TOY_MON01"
+    }
+  }
+]

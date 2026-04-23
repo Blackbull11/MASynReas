@@ -146,20 +146,58 @@ public class PythonExecArtifact extends Artifact {
     private String readConfiguredPythonExecutable(Properties properties) {
         String configuredPython = properties.getProperty("python.path", "").trim();
 
+        if (!configuredPython.isEmpty()) {
+            Path pythonPath = Paths.get(configuredPython);
+
+            if (Files.exists(pythonPath)) {
+                log("[PythonExecArtifact] Using Python interpreter: " + configuredPython);
+                return configuredPython;
+            }
+
+            log("[PythonExecArtifact] Configured python.path does not exist, trying fallbacks: " + configuredPython);
+        }
+
+        String fallback = findAvailablePythonExecutable();
+        if (fallback != null) {
+            log("[PythonExecArtifact] Using fallback Python interpreter: " + fallback);
+            return fallback;
+        }
+
         if (configuredPython.isEmpty()) {
-            failed("Missing 'python.path' in mas.properties.");
+            failed("Missing 'python.path' in mas.properties and no fallback interpreter was found.");
             return "python";
         }
 
-        Path pythonPath = Paths.get(configuredPython);
+        failed("Configured python.path does not exist and no fallback interpreter was found: " + configuredPython);
+        return configuredPython;
+    }
 
-        if (!Files.exists(pythonPath)) {
-            failed("Configured python.path does not exist: " + configuredPython);
-            return configuredPython;
+    private String findAvailablePythonExecutable() {
+        String[] candidates = new String[] {
+                "python",
+                "python3",
+                "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\VC\\SecurityIssueAnalysis\\python\\python.exe"
+        };
+
+        for (String candidate : candidates) {
+            if (isRunnablePython(candidate)) {
+                return candidate;
+            }
         }
 
-        log("[PythonExecArtifact] Using Python interpreter: " + configuredPython);
-        return configuredPython;
+        return null;
+    }
+
+    private boolean isRunnablePython(String candidate) {
+        try {
+            Process process = new ProcessBuilder(candidate, "--version")
+                    .redirectErrorStream(true)
+                    .start();
+            int exitCode = process.waitFor();
+            return exitCode == 0;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private int countPythonDetectors(String mode) {
@@ -174,6 +212,7 @@ public class PythonExecArtifact extends Artifact {
                     .filter(Files::isRegularFile)
                     .filter(path -> path.toString().endsWith(".py"))
                     .filter(path -> path.toString().contains(File.separator + mode + File.separator))
+                    .filter(path -> !path.toString().contains(File.separator + "level2" + File.separator))
                     .count();
         } catch (IOException e) {
             failed("Could not count detector scripts for mode '" + mode + "': " + e.getMessage());

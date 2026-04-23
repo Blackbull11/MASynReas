@@ -220,10 +220,63 @@ mas multiagentSystem {
         focus: w.pyexec
     }
 
+    // ── Level 2 : correlation and interpretation agents ──────────────────────
+    agent level2_controller {
+        focus: w.pyexec
+    }
+
+    agent structural_fragility_diagnoser {
+        focus: w.pyexec
+    }
+
+    agent critical_service_exposure_diagnoser {
+        focus: w.pyexec
+    }
+
+    agent observability_gap_diagnoser {
+        focus: w.pyexec
+    }
+
+    agent procedural_unreadiness_diagnoser {
+        focus: w.pyexec
+    }
+
+    agent functional_mapping_gap_diagnoser {
+        focus: w.pyexec
+    }
+
+    agent single_point_of_failure_diagnoser {
+        focus: w.pyexec
+    }
+
+    agent change_induced_incident_diagnoser {
+        focus: w.pyexec
+    }
+
+    agent service_cascade_diagnoser {
+        focus: w.pyexec
+    }
+
+    agent traceability_breakdown_diagnoser {
+        focus: w.pyexec
+    }
+
+    agent unstable_component_diagnoser {
+        focus: w.pyexec
+    }
+
+    agent application_support_failure_diagnoser {
+        focus: w.pyexec
+    }
+
+    agent local_infrastructure_cluster_diagnoser {
+        focus: w.pyexec
+    }
+
     workspace w {
         artifact pyexec: env.PythonExecArtifact()
     }
 
-    asl-path: ., src/agt, src/agt/structural/apriori, src/agt/structural/aposteriori, src/agt/dynamic/apriori, src/agt/dynamic/aposteriori, src/agt/functional/apriori, src/agt/functional/aposteriori, src/agt/procedural/apriori, src/agt/procedural/aposteriori
+    asl-path: ., src/agt, src/agt/structural/apriori, src/agt/structural/aposteriori, src/agt/dynamic/apriori, src/agt/dynamic/aposteriori, src/agt/functional/apriori, src/agt/functional/aposteriori, src/agt/procedural/apriori, src/agt/procedural/aposteriori, src/agt/level2, src/agt/level2/apriori, src/agt/level2/aposteriori
     java-path: ., src/env, src/agt
 }

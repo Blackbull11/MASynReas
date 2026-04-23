@@ -108,4 +108,21 @@ public class SparqlArtifact extends Artifact {
             signal("report_error", e.getMessage());
         }
     }
+
+    // ajoute du contenu à la fin d'un fichier existant (pour la narrative LLM)
+    @OPERATION
+    public void appendReport(String filePath, String content) {
+        try {
+            java.nio.file.Files.write(
+                java.nio.file.Paths.get(filePath),
+                content.getBytes(java.nio.charset.StandardCharsets.UTF_8),
+                java.nio.file.StandardOpenOption.APPEND,
+                java.nio.file.StandardOpenOption.CREATE
+            );
+            log("Contenu ajouté dans : " + filePath);
+        } catch (Exception e) {
+            log("Erreur appendReport : " + e.getMessage());
+            signal("report_error", e.getMessage());
+        }
+    }
 }

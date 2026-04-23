@@ -3,5 +3,8 @@ log/
 .vscode/
 *.class
 .gradle/
+result_narrative.txt
 .gradle-local/
 .gradle-project-cache/
+**/__pycache__/
+*.pyc
