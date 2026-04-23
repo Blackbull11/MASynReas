@@ -341,10 +341,13 @@ def compute_metrics(
     hallucinated: list[str] = []
     for det in detections:
         entity = det.get("entity", "")
+        # Handle full URIs, Turtle prefixed names (ns3:RES_TOY_as2 → RES_TOY_as2)
         local = entity.rstrip("/").split("/")[-1].split("#")[-1]
+        if ":" in local:
+            local = local.split(":")[-1]
         if local:
             llm_locals.add(local)
-        # Hallucination: entity not present anywhere in the graph
+        # Hallucination: local name not present anywhere in the graph
         if entity and local not in graph_names and entity not in graph_names:
             hallucinated.append(entity)
 
@@ -454,11 +457,30 @@ def main() -> None:
     ttl_path.write_text(graph_turtle, encoding="utf-8")
     print(f"  Graph saved to {ttl_path.name}  (attach to Claude/GPT chat for manual tests)")
 
+    # Load any previously completed results so reruns can skip finished combos
+    out = PROJECT_ROOT / "llm_baseline_results.json"
     results: dict = {}
+    if out.exists():
+        try:
+            results = json.loads(out.read_text(encoding="utf-8"))
+        except Exception:
+            results = {}
+
     for mode in modes:
-        results[mode] = {}
+        results.setdefault(mode, {})
         for strategy in strategies:
+            if strategy in results[mode] and "error" not in results[mode][strategy]:
+                print(f"\n  [{mode.upper()} / {strategy.upper()}]  skipped (already done)")
+                m = results[mode][strategy]["metrics"]
+                print(
+                    f"  recall={m['recall']:.2f}  precision={m['precision']:.2f}  "
+                    f"halluc={m['hallucination_rate']:.2f}  "
+                    f"agents hit={m['agents_covered']}/{m['agents_total']}"
+                )
+                continue
             results[mode][strategy] = run_one(mode, strategy, graph_turtle)
+            # Save after each combo so a crash doesn't lose work
+            out.write_text(json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")
 
     # ── Summary ──────────────────────────────────────────────────────────────
     print("\n" + "=" * 60)
@@ -484,7 +506,6 @@ def main() -> None:
                 f"{r['elapsed_s']:>6.0f}s"
             )
 
-    out = PROJECT_ROOT / "llm_baseline_results.json"
     out.write_text(json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"\n  Full results saved to {out.name}")
 
