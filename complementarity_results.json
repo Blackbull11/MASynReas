@@ -55,8 +55,11 @@
   "aposteriori": {
     "families": {
       "structural": {
-        "active_agents": [],
-        "total_detections": 0
+        "active_agents": [
+          "isolated_incident_resource",
+          "no_redundancy_incident"
+        ],
+        "total_detections": 10
       },
       "dynamic": {
         "active_agents": [],
@@ -79,6 +82,14 @@
         "total_detections": 0
       }
     },
-    "synergy_cases": []
+    "synergy_cases": [
+      {
+        "entity": "RES_TOY_pe_1_1",
+        "families": [
+          "structural",
+          "functional"
+        ]
+      }
+    ]
   }
 }

@@ -443,7 +443,7 @@ def compute_metrics(
 # MAIN
 # ─────────────────────────────────────────────────────────────────────────────
 
-def run_one(mode: str, strategy: str, graph_turtle: str, graph_names: set[str] | None = None) -> dict:
+def run_one(mode: str, strategy: str, graph_turtle: str, graph_names=None) -> dict:
     print(f"\n  [{mode.upper()} / {strategy.upper()}]")
 
     if strategy == "guided":

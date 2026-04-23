@@ -1,0 +1,44 @@
+﻿{
+    "dataset_id":  "DS01_clean_baseA",
+    "title":  "Clean control scenario derived from Base A",
+    "base_graph":  "baseA",
+    "source_variant":  "quiescentA",
+    "mode":  "both",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "quiescent_clean_slice",
+                             "injected_anomalies":  [
+
+                                                    ],
+                             "removed_entities":  [
+                                                      "baseA:event_customer_warning",
+                                                      "baseA:event_monitoring_warning",
+                                                      "baseA:ticket_customer_warning",
+                                                      "baseA:ticket_monitoring_warning"
+                                                  ],
+                             "removed_relations":  [
+
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "false_positive_control",
+                        "activation_correctness",
+                        "baseline_runtime",
+                        "traceability_sanity_check"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  {
+
+                                                       },
+                             "nonzero_level2_diagnosers":  {
+
+                                                           },
+                             "level1_total_bindings":  0,
+                             "level2_total_diagnoses":  0
+                         }
+}

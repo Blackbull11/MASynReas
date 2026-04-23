@@ -8,5 +8,5 @@
 
 +selected_mode(aposteriori)
   <- .print("[NoRedundancyIncidentDetector] Starting detection...");
-     run_python("src/agt/structural/aposteriori/no_redundancy_detector.py");
+     run_python("src/agt/structural/aposteriori/no_redundancy_incident_detector.py");
      .print("[NoRedundancyIncidentDetector] Detection finished.").

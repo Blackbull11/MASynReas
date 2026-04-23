@@ -1,0 +1,46 @@
+﻿{
+    "apriori":  {
+                    "critical_service_exposure_diagnoser":  [
+
+                                                            ],
+                    "functional_mapping_gap_diagnoser":  [
+
+                                                         ],
+                    "observability_gap_diagnoser":  [
+
+                                                    ],
+                    "procedural_unreadiness_diagnoser":  [
+
+                                                         ],
+                    "structural_fragility_diagnoser":  [
+                                                           {
+                                                               "anchor":  "baseA:res_access_switch_02",
+                                                               "reliability":  "high",
+                                                               "severity":  "medium"
+                                                           }
+                                                       ]
+                },
+    "aposteriori":  {
+                        "application_support_failure_diagnoser":  [
+
+                                                                  ],
+                        "change_induced_incident_diagnoser":  [
+
+                                                              ],
+                        "local_infrastructure_cluster_diagnoser":  [
+
+                                                                   ],
+                        "service_cascade_diagnoser":  [
+
+                                                      ],
+                        "single_point_of_failure_diagnoser":  [
+
+                                                              ],
+                        "traceability_breakdown_diagnoser":  [
+
+                                                             ],
+                        "unstable_component_diagnoser":  [
+
+                                                         ]
+                    }
+}

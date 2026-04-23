@@ -10,13 +10,13 @@ The project is implemented with:
 
 ## Architecture
 
-The system has three layers:
+The system is organized in three layers:
 
-- **Level 1 — Detector agents** (54 agents across 4 families): each runs a SPARQL query against Virtuoso and writes a JSON result to `results/`
-- **Level 2 — Diagnoser agents** (4 agents): correlate level-1 results across families to produce structured diagnoses with confidence scores
-- **Level 3 — Narrative synthesis**: a local LLM (via Ollama) synthesizes a natural language diagnosis from level-1+2 outputs (evaluated via ablation study; not wired into the JaCaMo MAS)
+- **Level 1 — Detector agents**: one elementary pattern per agent, one SPARQL query per agent, one JSON result file per agent
+- **Level 2 — Diagnoser agents**: deterministic aggregation of level-1 outputs into higher-level diagnoses
+- **Level 3 — Narrative synthesis**: a local LLM synthesizes a natural-language diagnosis from level-1+2 outputs (evaluated via ablation study; not wired into the JaCaMo MAS)
 
-### Agent families
+### Level 1 families
 
 | Family | Apriori agents | Aposteriori agents |
 |--------|:--------------:|:-----------------:|
@@ -25,20 +25,50 @@ The system has three layers:
 | Functional | 7 | 9 |
 | Procedural | 3 | 3 |
 
-### Level-2 diagnosers
+Level 1 currently represents **54 detector agents**.
 
-| Agent | Mode | Correlation |
-|-------|------|-------------|
-| `single_point_of_failure_diagnoser` | aposteriori | 3 structural signals on same resource |
-| `change_induced_incident_diagnoser` | aposteriori | dynamic + procedural signals on same change |
-| `traceability_breakdown_diagnoser` | aposteriori | incident_without_ticket + ticket_without_event |
-| `structural_fragility_diagnoser` | apriori | accumulation of governance weaknesses |
+### Level 2 catalogue
+
+Level 2 is no longer a small flat prototype. It is now organized by execution mode:
+
+- `src/agt/level2/apriori`
+- `src/agt/level2/aposteriori`
+
+#### A priori diagnosers
+
+- `structural_fragility_diagnoser`
+- `critical_service_exposure_diagnoser`
+- `observability_gap_diagnoser`
+- `procedural_unreadiness_diagnoser`
+- `functional_mapping_gap_diagnoser`
+
+#### A posteriori diagnosers
+
+- `single_point_of_failure_diagnoser`
+- `change_induced_incident_diagnoser`
+- `service_cascade_diagnoser`
+- `traceability_breakdown_diagnoser`
+- `unstable_component_diagnoser`
+- `application_support_failure_diagnoser`
+- `local_infrastructure_cluster_diagnoser`
+
+Level 2 therefore currently contains **12 diagnoser agents**.
+
+Each level-2 agent:
+- reads a selected set of level-1 JSON result files
+- checks deterministic activation conditions
+- correlates evidence on shared anchors
+- computes reliability, severity, and priority scores
+- writes one diagnosis JSON file under `results/level2/<mode>/`
+
+See [src/agt/level2/README.md](src/agt/level2/README.md) for the detailed level-2 architecture.
 
 ## Execution Modes
 
 The MAS can be launched in two modes:
-- `apriori`: detects structural weaknesses independently of any incident context
-- `aposteriori`: diagnoses anomalies in an incident context
+
+- `apriori`: diagnoses weaknesses independently from any explicit incident context
+- `aposteriori`: diagnoses anomaly causes and propagation after incidents, events, or tickets exist
 
 The selected mode is configured in `mas.properties`:
 
@@ -47,7 +77,7 @@ mode=apriori
 python.path=C:/path/to/python.exe
 ```
 
-Accepted values: `apriori` or `aposteriori`.
+Accepted values are `apriori` and `aposteriori`.
 
 ## Running the MAS
 
@@ -57,16 +87,22 @@ From the project root:
 jacamo multiagentSystem.jcm
 ```
 
-In `apriori` mode, the MAS stops automatically after all detectors and the level-2 diagnoser complete.  
-In `aposteriori` mode, the 3 level-2 diagnosers run after all level-1 detectors complete.
+Execution flow:
 
-## Running experiments (without JaCaMo)
+1. The selected mode activates the corresponding level-1 agents.
+2. Level-1 agents write their JSON results in `results/<family>/<mode>/`.
+3. `level2_controller` waits for all level-1 scripts of the selected mode.
+4. The controller launches only the level-2 diagnosers of the same mode.
+
+Current mode-specific behavior:
+
+- In `apriori` mode, the MAS stops automatically after the 5 level-2 a priori diagnosers complete.
+- In `aposteriori` mode, the 7 level-2 a posteriori diagnosers run after the full level-1 catalogue of that mode.
+
+## Running Experiments
 
 ```powershell
-# Run all level-1 detectors directly
 python -X utf8 run_all_detectors.py both
-
-# Complementarity table (non-redundancy proof)
 python -X utf8 complementarity_table.py
 
 # Sequential baseline (speedup measurement)
@@ -80,30 +116,29 @@ python -X utf8 ablation_study.py
 python -X utf8 llm_detector_baseline.py both both
 ```
 
-See `EXPERIMENTS_README.md` for full results and analysis.
+See `EXPERIMENTS_README.md` for the experiment-oriented documentation.
 
 ## Requirements
 
 ### Java / JaCaMo
-- JaCaMo CLI (`jacamo` command available in PATH)
+
+- JaCaMo CLI available in `PATH`
 - Java 11+
 
 ### Python
+
 - Python 3.8+
-- `requests`, `SPARQLWrapper` libraries
+- `requests`
+- `SPARQLWrapper`
 
 ### SPARQL endpoint
-- Virtuoso running on `http://localhost:8890/sparql` with NORIA-O dataset loaded
 
-### Ollama (for level-3 narrative and ablation study)
+- Virtuoso running on `http://localhost:8890/sparql`
+- NORIA-O dataset loaded in the endpoint
 
-1. Download and install Ollama from `ollama.com/download`
-2. Pull the models:
-   ```bash
-   ollama pull llama3.2:3b
-   ollama pull llama3.1:8b
-   ```
-3. Ollama starts automatically as a background service. If needed: `ollama serve`
+### Level 3 synthesis
+
+If you use the narrative synthesis layer, configure the local LLM runtime expected by the project.
 
 ### LLM baseline on a GPU server (no Virtuoso needed)
 
@@ -121,8 +156,8 @@ ssh user@server "cd ~/baseline && HF_HOME=/tmp/hf_cache python3 llm_detector_bas
 
 ## Main entry files
 
-- `multiagentSystem.jcm` — main JaCaMo project file
-- `mas.properties` — mode and python path configuration
-- `src/env/env/PythonExecArtifact.java` — shared artifact that runs Python scripts
-- `src/agt/level2/README.md` — level-2 agent documentation
-- `EXPERIMENTS_README.md` — experiment results and analysis
+- [multiagentSystem.jcm](multiagentSystem.jcm)
+- [mas.properties](mas.properties)
+- [src/env/env/PythonExecArtifact.java](src/env/env/PythonExecArtifact.java)
+- [src/agt/level2/README.md](src/agt/level2/README.md)
+- [EXPERIMENTS_README.md](EXPERIMENTS_README.md)

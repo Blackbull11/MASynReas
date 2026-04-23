@@ -1,0 +1,42 @@
+﻿{
+    "dataset_id":  "DS17_local_infrastructure_cluster_basic",
+    "title":  "Several incident signals concentrate in the same location and time window",
+    "base_graph":  "baseB",
+    "source_variant":  "baseB",
+    "mode":  "aposteriori",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "local_infrastructure_cluster",
+                             "injected_anomalies":  [
+                                                        "baseB:event_billing_cluster",
+                                                        "baseB:event_switch_cluster",
+                                                        "baseB:ticket_billing_cluster",
+                                                        "baseB:ticket_switch_cluster"
+                                                    ],
+                             "removed_entities":  [
+
+                                                  ],
+                             "removed_relations":  [
+
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "precision_at_l2",
+                        "recall_at_l2",
+                        "top1_diagnosis_accuracy"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "aposteriori/structural/spatial_incident_cluster_detector",
+                                                           "aposteriori/dynamic/multi_element_synchronous_incident_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  "aposteriori/local_infrastructure_cluster_diagnoser",
+                             "level1_total_bindings":  2,
+                             "level2_total_diagnoses":  1
+                         }
+}

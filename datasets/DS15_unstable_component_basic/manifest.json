@@ -1,0 +1,47 @@
+﻿{
+    "dataset_id":  "DS15_unstable_component_basic",
+    "title":  "Repeated and contradictory symptoms accumulate on one monitored component",
+    "base_graph":  "baseB",
+    "source_variant":  "baseB",
+    "mode":  "aposteriori",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "unstable_component",
+                             "injected_anomalies":  [
+                                                        "baseB:event_monitor_down",
+                                                        "baseB:event_monitor_up",
+                                                        "baseB:event_monitor_timeout",
+                                                        "baseB:event_monitor_timeout_repeat",
+                                                        "baseB:ticket_monitor_resolved_old",
+                                                        "baseB:ticket_monitor_active_new"
+                                                    ],
+                             "removed_entities":  [
+
+                                                  ],
+                             "removed_relations":  [
+
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "precision_at_l2",
+                        "recall_at_l2",
+                        "priority_score_calibration"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "aposteriori/dynamic/event_burst_detector",
+                                                           "aposteriori/dynamic/flapping_state_detector",
+                                                           "aposteriori/dynamic/reopened_incident_detector",
+                                                           "aposteriori/dynamic/repeated_similar_event_detector",
+                                                           "aposteriori/dynamic/stale_incident_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  "aposteriori/unstable_component_diagnoser",
+                             "level1_total_bindings":  5,
+                             "level2_total_diagnoses":  1
+                         }
+}

@@ -1,0 +1,42 @@
+﻿{
+    "dataset_id":  "DS26_scalability_medium",
+    "title":  "Medium clean graph for the second point of the scalability curve",
+    "base_graph":  "baseB",
+    "source_variant":  "quiescentB",
+    "mode":  "both",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "scalability_medium",
+                             "injected_anomalies":  [
+
+                                                    ],
+                             "removed_entities":  [
+
+                                                  ],
+                             "removed_relations":  [
+
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "end_to_end_runtime",
+                        "mean_runtime_per_detector",
+                        "mean_runtime_per_diagnoser",
+                        "sparql_efficiency",
+                        "scalability_curve_point_2"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  {
+
+                                                       },
+                             "nonzero_level2_diagnosers":  {
+
+                                                           },
+                             "level1_total_bindings":  0,
+                             "level2_total_diagnoses":  0
+                         }
+}

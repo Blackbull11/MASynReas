@@ -1,0 +1,190 @@
+﻿{
+    "apriori":  {
+                    "structural":  {
+                                       "application_without_support_detector":  [
+
+                                                                                ],
+                                       "criticality_structural_weakness_detector":  [
+
+                                                                                    ],
+                                       "incomplete_network_link_detector":  [
+
+                                                                            ],
+                                       "missing_interface_detector":  [
+                                                                          {
+                                                                              "resource":  "baseA:res_access_switch_02"
+                                                                          }
+                                                                      ],
+                                       "missing_parent_resource_detector":  [
+                                                                                {
+                                                                                    "resource":  "baseA:res_access_switch_02"
+                                                                                }
+                                                                            ],
+                                       "missing_redundancy_detector":  [
+
+                                                                       ],
+                                       "orphan_interface_detector":  [
+
+                                                                     ],
+                                       "orphan_resource_detector":  [
+
+                                                                    ],
+                                       "unconnected_interface_detector":  [
+
+                                                                          ],
+                                       "unmanaged_resource_detector":  [
+                                                                           {
+                                                                               "resource":  "baseA:res_access_switch_02"
+                                                                           }
+                                                                       ]
+                                   },
+                    "dynamic":  {
+                                    "change_without_effective_time_detector":  [
+
+                                                                               ],
+                                    "event_without_related_element_detector":  [
+
+                                                                               ],
+                                    "event_without_timestamp_detector":  [
+
+                                                                         ]
+                                },
+                    "functional":  {
+                                       "application_without_module_detector":  [
+
+                                                                               ],
+                                       "application_without_resource_detector":  [
+
+                                                                                 ],
+                                       "duplicated_functional_mapping_detector":  [
+
+                                                                                  ],
+                                       "inconsistent_service_hierarchy_detector":  [
+
+                                                                                   ],
+                                       "over_concentrated_service_detector":  [
+
+                                                                              ],
+                                       "service_without_application_detector":  [
+
+                                                                                ],
+                                       "service_without_resource_coverage_detector":  [
+
+                                                                                      ]
+                                   },
+                    "procedural":  {
+                                       "change_request_without_scheduled_time_detector":  [
+
+                                                                                          ],
+                                       "procedure_not_linked_to_resource_type_detector":  [
+
+                                                                                          ],
+                                       "ticket_without_assigned_procedure_detector":  [
+
+                                                                                      ]
+                                   }
+                },
+    "aposteriori":  {
+                        "structural":  {
+                                           "application_mapping_inconsistency_detector":  [
+
+                                                                                          ],
+                                           "child_component_incident_escalation_detector":  [
+
+                                                                                            ],
+                                           "high_impact_resource_detector":  [
+
+                                                                             ],
+                                           "incident_on_incomplete_link_detector":  [
+
+                                                                                    ],
+                                           "isolated_incident_resource_detector":  [
+
+                                                                                   ],
+                                           "no_redundancy_incident_detector":  [
+
+                                                                               ],
+                                           "spatial_incident_cluster_detector":  [
+
+                                                                                 ]
+                                       },
+                        "dynamic":  {
+                                        "change_followed_by_incident_detector":  [
+
+                                                                                 ],
+                                        "change_overlap_conflict":  [
+
+                                                                    ],
+                                        "critical_event_ticket_escalation_detector":  [
+
+                                                                                      ],
+                                        "event_burst_detector":  [
+
+                                                                 ],
+                                        "flapping_state_detector":  [
+
+                                                                    ],
+                                        "incident_propagation_detector":  [
+
+                                                                          ],
+                                        "multi_element_synchronous_incident_detector":  [
+
+                                                                                        ],
+                                        "parent_child_event_escalation_detector":  [
+
+                                                                                   ],
+                                        "reopened_incident_detector":  [
+
+                                                                       ],
+                                        "repeated_similar_event_detector":  [
+
+                                                                            ],
+                                        "silent_degradation_after_change_detector":  [
+
+                                                                                     ],
+                                        "stale_incident_detector":  [
+
+                                                                    ]
+                                    },
+                        "functional":  {
+                                           "application_incident_without_resource_detector":  [
+
+                                                                                              ],
+                                           "cascading_service_failure_detector":  [
+
+                                                                                  ],
+                                           "conflicting_application_state_detector":  [
+
+                                                                                      ],
+                                           "hidden_service_dependency_detector":  [
+
+                                                                                  ],
+                                           "module_level_incident_aggregation_detector":  [
+
+                                                                                          ],
+                                           "resource_event_without_service_impact_detector":  [
+
+                                                                                              ],
+                                           "service_impacted_by_multiple_resources_detector":  [
+
+                                                                                               ],
+                                           "service_without_ticket_escalation_detector":  [
+
+                                                                                          ],
+                                           "service_with_repeated_incident_detector":  [
+
+                                                                                       ]
+                                       },
+                        "procedural":  {
+                                           "change_linked_to_multiple_incidents_detector":  [
+
+                                                                                            ],
+                                           "incident_without_ticket_detector":  [
+
+                                                                                ],
+                                           "ticket_without_linked_event_detector":  [
+
+                                                                                    ]
+                                       }
+                    }
+}

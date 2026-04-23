@@ -1,0 +1,45 @@
+﻿{
+    "dataset_id":  "DS11_single_point_of_failure_basic",
+    "title":  "An incident reveals a structurally exposed single point of failure",
+    "base_graph":  "baseB",
+    "source_variant":  "baseB",
+    "mode":  "aposteriori",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "single_point_of_failure",
+                             "injected_anomalies":  [
+                                                        "baseB:event_firewall_major",
+                                                        "baseB:ticket_firewall_major"
+                                                    ],
+                             "removed_entities":  [
+                                                      "baseB:if_workforce_vm_01",
+                                                      "baseB:if_firewall_01_port_02",
+                                                      "baseB:link_workforce_vm_01_to_firewall_01",
+                                                      "baseB:if_monitor_vm_01"
+                                                  ],
+                             "removed_relations":  [
+
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "precision_at_l2",
+                        "recall_at_l2",
+                        "top1_diagnosis_accuracy"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "aposteriori/structural/high_impact_resource_detector",
+                                                           "aposteriori/structural/incident_on_incomplete_link_detector",
+                                                           "aposteriori/structural/isolated_incident_resource_detector",
+                                                           "aposteriori/structural/no_redundancy_incident_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  "aposteriori/single_point_of_failure_diagnoser",
+                             "level1_total_bindings":  4,
+                             "level2_total_diagnoses":  1
+                         }
+}

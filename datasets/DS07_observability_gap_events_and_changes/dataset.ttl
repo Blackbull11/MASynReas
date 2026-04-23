@@ -1,0 +1,282 @@
+﻿@prefix baseA: <https://example.org/masynreas/datasets/baseA/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix noria: <https://w3id.org/noria/ontology/> .
+@prefix pep: <https://w3id.org/pep/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix seas: <https://w3id.org/seas/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+baseA:dataset
+    a noria:Dataset ;
+    rdfs:label "MASynReas Base A"@en ;
+    dcterms:description "Small healthy NORIA-O reference graph for MASynReas."@en .
+
+baseA:team_platform
+    a foaf:Agent ;
+    rdfs:label "Platform Operations Team"@en .
+
+baseA:team_network
+    a foaf:Agent ;
+    rdfs:label "Network Operations Team"@en .
+
+baseA:type_virtual_machine
+    a skos:Concept ;
+    rdfs:label "Virtual machine"@en .
+
+baseA:type_switch
+    a skos:Concept ;
+    rdfs:label "Network switch"@en .
+
+baseA:criticality_high
+    a skos:Concept ;
+    rdfs:label "High"@en .
+
+baseA:criticality_medium
+    a skos:Concept ;
+    rdfs:label "Medium"@en .
+
+baseA:severity_minor
+    a skos:Concept ;
+    rdfs:label "Minor"@en .
+
+baseA:priority_normal
+    a skos:Concept ;
+    rdfs:label "Normal"@en .
+
+baseA:urgency_normal
+    a skos:Concept ;
+    rdfs:label "Normal"@en .
+
+baseA:status_closed
+    a skos:Concept ;
+    rdfs:label "Closed"@en .
+
+baseA:event_type_warning
+    a skos:Concept ;
+    rdfs:label "Warning event"@en .
+
+baseA:site_paris_dc
+    rdfs:label "Paris DC"@en .
+
+baseA:room_dc1
+    rdfs:label "Paris DC room 1"@en .
+
+baseA:compute_zone_customer
+    rdfs:label "Customer compute zone"@en .
+
+baseA:compute_zone_monitoring
+    rdfs:label "Monitoring compute zone"@en .
+
+baseA:network_zone_access
+    rdfs:label "Access network zone"@en .
+
+baseA:service_customer_access
+    a noria:Service ;
+    rdfs:label "Customer Access Service"@en ;
+    prov:wasDerivedFrom "MASynReas-baseA" .
+
+baseA:service_network_monitoring
+    a noria:Service ;
+    rdfs:label "Network Monitoring Service"@en ;
+    prov:wasDerivedFrom "MASynReas-baseA" .
+
+baseA:module_customer_portal
+    a noria:ApplicationModule ;
+    rdfs:label "Customer Portal Module"@en ;
+    seas:subSystemOf baseA:service_customer_access ;
+    noria:applicationModuleOf baseA:app_customer_portal ;
+    prov:wasDerivedFrom "MASynReas-baseA" .
+
+baseA:module_monitoring_dashboard
+    a noria:ApplicationModule ;
+    rdfs:label "Monitoring Dashboard Module"@en ;
+    seas:subSystemOf baseA:service_network_monitoring ;
+    noria:applicationModuleOf baseA:app_monitoring_dashboard ;
+    prov:wasDerivedFrom "MASynReas-baseA" .
+
+baseA:app_customer_portal
+    a noria:Application ;
+    rdfs:label "Customer Portal"@en ;
+    noria:businessCriticality <https://w3id.org/noria/kos/application/criticality/high-critical> ;
+    prov:wasDerivedFrom "MASynReas-baseA" .
+
+baseA:app_monitoring_dashboard
+    a noria:Application ;
+    rdfs:label "Monitoring Dashboard"@en ;
+    noria:businessCriticality baseA:criticality_medium ;
+    prov:wasDerivedFrom "MASynReas-baseA" .
+
+baseA:res_customer_vm_01
+    a noria:Resource ;
+    rdfs:label "Customer VM 01"@en ;
+    noria:resourceType baseA:type_virtual_machine ;
+    noria:resourceManagedBy baseA:team_platform ;
+    noria:resourceForApplication baseA:app_customer_portal ;
+    noria:locatedIn baseA:room_dc1 ;
+    seas:subSystemOf baseA:compute_zone_customer ;
+    prov:wasDerivedFrom "MASynReas-baseA" .
+
+baseA:res_customer_vm_02
+    a noria:Resource ;
+    rdfs:label "Customer VM 02"@en ;
+    noria:resourceType baseA:type_virtual_machine ;
+    noria:resourceManagedBy baseA:team_platform ;
+    noria:resourceForApplication baseA:app_customer_portal ;
+    noria:locatedIn baseA:room_dc1 ;
+    seas:subSystemOf baseA:compute_zone_customer ;
+    prov:wasDerivedFrom "MASynReas-baseA" .
+
+baseA:res_monitor_vm_01
+    a noria:Resource ;
+    rdfs:label "Monitoring VM 01"@en ;
+    noria:resourceType baseA:type_virtual_machine ;
+    noria:resourceManagedBy baseA:team_platform ;
+    noria:resourceForApplication baseA:app_monitoring_dashboard ;
+    noria:locatedIn baseA:room_dc1 ;
+    seas:subSystemOf baseA:compute_zone_monitoring ;
+    prov:wasDerivedFrom "MASynReas-baseA" .
+
+baseA:res_monitor_vm_02
+    a noria:Resource ;
+    rdfs:label "Monitoring VM 02"@en ;
+    noria:resourceType baseA:type_virtual_machine ;
+    noria:resourceManagedBy baseA:team_platform ;
+    noria:resourceForApplication baseA:app_monitoring_dashboard ;
+    noria:locatedIn baseA:room_dc1 ;
+    seas:subSystemOf baseA:compute_zone_monitoring ;
+    prov:wasDerivedFrom "MASynReas-baseA" .
+
+baseA:res_access_switch_01
+    a noria:Resource ;
+    rdfs:label "Access Switch 01"@en ;
+    noria:resourceType baseA:type_switch ;
+    noria:resourceManagedBy baseA:team_network ;
+    noria:locatedIn baseA:room_dc1 ;
+    seas:subSystemOf baseA:network_zone_access ;
+    prov:wasDerivedFrom "MASynReas-baseA" .
+
+baseA:res_access_switch_02
+    a noria:Resource ;
+    rdfs:label "Access Switch 02"@en ;
+    noria:resourceType baseA:type_switch ;
+    noria:resourceManagedBy baseA:team_network ;
+    noria:locatedIn baseA:room_dc1 ;
+    seas:subSystemOf baseA:network_zone_access ;
+    prov:wasDerivedFrom "MASynReas-baseA" .
+
+baseA:if_customer_vm_01
+    a noria:NetworkInterface ;
+    rdfs:label "Customer VM 01 interface"@en ;
+    noria:networkInterfaceOf baseA:res_customer_vm_01 ;
+    noria:networkInterfaceConnects baseA:link_customer_vm_01_to_switch_01 .
+
+baseA:if_customer_vm_02
+    a noria:NetworkInterface ;
+    rdfs:label "Customer VM 02 interface"@en ;
+    noria:networkInterfaceOf baseA:res_customer_vm_02 ;
+    noria:networkInterfaceConnects baseA:link_customer_vm_02_to_switch_02 .
+
+baseA:if_monitor_vm_01
+    a noria:NetworkInterface ;
+    rdfs:label "Monitoring VM 01 interface"@en ;
+    noria:networkInterfaceOf baseA:res_monitor_vm_01 ;
+    noria:networkInterfaceConnects baseA:link_monitor_vm_01_to_switch_01 .
+
+baseA:if_monitor_vm_02
+    a noria:NetworkInterface ;
+    rdfs:label "Monitoring VM 02 interface"@en ;
+    noria:networkInterfaceOf baseA:res_monitor_vm_02 ;
+    noria:networkInterfaceConnects baseA:link_monitor_vm_02_to_switch_02 .
+
+baseA:if_switch_01_port_01
+    a noria:NetworkInterface ;
+    rdfs:label "Switch 01 port 01"@en ;
+    noria:networkInterfaceOf baseA:res_access_switch_01 ;
+    noria:networkInterfaceConnects baseA:link_customer_vm_01_to_switch_01 .
+
+baseA:if_switch_01_port_02
+    a noria:NetworkInterface ;
+    rdfs:label "Switch 01 port 02"@en ;
+    noria:networkInterfaceOf baseA:res_access_switch_01 ;
+    noria:networkInterfaceConnects baseA:link_monitor_vm_01_to_switch_01 .
+
+baseA:if_switch_02_port_01
+    a noria:NetworkInterface ;
+    rdfs:label "Switch 02 port 01"@en ;
+    noria:networkInterfaceOf baseA:res_access_switch_02 ;
+    noria:networkInterfaceConnects baseA:link_customer_vm_02_to_switch_02 .
+
+baseA:if_switch_02_port_02
+    a noria:NetworkInterface ;
+    rdfs:label "Switch 02 port 02"@en ;
+    noria:networkInterfaceOf baseA:res_access_switch_02 ;
+    noria:networkInterfaceConnects baseA:link_monitor_vm_02_to_switch_02 .
+
+baseA:link_customer_vm_01_to_switch_01
+    a noria:NetworkLink ;
+    rdfs:label "Customer VM 01 to Switch 01"@en ;
+    noria:networkLinkTerminationResource baseA:res_customer_vm_01, baseA:res_access_switch_01 ;
+    prov:wasDerivedFrom "MASynReas-baseA" .
+
+baseA:link_customer_vm_02_to_switch_02
+    a noria:NetworkLink ;
+    rdfs:label "Customer VM 02 to Switch 02"@en ;
+    noria:networkLinkTerminationResource baseA:res_customer_vm_02, baseA:res_access_switch_02 ;
+    prov:wasDerivedFrom "MASynReas-baseA" .
+
+baseA:link_monitor_vm_01_to_switch_01
+    a noria:NetworkLink ;
+    rdfs:label "Monitoring VM 01 to Switch 01"@en ;
+    noria:networkLinkTerminationResource baseA:res_monitor_vm_01, baseA:res_access_switch_01 ;
+    prov:wasDerivedFrom "MASynReas-baseA" .
+
+baseA:link_monitor_vm_02_to_switch_02
+    a noria:NetworkLink ;
+    rdfs:label "Monitoring VM 02 to Switch 02"@en ;
+    noria:networkLinkTerminationResource baseA:res_monitor_vm_02, baseA:res_access_switch_02 ;
+    prov:wasDerivedFrom "MASynReas-baseA" .
+
+baseA:procedure_restart_customer_portal
+    a pep:Procedure ;
+    rdfs:label "Restart customer portal node"@en .
+
+baseA:procedure_restart_monitoring_agent
+    a pep:Procedure ;
+    rdfs:label "Restart monitoring agent"@en .
+
+baseA:change_switch_firmware_window
+    a noria:ChangeRequest ;
+    rdfs:label "Access switch firmware verification"@en ;
+    noria:eventRelatedElement baseA:res_access_switch_01 ;
+    noria:plannedStartDate "2026-01-05T08:00:00Z"^^xsd:dateTime ;
+    noria:plannedEndDate "2026-01-05T08:30:00Z"^^xsd:dateTime ;
+    noria:changeRequestActualStartTime "2026-01-05T08:05:00Z"^^xsd:dateTime ;
+
+baseA:change_monitoring_patch
+    a noria:ChangeRequest ;
+    rdfs:label "Monitoring stack patch window"@en ;
+    noria:eventRelatedElement baseA:app_monitoring_dashboard ;
+    noria:plannedStartDate "2026-01-07T09:00:00Z"^^xsd:dateTime ;
+    noria:plannedEndDate "2026-01-07T09:45:00Z"^^xsd:dateTime ;
+    noria:changeRequestActualStartTime "2026-01-07T09:05:00Z"^^xsd:dateTime ;
+
+baseA:event_obs_missing_timestamp
+    a noria:EventRecord ;
+    rdfs:label "Observability event without timestamp"@en ;
+    noria:eventRelatedElement baseA:res_customer_vm_02 ;
+    noria:logOriginatingManagedObject baseA:res_customer_vm_02 ;
+    noria:logOriginatingManagementSystem baseA:app_customer_portal ;
+    noria:alarmProposedRepairAction baseA:procedure_restart_customer_portal ;
+    noria:logText "Observability degraded: event ingested without timestamp."@en ;
+    dcterms:type baseA:event_type_warning .
+
+baseA:event_obs_missing_related
+    a noria:EventRecord ;
+    rdfs:label "Observability event without related element"@en ;
+    noria:loggingTime "2026-01-08T08:00:00Z"^^xsd:dateTime ;
+    noria:logText "Observability degraded: event missing related element."@en ;
+    dcterms:type baseA:event_type_warning .
+

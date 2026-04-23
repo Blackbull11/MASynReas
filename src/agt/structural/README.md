@@ -136,8 +136,7 @@ Current SPARQL logic:
 Detects incidents involving resources connected to incomplete links.
 
 Agent/script note:
-- the JaCaMo agent is named `incident_on_incomplete_link_detector`
-- the current Python script filename is `incident_on_incomple_link_detector.py`
+- the JaCaMo agent and the Python script are both named `incident_on_incomplete_link_detector`
 
 Current SPARQL logic:
 - starts from `noria:TroubleTicket`
@@ -161,8 +160,7 @@ Current SPARQL logic:
 Detects incident-affected resources with no visible structural redundancy.
 
 Agent/script note:
-- the JaCaMo agent is named `no_redundancy_incident_detector`
-- the current Python script filename is `no_redundancy_detector.py`
+- the JaCaMo agent and the Python script are both named `no_redundancy_incident_detector`
 
 Current SPARQL logic:
 - starts from `noria:TroubleTicket`

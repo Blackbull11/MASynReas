@@ -1,0 +1,40 @@
+﻿{
+    "dataset_id":  "DS21_noisy_irrelevant_events",
+    "title":  "Benign extra events are injected without strong diagnosis value",
+    "base_graph":  "baseB",
+    "source_variant":  "quiescentB",
+    "mode":  "aposteriori",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "noise_irrelevant_events",
+                             "injected_anomalies":  [
+                                                        "baseB:event_noise_probe_01",
+                                                        "baseB:event_noise_probe_02",
+                                                        "baseB:event_noise_probe_03"
+                                                    ],
+                             "removed_entities":  [
+
+                                                  ],
+                             "removed_relations":  [
+
+                                                   ],
+                             "noise_additions":  [
+                                                     "Three benign events on a non-service resource"
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "noise_robustness",
+                        "ranking_stability",
+                        "sparql_efficiency_under_noise"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  "aposteriori/functional/resource_event_without_service_impact_detector",
+                             "nonzero_level2_diagnosers":  {
+
+                                                           },
+                             "level1_total_bindings":  1,
+                             "level2_total_diagnoses":  0
+                         }
+}

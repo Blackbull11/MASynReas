@@ -1,0 +1,40 @@
+﻿{
+    "dataset_id":  "DS02_partial_evidence_no_l2_v1",
+    "title":  "Weak isolated evidence without convergent level-2 diagnosis",
+    "base_graph":  "baseA",
+    "source_variant":  "quiescentA",
+    "mode":  "both",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "weak_partial_signals",
+                             "injected_anomalies":  [
+                                                        "baseA:event_partial_signal"
+                                                    ],
+                             "removed_entities":  [
+
+                                                  ],
+                             "removed_relations":  [
+                                                       "noria:changeRequestActualEndTime on baseA:change_switch_firmware_window"
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "activation_correctness",
+                        "false_positive_resistance"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "apriori/dynamic/change_without_effective_time_detector",
+                                                           "apriori/dynamic/event_without_related_element_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  {
+
+                                                           },
+                             "level1_total_bindings":  2,
+                             "level2_total_diagnoses":  0
+                         }
+}

@@ -1,0 +1,39 @@
+﻿{
+    "dataset_id":  "DS13_service_cascade_basic",
+    "title":  "A shared functional dependency lets one technical issue affect several services",
+    "base_graph":  "baseB",
+    "source_variant":  "baseB",
+    "mode":  "aposteriori",
+    "graph_files":  [
+                        "dataset.ttl"
+                    ],
+    "mutation_profile":  {
+                             "type":  "service_cascade",
+                             "injected_anomalies":  [
+
+                                                    ],
+                             "removed_entities":  [
+
+                                                  ],
+                             "removed_relations":  [
+
+                                                   ],
+                             "noise_additions":  [
+
+                                                 ]
+                         },
+    "kpi_targets":  [
+                        "precision_at_l2",
+                        "recall_at_l2",
+                        "family_contribution_analysis"
+                    ],
+    "expected_summary":  {
+                             "nonzero_level1_agents":  [
+                                                           "aposteriori/functional/cascading_service_failure_detector",
+                                                           "aposteriori/functional/hidden_service_dependency_detector"
+                                                       ],
+                             "nonzero_level2_diagnosers":  "aposteriori/service_cascade_diagnoser",
+                             "level1_total_bindings":  2,
+                             "level2_total_diagnoses":  1
+                         }
+}

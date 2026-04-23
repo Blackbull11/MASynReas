@@ -1,0 +1,41 @@
+============================================================
+  LLM DETECTOR BASELINE  (mistral:latest)
+============================================================
+
+  Exporting knowledge graph from Virtuoso...
+  16,706 chars  (~4,176 tokens)
+  Graph saved to noria_graph.ttl  (attach to Claude/GPT chat for manual tests)
+
+  [APRIORI / GUIDED]  skipped (already done)
+  recall=0.00  precision=0.00  halluc=1.00  agents hit=0/6
+
+  [APRIORI / OPEN]
+  Prompt ~4,336 tokens — calling mistral:latest...
+.......
+  5 detections in 2098.6s
+  recall=0.00  precision=0.00  halluc=0.00  agents hit=0/6
+
+  [APOSTERIORI / GUIDED]
+  Prompt ~4,957 tokens — calling mistral:latest...
+.......
+  4 detections in 2917.2s
+  recall=0.00  precision=0.00  halluc=0.50  agents hit=0/9
+
+  [APOSTERIORI / OPEN]
+  Prompt ~4,337 tokens — calling mistral:latest...
+.....
+  5 detecti.....
+  5 detections in 2436.1s
+  recall=0.16  precision=0.60  halluc=0.00  agents hit=4/9
+
+============================================================
+  SUMMARY
+============================================================
+  Mode           Strategy  Det.   Recall    Prec.   Hall.   Agents    Time
+  ------------------------------------------------------------------------
+  apriori        guided      14     0.06     0.14    0.00   1/6     1660s
+  apriori        open         5     0.03     0.20    0.00   1/6     1468s
+  aposteriori    guided       4     0.00     0.00    0.25   0/9     3032s
+  aposteriori    open         5     0.16     0.60    0.00   4/9     2436s
+
+  Full results saved to llm_baseline_results.json

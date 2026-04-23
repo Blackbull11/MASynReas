@@ -1,8 +1,7 @@
 /*
     Project multiagentSystem
 
-    Gradle build file for JaCaMo Applications
-    décembre 08, 2025 - 20:21:42
+    Gradle build file for JaCaMo applications.
 */
 
 plugins {
@@ -16,7 +15,7 @@ defaultTasks 'run'
 apply from: '.jcm-deps.gradle'
 
 version '1.0'
-group   'org.jacamo'
+group 'org.jacamo'
 
 repositories {
     maven { url "https://raw.githubusercontent.com/jacamo-lang/mvn-repo/master" }
@@ -48,30 +47,28 @@ sourceSets {
     }
 }
 
-task run (type: JavaExec, dependsOn: 'classes') {
-    group       ' JaCaMo'
+task run(type: JavaExec, dependsOn: 'classes') {
+    group ' JaCaMo'
     description 'runs the JaCaMo application'
     doFirst {
         mkdir 'log'
     }
     mainClass = 'jacamo.infra.JaCaMoLauncher'
-    args 'multiagentSystem_v2.jcm'   // ← CHANGER CETTE LIGNE ET CELLE 1 paRa en DESSOUS
-    // jvmArgs '-Xss15m'
+    args 'multiagentSystem.jcm'
     classpath sourceSets.main.runtimeClasspath
 }
 
-task buildJCMDeps (type: JavaExec, dependsOn: 'classes') {
+task buildJCMDeps(type: JavaExec, dependsOn: 'classes') {
     mainClass = 'jacamo.infra.RunJaCaMoProject'
-    args = ['multiagentSystem_v2.jcm', '--deps']   // ← ET CETTE LIGNE AUSSI
+    args = ['multiagentSystem.jcm', '--deps']
     classpath sourceSets.main.runtimeClasspath
 }
 
 jar {
     duplicatesStrategy 'exclude'
-
     archiveBaseName = project.name
 
-    from (project.projectDir.absolutePath + '/src') {
+    from(project.projectDir.absolutePath + '/src') {
         include '**/*.asl'
         include '**/*.xml'
         include '**/*.sai'
@@ -79,7 +76,7 @@ jar {
         include '**/*.jcm'
         exclude 'test'
     }
-    from (project.buildDir.absolutePath + '/classes') {
+    from(project.buildDir.absolutePath + '/classes') {
         include '**/*'
     }
 
@@ -100,12 +97,12 @@ shadowJar {
     doFirst {
         copy {
             from 'multiagentSystem.jcm'
-            rename 'multiagentSystem.jcm','default.jcm'
+            rename 'multiagentSystem.jcm', 'default.jcm'
             into project.buildDir.absolutePath + '/jcm'
         }
     }
     archiveFileName = "jacamo-${project.name}-${project.version}-all.jar"
-    from (project.projectDir.absolutePath + '/src') {
+    from(project.projectDir.absolutePath + '/src') {
         include '**/*.asl'
         include '**/*.xml'
         include '**/*.sai'
@@ -114,13 +111,13 @@ shadowJar {
         include '*.properties'
         exclude 'test'
     }
-    from (project.buildDir.absolutePath + '/classes') {
+    from(project.buildDir.absolutePath + '/classes') {
         include '**/*'
     }
-    from (project.buildDir.absolutePath + '/jcm') {
+    from(project.buildDir.absolutePath + '/jcm') {
         include '**/*'
     }
-    from (project.projectDir.absolutePath + '/') {
+    from(project.projectDir.absolutePath + '/') {
         include '*.properties'
     }
 
