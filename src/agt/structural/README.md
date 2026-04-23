@@ -136,8 +136,7 @@ Current SPARQL logic:
 Detects incidents involving resources connected to incomplete links.
 
 Agent/script note:
-- the JaCaMo agent is named `incident_on_incomplete_link_detector`
-- the current Python script filename is `incident_on_incomple_link_detector.py`
+- the JaCaMo agent and the Python script are both named `incident_on_incomplete_link_detector`
 
 Current SPARQL logic:
 - starts from `noria:TroubleTicket`
@@ -161,8 +160,7 @@ Current SPARQL logic:
 Detects incident-affected resources with no visible structural redundancy.
 
 Agent/script note:
-- the JaCaMo agent is named `no_redundancy_incident_detector`
-- the current Python script filename is `no_redundancy_detector.py`
+- the JaCaMo agent and the Python script are both named `no_redundancy_incident_detector`
 
 Current SPARQL logic:
 - starts from `noria:TroubleTicket`
@@ -202,13 +200,6 @@ Current SPARQL logic:
 - counts sibling or child resources linked to the same parent
 - counts applications supported by that parent through `noria:resourceForApplication`
 - returns parent resources having either at least two contained resources or at least one supported application
-
-## Control Agent
-
-The `apriori` folder also contains:
-- `apriori_test_controller`
-
-This is not an anomaly detector. It is a coordination agent used to observe Python execution completion signals and stop the MAS after all a priori detectors have reported.
 
 ## Execution Model
 
