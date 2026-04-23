@@ -1,14 +1,27 @@
 # Expériences et Résultats — PSC INF12
 
-Ce document couvre les deux expériences principales menées sur le système
-MASynReas appliqué au dataset noria-0.2.
+Ce document couvre les cinq expériences menées sur MASynReas, appliqué au dataset noria-0.2 (graphe de connaissances ICT jouet) et à un catalogue de 27 datasets synthétiques.
+
+### Fil conducteur
+
+Les expériences répondent à cinq questions dans un ordre logique :
+
+1. **Les 4 familles d'agents niveau 1 sont-elles redondantes ?** → Tableau de complémentarité
+2. **Le parallélisme MAS apporte-t-il un gain de vitesse réel ?** → Baseline séquentiel
+3. **Le MAS améliore-t-il la qualité d'un LLM utilisé en synthèse ?** → Étude d'ablation
+4. **Un LLM seul peut-il remplacer le MAS pour la détection ?** → Baseline LLM monovalent
+5. **La pipeline L1+L2 est-elle précise sur ground truth contrôlé ?** → Évaluation datasets synthétiques
+
+Les expériences 3 et 4 impliquent des LLM mais avec des rôles radicalement différents :
+- En **expérience 3**, le LLM est un *consommateur* des sorties MAS — il synthétise un rapport à partir de faits déjà corrélés.
+- En **expérience 4**, le LLM est un *concurrent* du MAS — on lui donne le graphe brut et on lui demande de trouver les anomalies lui-même, sans aucun prétraitement.
 
 ---
 
 ## 1. Tableau de complémentarité des familles
 
 **Script :** `complementarity_table.py`  
-**Données :** run réel sur Virtuoso localhost:8890, dataset noria-0.2 (3152 triplets)  
+**Données :** dataset noria-0.2 chargé dans Virtuoso (localhost:8890)  
 **Préparation :** `python -X utf8 run_all_detectors.py both`  
 **Exécution :** `python -X utf8 complementarity_table.py`  
 **Résultats :** `complementarity_results.json`
@@ -71,35 +84,83 @@ certaines ne sont actives que sur des topologies spécifiques.
 
 ---
 
-## 2. Étude d'ablation — valeur ajoutée de chaque couche MAS
+## 2. Baseline séquentiel — mesure du speedup MAS
+
+**Script :** `baseline_monoagent.py`  
+**Résultats :** `baseline_results.json`  
+**Exécution :** `python -X utf8 baseline_monoagent.py both`
+
+### Objectif
+
+Mesurer le gain de temps apporté par l'exécution parallèle des agents niveau 1
+par rapport à une exécution séquentielle sur un seul thread Python.
+Le même ensemble de requêtes SPARQL est exécuté dans les deux cas ;
+seul l'ordonnancement change.
+
+---
+
+## 3. Étude d'ablation — valeur ajoutée de chaque couche MAS
 
 **Script :** `ablation_study.py`  
-**Modèle :** llama3.1:8b (via Ollama, local, CPU)  
-**Runs par condition :** 5  
-**Résultats :** `ablation_results.json`  
-**Exécution :** `python -X utf8 ablation_study.py` (~25 minutes)
+**Exécution :** `python -X utf8 ablation_study.py` (~25 minutes)  
+**Résultats :** `ablation_results.json`
 
 ### Objectif
 
 Mesurer empiriquement la valeur ajoutée de chaque couche du MAS sur
-la qualité des diagnostics produits par le LLM.
+la qualité des diagnostics produits par un LLM de synthèse.
 
 **Question centrale :** *à quoi sert le MAS si on a déjà un LLM ?*
 
+### Modèle LLM utilisé
+
+**`llama3.1:8b`** — Meta Llama 3.1, 8 milliards de paramètres, variante instruction-tuned.
+Exécuté via Ollama sur CPU local.
+Paramètres d'inférence : température = 0.1 (quasi-déterministe), longueur maximale = 300 tokens.
+
+Ce modèle a été choisi pour sa capacité de suivi d'instructions en langue naturelle
+et son contexte étendu (jusqu'à 128K tokens), utile pour ingérer les JSON
+de détection de condition B.
+
 ### Protocole
 
-Trois conditions testées sur les mêmes scénarios, seul l'input du LLM change :
+Trois conditions testées sur les mêmes scénarios. Seul l'input du LLM change ;
+le prompt de tâche est identique dans les 3 cas :
+*"You are a network operations expert. Based on the following [input], provide a concise diagnosis :
+identify the most likely root cause, the affected entity, and the severity (CRITICAL / HIGH / MEDIUM / LOW).
+Answer in 3–5 sentences."*
 
 | | Condition A | Condition B | Condition C |
 |-|-------------|-------------|-------------|
-| **Input LLM** | Texte du ticket (contexte opérateur minimal) | JSON niveau 1 (54 agents détecteurs) | JSON niveau 1 + diagnostics niveau 2 |
-| **Architecture** | LLM seul | Niveau 1 → LLM | Niveau 1+2 → LLM |
+| **Input LLM** | Texte du ticket d'incident (50 mots env.) | JSON des résultats niveau 1 (tous agents actifs) | JSON niveau 1 + JSON des diagnostics niveau 2 |
+| **Architecture simulée** | LLM seul | Niveau 1 → LLM | Niveau 1+2 → LLM |
 
-Quatre métriques automatiques :
-- **Hallucination** : noms d'entités inventés par le LLM (↓ = mieux)
-- **Conformité** : fraction du ground truth retrouvée dans la réponse (↑ = mieux)
-- **Consistance** : similarité Jaccard entre les 5 runs (↑ = mieux)
-- **Sévérité** : sévérité correcte reprouite (↑ = mieux)
+**Important :** les facts de condition B et les diagnostics de condition C sont des données
+représentatives construites manuellement dans le script pour chaque scénario.
+Ils reproduisent fidèlement la structure réelle des sorties MAS mais ne sont pas
+générés dynamiquement par les agents à chaque run.
+L'étude d'ablation a été conçue et exécutée avant le refactor niveau 2 (qui est passé
+de 4 à 12 diagnoseurs). Les diagnostics de condition C illustrent les 4 diagnoseurs
+originaux (SPOF, change-induced, traceability, structural fragility).
+
+### Métriques (calculées sur la première réponse parmi les 5 runs)
+
+**Hallucination** — fraction des tokens capitalisés dans la réponse qui ressemblent
+à un nom d'entité NORIA (pattern `[A-Z]{2+}[_A-Za-z0-9]*`, ex. `RES_TOY_as2`)
+mais n'apparaissent pas dans la liste des entités connues du scénario.
+Les mots-clés génériques (`CRITICAL`, `HIGH`, `JSON`, etc.) sont exclus.
+Un hallucination_rate = 0.25 signifie que 1 entité sur 4 mentionnées par le LLM n'existe pas.
+
+**Conformité** — fraction de 3 éléments du ground truth présents dans la réponse :
+le nom de l'entité cible, le niveau de sévérité, et le type de diagnostic
+(avec underscores remplacés par des espaces). Valeurs possibles : 0.00, 0.33, 0.67, 1.00.
+
+**Consistance** — similarité Jaccard moyenne entre toutes les paires parmi les 5 runs
+(vocabulaire tokenisé en minuscules). Une valeur de 1.0 signifie que les 5 réponses
+utilisent exactement le même vocabulaire.
+
+**Sévérité** — binaire : 1 si le mot correspondant au niveau de sévérité attendu
+(`CRITICAL`, `HIGH`, etc.) apparaît dans la réponse, 0 sinon.
 
 ### Scénarios
 
@@ -143,17 +204,18 @@ correctement la sévérité sur tous les scénarios (1.00 vs 0.60 pour B).
 #### Résultat clé : la condition B est systématiquement pire que A
 
 Sur S2 (change-induced) et S5 (cross-family), la condition B :
-- manque la sévérité correcte (dit CRITICAL au lieu de HIGH)
+- rate la sévérité correcte (dit CRITICAL au lieu de HIGH)
 - conformité = 0.33, inférieure à la condition A (0.67)
 
 Sur S1 (SPOF), la condition B atteint conformité = 1.00 mais hallucine
-une entité (rate = 0.25) : elle trouve la bonne réponse mais ajoute des
-éléments fictifs. La condition C obtient le même résultat sans hallucination.
+une entité (rate = 0.25) : elle trouve la bonne réponse mais invente
+des entités inexistantes. La condition C obtient le même résultat sans hallucination.
 
 **Explication :** les JSON bruts du niveau 1 contiennent `RES_TOY_as2`
-dans plusieurs fichiers indépendants (isolated, no_redundancy, high_impact,
-change_linked). Sans corrélation, le LLM se concentre sur la ressource la
-plus visible et sur-diagnostique en CRITICAL même quand le signal dominant
+dans plusieurs agents indépendants (`isolated_incident_resource`, `no_redundancy_incident`,
+`high_impact_resource`, `change_linked_to_multiple_incidents`).
+Sans corrélation, le LLM se concentre sur l'entité la plus fréquente
+et sur-diagnostique en CRITICAL même quand le signal dominant
 est la chaîne de changement. Le diagnostic niveau 2 — qui dit explicitement
 *"change CR_2022_001, dual corroboration, severity HIGH"* — recadre
 correctement le modèle.
@@ -178,53 +240,122 @@ décisive : sans elle, le LLM est submergé par des signaux contradictoires.
 
 ---
 
-## 3. Baseline LLM monovalent — comparaison directe avec le MAS
+## 4. Baseline LLM monovalent — le LLM peut-il remplacer le MAS ?
 
 **Script :** `llm_detector_baseline.py`  
-**Objectif :** mesurer ce qu'un LLM obtient quand on lui donne le graphe entier et qu'on lui demande de trouver les anomalies — sans aucun pré-traitement MAS.
+**Exécution :** `python -X utf8 llm_detector_baseline.py both both`  
+**Résultats :** `llm_baseline_results.json` (CPU), `llm_baseline_results_gpu.json` (GPU)
+
+### Objectif
+
+Mesurer ce qu'un LLM obtient quand on lui donne **le graphe entier** et qu'on lui
+demande de trouver les anomalies — sans aucun prétraitement MAS.
+C'est le scénario de remplacement total : *"oublie le MAS, utilise directement un LLM"*.
+
+À distinguer de l'expérience 3 : ici le LLM ne reçoit **pas** les sorties MAS.
+Il reçoit le graphe brut et doit effectuer lui-même la détection,
+là où l'expérience 3 mesurait combien le MAS aide le LLM à synthétiser.
+
+### Modèles LLM utilisés
+
+Deux runs ont été réalisés avec deux variantes du même modèle de base (Mistral 7B) :
+
+**Run CPU — `mistral:latest` via Ollama**
+- Architecture : Mistral-7B (7 milliards de paramètres)
+- Quantification : Q4_K_M (GGUF, 4 bits) — compression lossy qui réduit la qualité
+  du modèle mais permet l'exécution sur CPU avec ~4 GB de RAM
+- Machine : Intel CPU local (pas de GPU), via Ollama
+- Temps : 28 minutes à 50 minutes par combinaison mode×stratégie
+
+**Run GPU — `Mistral-7B-Instruct-v0.3` via HuggingFace Transformers**
+- Architecture : identique au run CPU, mais variante **Instruct-v0.3**
+  (fine-tuné sur des données d'instructions — meilleure qualité de réponse)
+- Précision : **float16** (16 bits) — précision complète, pas de compression
+- Machine : NVIDIA RTX 4000 Ada, 20 GB VRAM, `jaguar.polytechnique.fr`
+  (Polytechnique GPU cluster, accès via SSH)
+- Temps : 23 à 188 secondes par combinaison
+
+**Note de comparabilité :** les deux runs utilisent des variantes différentes
+(Q4 base vs float16 Instruct). Leurs résultats sont indicatifs et non strictement
+comparables. Le run GPU utilise le modèle de meilleure qualité.
+
+Le run GPU est ~**80× plus rapide** grâce à la parallélisation du prefill sur GPU
+(le prompt de ~5 000 tokens est traité en parallèle sur les milliers de cœurs CUDA,
+là où le CPU le traite token par token).
 
 ### Protocole
 
 Deux axes orthogonaux, 4 combinaisons testées :
 
-- **Mode** : `apriori` (config statique seulement) / `aposteriori` (config + incidents + tickets)
-- **Stratégie** : `guided` (briefing ontologique : types d'entités, familles d'anomalies) / `open` (prompt minimal : "trouve les anomalies")
+**Mode :**
+- `apriori` — seules les triples de configuration infrastructure sont incluses dans le graphe exporté (ressources, services, applications, interfaces, relations topologiques). Aucun événement ni incident.
+- `aposteriori` — graphe complet : configuration + enregistrements d'événements réseau, tickets d'incidents, enregistrements de changements.
 
-Le graphe exporté via SPARQL CONSTRUCT filtre les prédicats non diagnostiques (`prov:wasDerivedFrom`, `foaf:*`, `rdfs:label`) pour réduire le contexte à ~4 200 tokens utiles.
+**Stratégie :**
+- `guided` — le prompt commence par un briefing ontologique : types d'entités NORIA-O (Resource, Service, Application, EventRecord, TroubleTicket, Change), les 4 familles d'anomalies (structurelles, dynamiques, fonctionnelles, procédurales), et les prédicats clés à surveiller. L'objectif est d'aider le LLM à mapper les patterns RDF sur les catégories d'anomalies connues.
+- `open` — prompt minimal : *"You are a network engineer. In the following knowledge graph (Turtle format), identify all anomalies, misconfigurations, or operational issues. List the affected entities with explanation."* Aucune guidance.
 
-Les métriques sont calculées par rapport au ground truth MAS (`results/`) :
-- **Recall** : fraction des entités détectées par le MAS que le LLM a aussi trouvées
-- **Precision** : fraction des entités LLM confirmées par le MAS
-- **Hallucination** : fraction des entités LLM absentes du graphe
-- **Agents couverts** : fraction des agents MAS dont le LLM a touché au moins une entité
+**Graphe fourni au LLM :**
+Le graphe est exporté via une requête SPARQL CONSTRUCT qui filtre les prédicats
+non diagnostiques (`prov:wasDerivedFrom`, `foaf:*`, `rdfs:label`, prédicats ontologiques
+purs). Seuls les prédicats porteurs d'information diagnostique sont conservés :
+relations de type (`rdf:type`), adjacence réseau, appartenance de service,
+enregistrements d'événements, tickets et leurs liens, changements et leurs liens.
+Résultat : ~4 200 tokens de Turtle RDF (après filtrage).
 
-### Deux runs réalisés
+### Métriques
 
-**Run CPU** — `mistral:latest` Q4_K_M via Ollama, Intel CPU (machine locale) :
+Les métriques sont calculées par rapport au **ground truth MAS** sur noria-0.2,
+c'est-à-dire les entités effectivement détectées par les agents niveau 1
+lors d'un run réel (`results/` directory).
 
-| Combinaison | Détections | Recall | Precision | Halluc | Agents | Temps |
+Le LLM produit une liste d'entités anormales (noms extraits de sa réponse
+par extraction regex). Ces entités sont normalisées (préfixes Turtle retirés,
+ex. `ns3:RES_TOY_as1` → `RES_TOY_as1`).
+
+- **Recall** = |entités LLM ∩ entités MAS| / |entités MAS| — quelle fraction des entités que le MAS a trouvées est aussi mentionnée par le LLM ?
+- **Precision** = |entités LLM ∩ entités MAS| / |entités LLM| — quelle fraction des mentions du LLM est confirmée par le MAS ?
+- **Hallucination** = |entités LLM absentes du graphe| / |entités LLM| — quelle fraction des mentions du LLM correspond à des entités qui n'existent pas du tout dans le graphe de connaissances ?
+- **Agents couverts** = nombre d'agents MAS *actifs* (ayant produit au moins une détection sur noria-0.2) dont au moins une entité détectée est aussi mentionnée par le LLM. Le dénominateur est le nombre d'agents actifs : **6 en apriori** (sur 23 agents totaux), **9 en aposteriori** (sur 31 agents totaux). Les autres agents n'ont pas de détections sur noria-0.2 et ne peuvent pas être couverts.
+
+### Résultats
+
+**Run CPU** — `mistral:latest` Q4_K_M, Intel CPU :
+
+| Combinaison | Détections | Recall | Precision | Halluc | Agents couverts | Temps |
 |---|:---:|:---:|:---:|:---:|:---:|---:|
 | apriori / guided | 14 | 0.06 | 0.14 | 0.00 | 1/6 | 1 660s |
 | apriori / open | 5 | 0.03 | 0.20 | 0.00 | 1/6 | 1 468s |
 | aposteriori / guided | 4 | 0.00 | 0.00 | 0.25 | 0/9 | 3 032s |
 | aposteriori / open | 5 | 0.16 | 0.60 | 0.00 | 4/9 | 2 436s |
 
-**Run GPU** — `Mistral-7B-Instruct-v0.3` float16 via HuggingFace transformers, NVIDIA RTX 4000 Ada (20 GB VRAM, jaguar.polytechnique.fr) :
+**Run GPU** — `Mistral-7B-Instruct-v0.3` float16, NVIDIA RTX 4000 Ada :
 
-| Combinaison | Détections | Recall | Precision | Halluc | Agents | Temps |
+| Combinaison | Détections | Recall | Precision | Halluc | Agents couverts | Temps |
 |---|:---:|:---:|:---:|:---:|:---:|---:|
 | apriori / guided | 11 | 0.06 | 0.18 | 0.09 | 2/6 | 188s |
 | apriori / open | 5 | 0.00 | 0.00 | 0.00 | 0/6 | 28s |
 | **aposteriori / guided** | **4** | **0.21** | **1.00** | **0.00** | **3/9** | **23s** |
 | aposteriori / open | 5 | 0.16 | 0.75 | 0.00 | 4/9 | 24s |
 
-Note : les deux runs utilisent des variantes différentes de Mistral 7B (base Q4 vs Instruct float16) — les résultats sont donc indicatifs et non strictement comparables. Le run GPU utilise un modèle plus récent et de meilleure qualité.
-
 ### Analyse
 
 #### Ce que le LLM fait bien
 
-En mode `aposteriori/guided` sur GPU, le LLM atteint **precision=1.00** : ses 4 détections sont toutes dans le ground truth MAS. Il a correctement identifié `RES_TOY_srv1` (serveur en panne), `RES_TOY_term1` (point de terminaison défaillant), `APP_TOY_PFS01` (application sans ressource redondante), et `TT_TOY2022TT` (ticket sans procédure de réparation). C'est un raisonnement causal correct : le LLM lit les alarmes et remonte la chaîne d'impact.
+En mode `aposteriori/guided` sur GPU, le LLM atteint **precision=1.00** : ses 4 détections
+sont toutes dans le ground truth MAS. Il a correctement identifié `RES_TOY_srv1`
+(serveur impliqué dans un incident), `RES_TOY_term1` (point de terminaison défaillant),
+`APP_TOY_PFS01` (application sans ressource redondante), et `TT_TOY2022TT`
+(ticket sans procédure de réparation associée).
+C'est un raisonnement causal correct : le LLM lit les alarmes
+et remonte la chaîne d'impact applicatif.
+
+Le mode `open` donne généralement de meilleurs résultats que `guided` en aposteriori.
+**Explication :** le briefing ontologique en mode `guided` oriente le LLM vers les patterns
+structurels (redondance, interfaces manquantes) au détriment des signaux d'incidents
+explicitement présents. Le mode `open` suit naturellement les preuves disponibles.
+En apriori, la guidance aide car il n'y a pas de signal incident visible — le LLM
+doit inférer à partir de la configuration seule.
 
 #### Ce que le LLM rate systématiquement
 
@@ -232,32 +363,34 @@ Certains agents MAS ne sont couverts dans aucune combinaison :
 
 | Agent | Raison de l'échec LLM |
 |---|---|
-| `application_without_resource` | Nécessite d'énumérer toutes les apps et vérifier l'absence d'une relation |
+| `application_without_resource` | Nécessite d'énumérer toutes les apps et vérifier l'absence d'une relation pour chacune |
 | `ticket_without_assigned_procedure` | Détection par absence — le LLM ne constate pas ce qui manque |
-| `module_level_incident_aggregation` | Nécessite de regrouper des incidents par module applicatif |
-| `service_with_repeated_incident` | Nécessite de compter des occurrences répétées |
+| `module_level_incident_aggregation` | Nécessite de regrouper des incidents par module applicatif et compter |
+| `service_with_repeated_incident` | Nécessite de compter les occurrences répétées d'incidents sur un même service |
 
-Ces agents partagent une structure commune : **raisonnement par absence ou comptage exhaustif**. Le LLM répond aux signaux positifs présents dans le texte ; il ne fait pas de scan systématique pour détecter ce qui devrait être là et ne l'est pas.
+Ces agents partagent une structure commune : **raisonnement par absence ou comptage exhaustif**.
+Le LLM génère par complétion de pattern ; il détecte les signaux positifs présents dans le texte
+mais ne fait pas de scan systématique pour vérifier ce qui devrait exister et ne l'est pas.
+Un LLM ne peut pas garantir l'exhaustivité.
 
 #### Différence de granularité
 
-Le LLM raisonne au niveau réseau physique (liens, équipements, alarmes visibles). Le MAS raisonne au niveau impact applicatif et traçabilité opérationnelle. Sur le même dataset, leurs détections sont **complémentaires plutôt que redondantes**.
+Le LLM raisonne au niveau réseau physique (liens, équipements, alarmes visibles).
+Le MAS raisonne au niveau impact applicatif et traçabilité opérationnelle.
+Sur le même dataset, leurs détections sont **complémentaires plutôt que redondantes**.
 
-#### Speedup GPU
-
-Le run GPU est ~80× plus rapide que le run CPU pour un modèle comparable (23s vs 1 660s pour apriori/guided). L'essentiel du gain vient de la parallélisation du prefill sur les ~5 000 tokens du prompt.
-
-### Conclusion
+#### Conclusion
 
 > Un LLM monovalent est un bon diagnosticien quand les preuves sont
 > explicites dans le graphe (aposteriori, precision jusqu'à 1.00),
-> mais un mauvais détecteur systématique : il manque les familles entières
+> mais un mauvais détecteur systématique : il manque des familles entières
 > d'anomalies qui nécessitent un raisonnement par absence ou par comptage.
 > Le MAS couvre exactement ce que le LLM ne peut pas faire de façon fiable.
+> Les deux approches sont complémentaires, pas substituables.
 
 ---
 
-## 4. Évaluation sur le catalogue de datasets synthétiques
+## 5. Évaluation sur le catalogue de datasets synthétiques
 
 **Script :** `evaluate_datasets.py`  
 **Données :** 27 datasets synthétiques `DS01`–`DS27` (dossier `datasets/`)  
@@ -266,7 +399,10 @@ Le run GPU est ~80× plus rapide que le run CPU pour un modèle comparable (23s 
 
 ### Objectif
 
-Évaluer la pipeline complète niveau 1 + niveau 2 sur un catalogue de scénarios synthétiques contrôlés, avec ground truth explicite (`expected_level2.json` par dataset).
+Évaluer la pipeline complète niveau 1 + niveau 2 sur un catalogue de scénarios
+synthétiques contrôlés, avec ground truth explicite (`expected_level2.json` par dataset).
+Contrairement à l'expérience 3 qui mesurait la qualité de la synthèse LLM,
+cette expérience mesure la **précision propre du MAS** indépendamment de tout LLM.
 
 Métriques calculées par dataset et par mode :
 - **Precision@L2** : fraction des diagnoseurs déclenchés qui étaient attendus
@@ -325,7 +461,8 @@ Métriques calculées par dataset et par mode :
 | **Aposteriori** (20 éval.) | 8 | 2 | 5 | 0.80 | 0.62 | 0.70 | 0.73 |
 | **Global** (36 éval.) | 13 | 20 | 11 | 0.39 | 0.54 | 0.45 | 0.40 |
 
-*L1 recall = 1.00 sur les 36 évaluations (tous les agents niveau 1 s'exécutent correctement).*
+*L1 recall = 1.00 sur les 36 évaluations — tous les agents niveau 1 s'exécutent correctement
+sur tous les datasets.*
 
 ### Analyse
 
@@ -344,17 +481,30 @@ DS23 (3 diagnostics simultanés) obtient F1=0.80 : 2 TP sur 3 attendus, zéro FP
 
 #### 3 diagnoseurs aposteriori qui ne se déclenchent jamais
 
-`unstable_component_diagnoser` (FN sur DS15, DS18, DS23), `application_support_failure_diagnoser` (FN sur DS16), et `local_infrastructure_cluster_diagnoser` (FN sur DS17) n'ont produit aucun TP sur l'ensemble du catalogue. Les conditions d'activation sont probablement trop strictes pour les datasets synthétiques, ou les datasets ne reproduisent pas fidèlement les patterns requis.
+`unstable_component_diagnoser` (FN sur DS15, DS18, DS23),
+`application_support_failure_diagnoser` (FN sur DS16), et
+`local_infrastructure_cluster_diagnoser` (FN sur DS17) n'ont produit aucun TP
+sur l'ensemble du catalogue. Leurs conditions d'activation sont probablement
+trop strictes pour les datasets synthétiques actuels.
 
 #### Mode apriori : faux positif systématique
 
-`procedural_unreadiness_diagnoser` se déclenche sur **tous** les datasets apriori avec rel=25, sev=13 — y compris les graphes propres (DS01, DS02, DS03) et les graphes de scalabilité (DS25, DS26, DS27). C'est un problème de seuil d'activation : le score de 25 est en dessous du seuil de confiance minimal mais le diagnoseur se déclenche quand même. Ce FP systématique explique la quasi-totalité de la dégradation en mode apriori (18 FP sur 18 FP totaux en apriori).
+`procedural_unreadiness_diagnoser` se déclenche sur **tous** les datasets apriori
+avec rel=25, sev=13 — y compris les graphes propres (DS01, DS02, DS03).
+C'est un problème de seuil d'activation : le diagnoseur se déclenche
+à un score de fiabilité trop faible. Ce FP systématique
+représente la quasi-totalité de la dégradation en mode apriori
+(18 FP sur 18 FP totaux en apriori).
 
-`critical_service_exposure_diagnoser` et `observability_gap_diagnoser` ne se déclenchent jamais malgré des datasets spécifiquement conçus pour eux (DS05, DS06, DS07, DS24). Leurs conditions d'activation sont trop strictes ou ne correspondent pas aux patterns des datasets synthétiques.
+`critical_service_exposure_diagnoser` et `observability_gap_diagnoser` ne se déclenchent
+jamais malgré des datasets spécifiquement conçus pour eux (DS05, DS06, DS07, DS24).
 
 #### `traceability_breakdown_diagnoser` : sur-déclenchement en mode mixte
 
-En DS15 et DS18, `traceability_breakdown_diagnoser` se déclenche avec rel=55 alors qu'il n'est pas attendu. Les critères de traçabilité (incidents sans ticket, tickets sans événement) semblent présents en fond dans plusieurs datasets aposteriori.
+En DS15 et DS18, `traceability_breakdown_diagnoser` se déclenche avec rel=55
+alors qu'il n'est pas attendu. Les critères de traçabilité
+(incidents sans ticket, tickets sans événement) sont structurellement présents
+dans plusieurs datasets aposteriori en fond.
 
 ### Conclusion
 
@@ -372,27 +522,25 @@ En DS15 et DS18, `traceability_breakdown_diagnoser` se déclenche avec rel=55 al
 ```powershell
 # Prérequis : Virtuoso sur localhost:8890, Ollama avec llama3.1:8b
 
-# 1. Lancer tous les détecteurs niveau 1
+# 1. Tableau de complémentarité (niveau 1 seulement)
 python -X utf8 run_all_detectors.py both
-
-# 2. Tableau de complémentarité
 python -X utf8 complementarity_table.py
 
-# 3. Baseline séquentiel (mesure du speedup MAS)
+# 2. Baseline séquentiel
 python -X utf8 baseline_monoagent.py both
 
-# 4. Étude d'ablation (~25 minutes)
+# 3. Étude d'ablation LLM (~25 minutes, nécessite llama3.1:8b via Ollama)
 python -X utf8 ablation_study.py
 
-# 5. Baseline LLM monovalent
-# Sur machine locale avec Ollama (lent sur CPU) :
+# 4. Baseline LLM monovalent
+# Sur machine locale avec Ollama (lent sur CPU, ~2h) :
 python -X utf8 llm_detector_baseline.py both both
+# Sur serveur GPU (nécessite SSH + HuggingFace) :
+# scp llm_detector_baseline.py noria_graph.ttl user@server:~/baseline/
+# scp -r results/ user@server:~/baseline/
+# ssh user@server "cd /tmp/baseline_run && HF_HOME=/tmp/hf_cache python3 llm_detector_baseline.py both both"
 
-# Sur serveur GPU sans Ollama (auto-détecte HuggingFace transformers) :
-# scp llm_detector_baseline.py noria_graph.ttl results/ user@server:~/baseline/
-# ssh user@server "cd ~/baseline && HF_HOME=/tmp/hf_cache python3 llm_detector_baseline.py both both"
-
-# 6. Évaluation sur le catalogue synthétique (~18 minutes)
+# 5. Évaluation sur le catalogue synthétique (~18 minutes)
 python -X utf8 evaluate_datasets.py
 # Ou un sous-ensemble :
 python -X utf8 evaluate_datasets.py DS11 DS12 DS13
@@ -405,13 +553,13 @@ python -X utf8 evaluate_datasets.py --aposteriori
 
 | Fichier | Contenu |
 |---------|---------|
-| `results/` | JSON de détection par agent niveau 1 |
+| `results/` | JSON de détection par agent niveau 1 (noria-0.2) |
 | `results/level2/` | JSON de diagnostic par agent niveau 2 |
 | `complementarity_results.json` | Données brutes du tableau de complémentarité |
-| `ablation_results.json` | Données brutes de l'étude d'ablation |
+| `ablation_results.json` | Données brutes de l'étude d'ablation (5 scénarios × 3 conditions × 5 runs) |
 | `ABLATION_STUDY.md` | Analyse détaillée de l'ablation |
 | `baseline_results.json` | Données brutes du baseline séquentiel |
-| `llm_baseline_results.json` | Résultats du baseline LLM (run CPU, mistral:latest) |
-| `llm_baseline_results_gpu.json` | Résultats du baseline LLM (run GPU, Mistral-7B-Instruct-v0.3) |
-| `noria_graph.ttl` | Graphe NORIA-O filtré exporté (4 200 tokens, input LLM) |
+| `llm_baseline_results.json` | Résultats du baseline LLM — run CPU (mistral:latest Q4_K_M) |
+| `llm_baseline_results_gpu.json` | Résultats du baseline LLM — run GPU (Mistral-7B-Instruct-v0.3 float16) |
+| `noria_graph.ttl` | Graphe NORIA-O filtré exporté (~4 200 tokens, input LLM baseline) |
 | `eval_results.json` | Résultats complets de l'évaluation sur les 27 datasets synthétiques |
