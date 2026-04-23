@@ -1,0 +1,7 @@
+{
+  "agent": "critical_service_exposure_diagnoser",
+  "mode": "apriori",
+  "activation_status": "not_triggered",
+  "reason": "No anchor combines critical structural weakness with functional coverage gaps.",
+  "diagnoses": []
+}

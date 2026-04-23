@@ -1,0 +1,7 @@
+{
+  "agent": "unstable_component_diagnoser",
+  "mode": "aposteriori",
+  "activation_status": "not_triggered",
+  "reason": "Recurrent incident evidence does not yet converge on a shared component scope.",
+  "diagnoses": []
+}

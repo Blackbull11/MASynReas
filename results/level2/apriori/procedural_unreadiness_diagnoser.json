@@ -1,0 +1,136 @@
+{
+  "agent": "procedural_unreadiness_diagnoser",
+  "mode": "apriori",
+  "activation_status": "triggered",
+  "reason": "Activation conditions satisfied around Procedure 'procedure_clear_billing_queue'.",
+  "diagnoses": [
+    {
+      "diagnosis_id": "L2-A4-001",
+      "diagnosis_type": "procedural_unreadiness",
+      "mode": "apriori",
+      "target_type": "Procedure",
+      "target_id": "https://example.org/masynreas/datasets/baseB/procedure_clear_billing_queue",
+      "activation_status": "triggered",
+      "reliability_score": 25,
+      "severity_score": 13,
+      "priority_score": 20,
+      "evidence": [
+        {
+          "level1_agent": "procedure_not_linked_to_resource_type_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/procedure_clear_billing_queue",
+          "record_count": 1,
+          "family": "procedural",
+          "result_file": "results/procedural/apriori/procedure_not_linked_to_resource_type_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 0,
+        "concentration": 0,
+        "temporal_aggravation": 0,
+        "governance_weakness": 5,
+        "family_base_bonus": 8
+      },
+      "criticalities": [],
+      "explanation": "Procedural unreadiness is diagnosed for Procedure 'procedure_clear_billing_queue' because procedures are not linked to resource types converge on the same anchor. The evidence spans procedural signal family/families.",
+      "recommended_action": "Clarify operational procedures, scheduling, and ticket-to-procedure links for this anchor before incident pressure appears."
+    },
+    {
+      "diagnosis_id": "L2-A4-002",
+      "diagnosis_type": "procedural_unreadiness",
+      "mode": "apriori",
+      "target_type": "Procedure",
+      "target_id": "https://example.org/masynreas/datasets/baseB/procedure_restart_customer_portal",
+      "activation_status": "triggered",
+      "reliability_score": 25,
+      "severity_score": 13,
+      "priority_score": 20,
+      "evidence": [
+        {
+          "level1_agent": "procedure_not_linked_to_resource_type_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/procedure_restart_customer_portal",
+          "record_count": 1,
+          "family": "procedural",
+          "result_file": "results/procedural/apriori/procedure_not_linked_to_resource_type_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 0,
+        "concentration": 0,
+        "temporal_aggravation": 0,
+        "governance_weakness": 5,
+        "family_base_bonus": 8
+      },
+      "criticalities": [],
+      "explanation": "Procedural unreadiness is diagnosed for Procedure 'procedure_restart_customer_portal' because procedures are not linked to resource types converge on the same anchor. The evidence spans procedural signal family/families.",
+      "recommended_action": "Clarify operational procedures, scheduling, and ticket-to-procedure links for this anchor before incident pressure appears."
+    },
+    {
+      "diagnosis_id": "L2-A4-003",
+      "diagnosis_type": "procedural_unreadiness",
+      "mode": "apriori",
+      "target_type": "Procedure",
+      "target_id": "https://example.org/masynreas/datasets/baseB/procedure_restart_monitoring_agent",
+      "activation_status": "triggered",
+      "reliability_score": 25,
+      "severity_score": 13,
+      "priority_score": 20,
+      "evidence": [
+        {
+          "level1_agent": "procedure_not_linked_to_resource_type_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/procedure_restart_monitoring_agent",
+          "record_count": 1,
+          "family": "procedural",
+          "result_file": "results/procedural/apriori/procedure_not_linked_to_resource_type_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 0,
+        "concentration": 0,
+        "temporal_aggravation": 0,
+        "governance_weakness": 5,
+        "family_base_bonus": 8
+      },
+      "criticalities": [],
+      "explanation": "Procedural unreadiness is diagnosed for Procedure 'procedure_restart_monitoring_agent' because procedures are not linked to resource types converge on the same anchor. The evidence spans procedural signal family/families.",
+      "recommended_action": "Clarify operational procedures, scheduling, and ticket-to-procedure links for this anchor before incident pressure appears."
+    },
+    {
+      "diagnosis_id": "L2-A4-004",
+      "diagnosis_type": "procedural_unreadiness",
+      "mode": "apriori",
+      "target_type": "Procedure",
+      "target_id": "https://example.org/masynreas/datasets/baseB/procedure_restart_workforce_api",
+      "activation_status": "triggered",
+      "reliability_score": 25,
+      "severity_score": 13,
+      "priority_score": 20,
+      "evidence": [
+        {
+          "level1_agent": "procedure_not_linked_to_resource_type_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/procedure_restart_workforce_api",
+          "record_count": 1,
+          "family": "procedural",
+          "result_file": "results/procedural/apriori/procedure_not_linked_to_resource_type_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 0,
+        "concentration": 0,
+        "temporal_aggravation": 0,
+        "governance_weakness": 5,
+        "family_base_bonus": 8
+      },
+      "criticalities": [],
+      "explanation": "Procedural unreadiness is diagnosed for Procedure 'procedure_restart_workforce_api' because procedures are not linked to resource types converge on the same anchor. The evidence spans procedural signal family/families.",
+      "recommended_action": "Clarify operational procedures, scheduling, and ticket-to-procedure links for this anchor before incident pressure appears."
+    }
+  ]
+}

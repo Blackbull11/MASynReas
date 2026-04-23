@@ -1,0 +1,7 @@
+{
+  "agent": "functional_mapping_gap_diagnoser",
+  "mode": "apriori",
+  "activation_status": "not_triggered",
+  "reason": "Functional mapping evidence does not yet reach the diagnosis threshold.",
+  "diagnoses": []
+}

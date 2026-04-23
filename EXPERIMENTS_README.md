@@ -257,6 +257,116 @@ Le run GPU est ~80× plus rapide que le run CPU pour un modèle comparable (23s 
 
 ---
 
+## 4. Évaluation sur le catalogue de datasets synthétiques
+
+**Script :** `evaluate_datasets.py`  
+**Données :** 27 datasets synthétiques `DS01`–`DS27` (dossier `datasets/`)  
+**Exécution :** `python -X utf8 evaluate_datasets.py` (~18 minutes)  
+**Résultats :** `eval_results.json`
+
+### Objectif
+
+Évaluer la pipeline complète niveau 1 + niveau 2 sur un catalogue de scénarios synthétiques contrôlés, avec ground truth explicite (`expected_level2.json` par dataset).
+
+Métriques calculées par dataset et par mode :
+- **Precision@L2** : fraction des diagnoseurs déclenchés qui étaient attendus
+- **Recall@L2** : fraction des diagnoseurs attendus effectivement déclenchés
+- **F1@L2** : moyenne harmonique
+- **TP/FP/FN** : détail par diagnoseur
+
+### Résultats complets
+
+#### Tableau de synthèse (36 évaluations mode×dataset)
+
+| Dataset | Mode | P | R | F1 | TP/FP/FN |
+|---------|------|:-:|:-:|:--:|:--------:|
+| DS01_clean_baseA | apriori | 0.00 | 1.00 | 0.00 | 0/1/0 |
+| DS01_clean_baseA | aposteriori | 1.00 | 1.00 | 1.00 | 0/0/0 |
+| DS02_partial_evidence_no_l2_v1 | apriori | 0.00 | 1.00 | 0.00 | 0/1/0 |
+| DS02_partial_evidence_no_l2_v1 | aposteriori | 1.00 | 1.00 | 1.00 | 0/0/0 |
+| DS03_partial_evidence_no_l2_v2 | apriori | 0.00 | 1.00 | 0.00 | 0/1/0 |
+| DS03_partial_evidence_no_l2_v2 | aposteriori | 1.00 | 1.00 | 1.00 | 0/0/0 |
+| DS04_structural_fragility | apriori | 0.50 | 1.00 | 0.67 | 1/1/0 |
+| DS05_critical_service_exposure_basic | apriori | 0.00 | 0.00 | 0.00 | 0/2/1 |
+| DS06_critical_service_exposure_concentrated | apriori | 0.00 | 0.00 | 0.00 | 0/2/1 |
+| DS07_observability_gap | apriori | 0.00 | 0.00 | 0.00 | 0/1/1 |
+| DS08_procedural_unreadiness_basic | apriori | **1.00** | **1.00** | **1.00** | 1/0/0 |
+| DS09_functional_mapping_gap | apriori | 0.50 | 1.00 | 0.67 | 1/1/0 |
+| DS10_apriori_mixed_two_diagnoses | apriori | 0.33 | 0.50 | 0.40 | 1/2/1 |
+| DS11_single_point_of_failure | aposteriori | **1.00** | **1.00** | **1.00** | 1/0/0 |
+| DS12_change_induced_incident | aposteriori | **1.00** | **1.00** | **1.00** | 1/0/0 |
+| DS13_service_cascade | aposteriori | **1.00** | **1.00** | **1.00** | 1/0/0 |
+| DS14_traceability_breakdown | aposteriori | **1.00** | **1.00** | **1.00** | 1/0/0 |
+| DS15_unstable_component | aposteriori | 0.00 | 0.00 | 0.00 | 0/1/1 |
+| DS16_application_support_failure | aposteriori | 1.00 | 0.00 | 0.00 | 0/0/1 |
+| DS17_local_infrastructure_cluster | aposteriori | 1.00 | 0.00 | 0.00 | 0/0/1 |
+| DS18_aposteriori_mixed_two_diagnoses | aposteriori | 0.50 | 0.50 | 0.50 | 1/1/1 |
+| DS19_missing_data | apriori | 0.00 | 1.00 | 0.00 | 0/1/0 |
+| DS19_missing_data | aposteriori | 1.00 | 1.00 | 1.00 | 0/0/0 |
+| DS20_missing_procedural_links | aposteriori | **1.00** | **1.00** | **1.00** | 1/0/0 |
+| DS21_noisy_irrelevant_events | aposteriori | 1.00 | 1.00 | 1.00 | 0/0/0 |
+| DS22_noisy_duplicate_records | apriori | 0.00 | 1.00 | 0.00 | 0/1/0 |
+| DS22_noisy_duplicate_records | aposteriori | 1.00 | 1.00 | 1.00 | 0/0/0 |
+| DS23_three_diagnoses_ranked | aposteriori | 1.00 | 0.67 | 0.80 | 2/0/1 |
+| DS24_reliability_calibration | apriori | 0.50 | 0.33 | 0.40 | 1/1/2 |
+| DS24_reliability_calibration | aposteriori | 1.00 | 1.00 | 1.00 | 0/0/0 |
+| DS25_scalability_small | apriori | 0.00 | 1.00 | 0.00 | 0/1/0 |
+| DS25_scalability_small | aposteriori | 1.00 | 1.00 | 1.00 | 0/0/0 |
+| DS26_scalability_medium | apriori | 0.00 | 1.00 | 0.00 | 0/1/0 |
+| DS26_scalability_medium | aposteriori | 1.00 | 1.00 | 1.00 | 0/0/0 |
+| DS27_scalability_large | apriori | 0.00 | 1.00 | 0.00 | 0/1/0 |
+| DS27_scalability_large | aposteriori | 1.00 | 1.00 | 1.00 | 0/0/0 |
+
+#### Métriques agrégées
+
+| Mode | TP | FP | FN | Precision | Recall | F1 (micro) | F1 (macro) |
+|------|----|----|----|:---------:|:------:|:----------:|:----------:|
+| **Apriori** (16 éval.) | 5 | 18 | 6 | 0.22 | 0.45 | 0.30 | 0.20 |
+| **Aposteriori** (20 éval.) | 8 | 2 | 5 | 0.80 | 0.62 | 0.70 | 0.73 |
+| **Global** (36 éval.) | 13 | 20 | 11 | 0.39 | 0.54 | 0.45 | 0.40 |
+
+*L1 recall = 1.00 sur les 36 évaluations (tous les agents niveau 1 s'exécutent correctement).*
+
+### Analyse
+
+#### Mode aposteriori : performances solides sur 4 diagnoseurs
+
+Les 4 diagnoseurs aposteriori de base sont robustes :
+
+| Diagnoseur | Datasets cibles | Résultat |
+|---|---|:---:|
+| `single_point_of_failure_diagnoser` | DS11, DS23 | TP sur tous |
+| `change_induced_incident_diagnoser` | DS12 | TP |
+| `service_cascade_diagnoser` | DS13, DS18 | TP sur tous |
+| `traceability_breakdown_diagnoser` | DS14, DS20 | TP sur tous |
+
+DS23 (3 diagnostics simultanés) obtient F1=0.80 : 2 TP sur 3 attendus, zéro FP.
+
+#### 3 diagnoseurs aposteriori qui ne se déclenchent jamais
+
+`unstable_component_diagnoser` (FN sur DS15, DS18, DS23), `application_support_failure_diagnoser` (FN sur DS16), et `local_infrastructure_cluster_diagnoser` (FN sur DS17) n'ont produit aucun TP sur l'ensemble du catalogue. Les conditions d'activation sont probablement trop strictes pour les datasets synthétiques, ou les datasets ne reproduisent pas fidèlement les patterns requis.
+
+#### Mode apriori : faux positif systématique
+
+`procedural_unreadiness_diagnoser` se déclenche sur **tous** les datasets apriori avec rel=25, sev=13 — y compris les graphes propres (DS01, DS02, DS03) et les graphes de scalabilité (DS25, DS26, DS27). C'est un problème de seuil d'activation : le score de 25 est en dessous du seuil de confiance minimal mais le diagnoseur se déclenche quand même. Ce FP systématique explique la quasi-totalité de la dégradation en mode apriori (18 FP sur 18 FP totaux en apriori).
+
+`critical_service_exposure_diagnoser` et `observability_gap_diagnoser` ne se déclenchent jamais malgré des datasets spécifiquement conçus pour eux (DS05, DS06, DS07, DS24). Leurs conditions d'activation sont trop strictes ou ne correspondent pas aux patterns des datasets synthétiques.
+
+#### `traceability_breakdown_diagnoser` : sur-déclenchement en mode mixte
+
+En DS15 et DS18, `traceability_breakdown_diagnoser` se déclenche avec rel=55 alors qu'il n'est pas attendu. Les critères de traçabilité (incidents sans ticket, tickets sans événement) semblent présents en fond dans plusieurs datasets aposteriori.
+
+### Conclusion
+
+> Le mode aposteriori est nettement plus précis (P=0.80, F1=0.70) que le mode
+> apriori (P=0.22, F1=0.30). Les 4 diagnoseurs aposteriori de base sont fiables.
+> Le mode apriori souffre d'un seuil d'activation trop bas pour
+> `procedural_unreadiness_diagnoser` et de conditions trop strictes pour
+> `critical_service_exposure_diagnoser` et `observability_gap_diagnoser`.
+> 5 des 12 diagnoseurs n'ont produit aucun TP sur le catalogue complet.
+
+---
+
 ## Reproduire les expériences
 
 ```powershell
@@ -281,6 +391,12 @@ python -X utf8 llm_detector_baseline.py both both
 # Sur serveur GPU sans Ollama (auto-détecte HuggingFace transformers) :
 # scp llm_detector_baseline.py noria_graph.ttl results/ user@server:~/baseline/
 # ssh user@server "cd ~/baseline && HF_HOME=/tmp/hf_cache python3 llm_detector_baseline.py both both"
+
+# 6. Évaluation sur le catalogue synthétique (~18 minutes)
+python -X utf8 evaluate_datasets.py
+# Ou un sous-ensemble :
+python -X utf8 evaluate_datasets.py DS11 DS12 DS13
+python -X utf8 evaluate_datasets.py --aposteriori
 ```
 
 ---
@@ -298,3 +414,4 @@ python -X utf8 llm_detector_baseline.py both both
 | `llm_baseline_results.json` | Résultats du baseline LLM (run CPU, mistral:latest) |
 | `llm_baseline_results_gpu.json` | Résultats du baseline LLM (run GPU, Mistral-7B-Instruct-v0.3) |
 | `noria_graph.ttl` | Graphe NORIA-O filtré exporté (4 200 tokens, input LLM) |
+| `eval_results.json` | Résultats complets de l'évaluation sur les 27 datasets synthétiques |

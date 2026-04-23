@@ -1,0 +1,7 @@
+{
+  "agent": "application_support_failure_diagnoser",
+  "mode": "aposteriori",
+  "activation_status": "not_triggered",
+  "reason": "Application anomalies do not yet align with support-chain inconsistencies.",
+  "diagnoses": []
+}

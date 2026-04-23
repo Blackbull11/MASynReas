@@ -1,0 +1,7 @@
+{
+  "agent": "traceability_breakdown_diagnoser",
+  "mode": "aposteriori",
+  "activation_status": "not_triggered",
+  "reason": "At least two traceability-breakdown primary signals are required.",
+  "diagnoses": []
+}

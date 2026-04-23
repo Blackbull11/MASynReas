@@ -1,0 +1,7 @@
+{
+  "agent": "observability_gap_diagnoser",
+  "mode": "apriori",
+  "activation_status": "not_triggered",
+  "reason": "Observability evidence does not yet converge strongly enough on any event or change scope.",
+  "diagnoses": []
+}
