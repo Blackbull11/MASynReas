@@ -40,8 +40,28 @@ import requests
 PROJECT_ROOT    = Path(__file__).resolve().parent
 SPARQL_ENDPOINT = "http://localhost:8890/sparql"
 OLLAMA_ENDPOINT = "http://localhost:11434/api/generate"
-MODEL           = "mistral:latest"
+HF_MODEL        = "mistralai/Mistral-7B-Instruct-v0.3"
+MODEL           = "mistral:latest"          # used for display / Ollama
 RESULTS_DIR     = PROJECT_ROOT / "results"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# BACKEND DETECTION
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _ollama_available() -> bool:
+    try:
+        r = requests.get("http://localhost:11434/api/tags", timeout=3)
+        return r.status_code == 200
+    except Exception:
+        return False
+
+USE_TRANSFORMERS = not _ollama_available()
+if USE_TRANSFORMERS:
+    print("  Ollama not found — using HuggingFace transformers backend")
+
+# Lazy-loaded HF model/tokenizer (loaded once on first call)
+_hf_model = None
+_hf_tokenizer = None
 
 # ─────────────────────────────────────────────────────────────────────────────
 # GRAPH EXPORT  (diagnostic predicates only — strips prov/foaf/label noise)
@@ -247,21 +267,15 @@ Identify every anomaly, weakness, or problem you can detect.
 # LLM CALL
 # ─────────────────────────────────────────────────────────────────────────────
 
-def call_llm(prompt: str) -> str:
-    # num_ctx must cover the full prompt; 16384 fits our ~9k-token graphs.
-    # Timeout is 30 min per call — CPU inference on a large context is slow.
+def _call_ollama(prompt: str) -> str:
     payload = {
         "model": MODEL,
         "prompt": prompt,
-        "stream": True,          # stream for progress visibility
-        "options": {
-            "temperature": 0.1,
-            "num_ctx": 16384,
-        },
+        "stream": True,
+        "options": {"temperature": 0.1, "num_ctx": 16384},
     }
     r = requests.post(OLLAMA_ENDPOINT, json=payload, stream=True, timeout=3600)
     r.raise_for_status()
-
     chunks: list[str] = []
     chars_printed = 0
     for line in r.iter_lines():
@@ -271,12 +285,53 @@ def call_llm(prompt: str) -> str:
         token = data.get("response", "")
         chunks.append(token)
         chars_printed += len(token)
-        if chars_printed % 200 < len(token):   # progress dot every ~200 chars
+        if chars_printed % 200 < len(token):
             print(".", end="", flush=True)
         if data.get("done"):
             break
     print()
     return "".join(chunks)
+
+
+def _call_transformers(prompt: str) -> str:
+    global _hf_model, _hf_tokenizer
+    import torch
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+
+    if _hf_model is None:
+        print(f"  Loading {HF_MODEL} into GPU...", flush=True)
+        _hf_tokenizer = AutoTokenizer.from_pretrained(HF_MODEL)
+        _hf_model = AutoModelForCausalLM.from_pretrained(
+            HF_MODEL,
+            torch_dtype=torch.float16,
+            device_map="auto",
+        )
+        print("  Model loaded.", flush=True)
+
+    messages = [{"role": "user", "content": prompt}]
+    inputs = _hf_tokenizer.apply_chat_template(
+        messages, return_tensors="pt", add_generation_prompt=True
+    ).to(_hf_model.device)
+
+    print(".", end="", flush=True)
+    with torch.no_grad():
+        outputs = _hf_model.generate(
+            inputs,
+            max_new_tokens=2048,
+            temperature=0.1,
+            do_sample=True,
+            pad_token_id=_hf_tokenizer.eos_token_id,
+        )
+    print()
+    return _hf_tokenizer.decode(
+        outputs[0][inputs.shape[1]:], skip_special_tokens=True
+    )
+
+
+def call_llm(prompt: str) -> str:
+    if USE_TRANSFORMERS:
+        return _call_transformers(prompt)
+    return _call_ollama(prompt)
 
 
 def parse_detections(response: str) -> list[dict]:
@@ -428,7 +483,7 @@ def run_one(mode: str, strategy: str, graph_turtle: str, graph_names: set[str] |
     return {
         "mode":            mode,
         "strategy":        strategy,
-        "model":           MODEL,
+        "model":           HF_MODEL if USE_TRANSFORMERS else MODEL,
         "elapsed_s":       elapsed,
         "prompt_tokens":   token_est,
         "raw_response":    response,
@@ -444,8 +499,9 @@ def main() -> None:
     modes      = ["apriori", "aposteriori"] if mode_arg     == "both" else [mode_arg]
     strategies = ["guided",  "open"]        if strategy_arg == "both" else [strategy_arg]
 
+    display_model = HF_MODEL if USE_TRANSFORMERS else MODEL
     print("=" * 60)
-    print(f"  LLM DETECTOR BASELINE  ({MODEL})")
+    print(f"  LLM DETECTOR BASELINE  ({display_model})")
     print("=" * 60)
 
     print("\n  Exporting knowledge graph...")
