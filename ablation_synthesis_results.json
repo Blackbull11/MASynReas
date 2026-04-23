@@ -1,0 +1,265 @@
+{
+  "model": "mistralai/Mistral-7B-Instruct-v0.3",
+  "n_runs": 3,
+  "task": "synthesis",
+  "results": [
+    {
+      "scenario": "S1_SPOF",
+      "label": "Single Point of Failure (aposteriori)",
+      "dataset_id": "DS11_single_point_of_failure_basic",
+      "mode": "aposteriori",
+      "anchor": "res_firewall_01",
+      "expected_severity": "CRITICAL",
+      "model": "mistralai/Mistral-7B-Instruct-v0.3",
+      "conditions": {
+        "A_graph_only": {
+          "conformite": 0.556,
+          "hallucination": 0.0,
+          "severite": 1.0,
+          "consistance": 0.277,
+          "elapsed_s": 60.4,
+          "responses": [
+            "Based on the provided knowledge graph, the main operational issue appears to be a network-related problem affecting multiple resources in the Paris DC. Specifically, there are warning events detected on the Customer Portal, Billing Gateway, Monitoring Dashboard, and Workforce Console applications. These applications are associated with virtual machines located in Paris DC rooms 1 and 2, which are ",
+            "Based on the provided knowledge graph, the main operational issue appears to be a network-related problem affecting multiple resources in the Paris DC. The primary affected entity is the network switch, specifically `baseB:res_access_switch_01` and `baseB:res_access_switch_02`.\n\nThe severity of this issue is CRITICAL, as it directly impacts multiple applications (Customer Access Service, Billing A",
+            "Based on the provided knowledge graph, the main operational issue appears to be a network-related problem affecting the \"Workforce Console\" application (baseB:app_workforce_console). The primary affected entity is the virtual machine resource responsible for the Workforce Console, specifically baseB:res_workforce_vm_01 and baseB:res_workforce_vm_02.\n\nThe severity of this issue is MEDIUM, as the Wo"
+          ]
+        },
+        "B_graph_plus_L1": {
+          "conformite": 0.889,
+          "hallucination": 0.333,
+          "severite": 1.0,
+          "consistance": 0.406,
+          "elapsed_s": 47.3,
+          "responses": [
+            "Based on the provided knowledge graph, the primary affected entity is the firewall resource `baseB:res_firewall_01`. This entity is associated with a high-severity incident, as indicated by the `baseB:severity_high` concept. The incident is a major outage, as evidenced by the `baseB:event_firewall_major` event and the corresponding trouble ticket `baseB:ticket_firewall_major`. This issue is CRITIC",
+            "Based on the provided knowledge graph, the primary affected entity is the firewall resource `baseB:res_firewall_01`. This entity is associated with a high-severity incident, as indicated by the `baseB:severity_high` concept. The incident is a major outage, as evidenced by the `baseB:event_firewall_major` event and the corresponding trouble ticket `baseB:ticket_firewall_major`.\n\nThe severity of thi",
+            "Based on the provided knowledge graph, the primary affected entity is the firewall resource `baseB:res_firewall_01`. This entity is associated with a high-severity incident, as indicated by the `baseB:severity_high` concept. The incident is a major outage, as evidenced by the `baseB:event_firewall_major` event and the corresponding trouble ticket `baseB:ticket_firewall_major`.\n\nThe severity of thi"
+          ]
+        },
+        "C_graph_L1_L2": {
+          "conformite": 1.0,
+          "hallucination": 0.333,
+          "severite": 1.0,
+          "consistance": 0.46,
+          "elapsed_s": 45.4,
+          "responses": [
+            "Based on the provided knowledge graph, the main operational issue appears to be a critical outage detected on the firewall (`baseB:res_firewall_01`). This is indicated by the `baseB:event_firewall_major` event and the associated `baseB:ticket_firewall_major` trouble ticket, both of which have a high severity level.\n\nThe firewall is a critical component in the network infrastructure, as it is respo",
+            "Based on the provided knowledge graph, the main operational issue appears to be a critical outage detected on the firewall (`baseB:res_firewall_01`). This is indicated by the `baseB:event_firewall_major` event and the associated `baseB:ticket_firewall_major` trouble ticket, both of which have a high severity level.\n\nThe firewall is a critical component in the network infrastructure, as it is respo",
+            "Based on the provided knowledge graph, the main operational issue appears to be a critical outage detected on the firewall resource (`baseB:res_firewall_01`). This is indicated by the `baseB:event_firewall_major` event and the associated `baseB:ticket_firewall_major` trouble ticket, both of which have a high severity level.\n\nThe firewall resource seems to be a single point of failure, as there is "
+          ]
+        }
+      }
+    },
+    {
+      "scenario": "S2_Change",
+      "label": "Change-induced incident (aposteriori)",
+      "dataset_id": "DS12_change_induced_incident_basic",
+      "mode": "aposteriori",
+      "anchor": "change_customer_release",
+      "expected_severity": "HIGH",
+      "model": "mistralai/Mistral-7B-Instruct-v0.3",
+      "conditions": {
+        "A_graph_only": {
+          "conformite": 0.333,
+          "hallucination": 0.0,
+          "severite": 0.667,
+          "consistance": 0.304,
+          "elapsed_s": 42.2,
+          "responses": [
+            "Based on the provided knowledge graph, the main operational issue appears to be a series of warning events across multiple applications and their related resources. Specifically, there are warning events related to the Customer Portal, Billing Gateway, Monitoring Dashboard, and Workforce Console applications. The primary affected entity is the `baseB:app_customer_portal` application, as it has the",
+            "Based on the provided knowledge graph, the primary affected entity is the Customer Portal Application, specifically the instances `baseB:app_customer_portal`. The root cause of the main operational issue appears to be a series of warning events detected on the related virtual machines (`baseB:res_customer_vm_01` and `baseB:res_customer_vm_02`) that are part of the Customer Portal Service (`baseB:s",
+            "Based on the provided knowledge graph, the main operational issue appears to be a series of warning events across multiple applications (Customer Portal, Billing Gateway, Monitoring Dashboard, and Workforce Console) in the Paris DC. The primary affected entity is the resource `baseB:res_customer_vm_01`, which is a virtual machine for the Customer Portal application.\n\nThe severity of this issue is "
+          ]
+        },
+        "B_graph_plus_L1": {
+          "conformite": 0.667,
+          "hallucination": 0.333,
+          "severite": 0.333,
+          "consistance": 0.352,
+          "elapsed_s": 53.7,
+          "responses": [
+            "Based on the provided knowledge graph, the main operational issue appears to be a series of warning events affecting multiple applications and resources within the Paris DC, specifically the Customer Access Service (service_customer_access). The primary affected entity is the Customer Portal Module (module_customer_portal), which is part of the Customer Access Service.\n\nThe severity of the issue i",
+            "Based on the provided knowledge graph, the main operational issue appears to be a series of warning events affecting multiple applications and resources within the \"Paris DC\" data center. The primary affected entity is the \"Customer Access Service\" (`baseB:service_customer_access`), specifically the \"Customer Portal Module\" (`baseB:module_customer_portal`).\n\nThe warning events are detected on vari",
+            "Based on the provided knowledge graph, the main operational issue appears to be a series of warning events affecting multiple resources and applications within the Paris DC, specifically in room DC1. The primary affected entity is the Customer Access Service (baseB:service_customer_access), with the Customer Portal Module (baseB:module_customer_portal) being a key component.\n\nThe severity of this "
+          ]
+        },
+        "C_graph_L1_L2": {
+          "conformite": 0.889,
+          "hallucination": 0.333,
+          "severite": 0.667,
+          "consistance": 0.354,
+          "elapsed_s": 55.5,
+          "responses": [
+            "Based on the provided data, the main operational issue appears to be a series of warning events affecting multiple applications and resources within the Paris DC. The primary affected entity is the `baseB:app_customer_portal` application, with related resources such as virtual machines and network interfaces also being impacted.\n\nThe severity of this issue is HIGH, as it involves a critical applic",
+            "Based on the provided data, the main operational issue appears to be a series of warning events affecting multiple applications and resources within the Paris DC. The primary affected entity is the `baseB:app_customer_portal` application, as it is associated with several warning events and is also the focus of a post-change incident.\n\nThe severity of this issue is HIGH, as it involves a critical a",
+            "Based on the provided data, the main operational issue appears to be a series of warning events affecting multiple applications and resources within the Paris DC. The primary affected entity is the `baseB:app_customer_portal` application, with related resources including `baseB:res_customer_vm_01`.\n\nThe severity of this issue is MEDIUM, as multiple applications are experiencing warning events, but"
+          ]
+        }
+      }
+    },
+    {
+      "scenario": "S3_Traceability",
+      "label": "Traceability breakdown (aposteriori)",
+      "dataset_id": "DS14_traceability_breakdown_basic",
+      "mode": "aposteriori",
+      "anchor": "operational_process",
+      "expected_severity": "HIGH",
+      "model": "mistralai/Mistral-7B-Instruct-v0.3",
+      "conditions": {
+        "A_graph_only": {
+          "conformite": 0.0,
+          "hallucination": 0.0,
+          "severite": 0.0,
+          "consistance": 0.319,
+          "elapsed_s": 38.0,
+          "responses": [
+            "Based on the provided knowledge graph, the main operational issue appears to be a series of warning events across multiple applications and resources, including the Customer Portal, Billing Gateway, Monitoring Dashboard, and Workforce Console. The primary affected entity is the resource `baseB:res_customer_vm_01`, which is a virtual machine for the Customer Portal application.\n\nThe severity of thi",
+            "Based on the provided knowledge graph, the main operational issue appears to be a series of warning events across multiple applications and resources. The primary affected entity is the `baseB:app_monitoring_dashboard` (Monitoring Dashboard Service), as it has a warning event associated with it.\n\nThe severity of this issue is assessed as MEDIUM, as while it does not directly impact critical servic",
+            "Based on the provided knowledge graph, the main operational issue appears to be a series of warning events across multiple applications and resources. The primary affected entity is the `baseB:res_customer_vm_01` resource, which is a virtual machine for the customer portal application (`baseB:app_customer_portal`).\n\nThe severity of the issue is `baseB:severity_minor`, as indicated by the `noria:al"
+          ]
+        },
+        "B_graph_plus_L1": {
+          "conformite": 0.0,
+          "hallucination": 0.667,
+          "severite": 0.0,
+          "consistance": 0.432,
+          "elapsed_s": 43.8,
+          "responses": [
+            "Based on the provided knowledge graph, the main operational issue appears to be a series of warning events affecting multiple resources in the Paris DC, specifically in Paris DC room 1 (`baseB:room_dc1`). The affected resources include the Customer Portal (`baseB:app_customer_portal`), Monitoring Dashboard (`baseB:app_monitoring_dashboard`), and Workforce Console (`baseB:app_workforce_console`). T",
+            "Based on the provided knowledge graph, the main operational issue appears to be a series of warning events affecting multiple resources in the Paris DC, specifically in room DC1. The primary affected entity is the resource `baseB:res_billing_api_01`, which is associated with the Billing API Service and has a warning event (`baseB:event_billing_warning`).\n\nThe severity of this issue is assessed as ",
+            "Based on the provided knowledge graph, the main operational issue appears to be a series of warning events affecting multiple resources in the Paris DC, specifically in room DC1. The primary affected entity is the resource `baseB:res_billing_api_01`, which is associated with the Billing API Service and has a warning event (`baseB:event_billing_warning`).\n\nThe severity of this issue is assessed as "
+          ]
+        },
+        "C_graph_L1_L2": {
+          "conformite": 0.333,
+          "hallucination": 0.0,
+          "severite": 0.667,
+          "consistance": 0.446,
+          "elapsed_s": 46.6,
+          "responses": [
+            "Based on the provided knowledge graph, the main operational issue appears to be a series of warning events affecting multiple resources and applications within the Paris DC. The primary affected entity is the resource `baseB:res_billing_api_01`, which is associated with the Billing API Service (`baseB:service_billing_api`).\n\nThe severity of this issue is CRITICAL, as it involves the Billing Gatewa",
+            "Based on the provided knowledge graph, the main operational issue appears to be a series of warning events affecting multiple resources and applications within the Paris DC. The primary affected entity is the resource `baseB:res_billing_api_01`, which is associated with the `baseB:app_billing_gateway`.\n\nThe severity of this issue is HIGH, as it involves a critical application (`baseB:app_billing_g",
+            "Based on the provided knowledge graph, the main operational issue appears to be a series of warning events affecting multiple resources and applications within the Paris DC. The primary affected entity is the resource `baseB:res_billing_api_01`, which is associated with the `baseB:app_billing_gateway`.\n\nThe severity of this issue is HIGH, as it involves a critical application (`baseB:app_billing_g"
+          ]
+        }
+      }
+    },
+    {
+      "scenario": "S4_Fragility",
+      "label": "Structural fragility (apriori)",
+      "dataset_id": "DS04_structural_fragility_resource_anchor",
+      "mode": "apriori",
+      "anchor": "res_access_switch_02",
+      "expected_severity": "HIGH",
+      "model": "mistralai/Mistral-7B-Instruct-v0.3",
+      "conditions": {
+        "A_graph_only": {
+          "conformite": 0.333,
+          "hallucination": 0.0,
+          "severite": 1.0,
+          "consistance": 0.34,
+          "elapsed_s": 43.6,
+          "responses": [
+            "Based on the provided knowledge graph, the main operational issue appears to be affecting the Customer Portal Application (baseA:app_customer_portal). This application, which is critical (noria:businessCriticality <https://w3id.org/noria/kos/application/criticality/high-critical>), is running on two Virtual Machines (baseA:res_customer_vm_01 and baseA:res_customer_vm_02), both located in the same ",
+            "Based on the provided knowledge graph, the main operational issue appears to be affecting the Customer Portal Application (baseA:app_customer_portal). This application, which is critical (noria:businessCriticality <https://w3id.org/noria/kos/application/criticality/high-critical>), is running on two Virtual Machines (baseA:res_customer_vm_01 and baseA:res_customer_vm_02) that are connected to a ne",
+            "Based on the provided knowledge graph, the main operational issue appears to be affecting the Customer Portal Application (baseA:app_customer_portal), specifically the Customer Portal Module (baseA:module_customer_portal). This is inferred from the business criticality of the application being high (baseA:criticality_high) and the module being a subsystem of the service that the application provid"
+          ]
+        },
+        "B_graph_plus_L1": {
+          "conformite": 0.778,
+          "hallucination": 0.0,
+          "severite": 0.333,
+          "consistance": 0.518,
+          "elapsed_s": 34.9,
+          "responses": [
+            "Based on the provided knowledge graph and level-1 detector findings, the primary affected entity is the resource `baseA:res_access_switch_02`, identified as \"Access Switch 02\". This network switch appears to be missing interfaces, parent resources, and is an orphan, suggesting it may not be properly integrated into the network.\n\nThe severity of this issue is CRITICAL, as the switch is a crucial co",
+            "Based on the provided knowledge graph and level-1 detector findings, the primary affected entity is the resource `baseA:res_access_switch_02`, identified as \"Access Switch 02\". This network switch appears to be missing interfaces, parent resources, and is an orphan, suggesting it may not be properly integrated into the network.\n\nThe severity of this issue is CRITICAL, as the switch is a crucial co",
+            "Based on the provided knowledge graph and level-1 detector findings, the primary affected entity is the resource `baseA:res_access_switch_02`, identified as \"Access Switch 02\". This network switch appears to be missing interfaces, parent resources, and is an orphan, suggesting it may not be properly integrated into the network.\n\nThe severity of this issue is CRITICAL, as the switch is a crucial co"
+          ]
+        },
+        "C_graph_L1_L2": {
+          "conformite": 0.778,
+          "hallucination": 0.0,
+          "severite": 0.333,
+          "consistance": 0.323,
+          "elapsed_s": 43.2,
+          "responses": [
+            "Based on the provided knowledge graph and detector findings, the primary affected entity is the resource `baseA:res_access_switch_02` (Access Switch 02). This entity is identified as missing an interface, having no parent resource, being an orphan, unmanaged, and not linked to any procedures.\n\nThe root cause of the operational issue appears to be a lack of proper configuration and management of th",
+            "Based on the provided knowledge graph and detector findings, the primary affected entity is the resource `baseA:res_access_switch_02`, which is an access network switch located in Paris DC room 1. This switch is missing interfaces, parent resources, and is unmanaged, making it an orphan resource.\n\nThe root cause of the operational issue appears to be a lack of proper configuration and management o",
+            "Based on the provided knowledge graph and detector findings, the primary affected entity is the resource `baseA:res_access_switch_02`, identified as \"Access Switch 02\". This network switch appears to be unmanaged, missing interfaces, parents, and is an orphan, indicating a potential configuration issue.\n\nThe severity of this operational issue is HIGH, as the missing switch could disrupt network co"
+          ]
+        }
+      }
+    },
+    {
+      "scenario": "S5_Cascade",
+      "label": "Service cascade / mixed (aposteriori)",
+      "dataset_id": "DS18_aposteriori_mixed_two_true_diagnoses",
+      "mode": "aposteriori",
+      "anchor": "service_workforce_portal",
+      "expected_severity": "CRITICAL",
+      "model": "mistralai/Mistral-7B-Instruct-v0.3",
+      "conditions": {
+        "A_graph_only": {
+          "conformite": 0.333,
+          "hallucination": 0.0,
+          "severite": 1.0,
+          "consistance": 0.4,
+          "elapsed_s": 46.8,
+          "responses": [
+            "Based on the provided knowledge graph, the main operational issue appears to be a series of warning events affecting multiple applications and their related resources. Specifically, there are warning events related to the Customer Portal, Billing Gateway, Monitoring Dashboard, and Workforce Console applications. These warning events are related to resources such as virtual machines and network int",
+            "Based on the provided knowledge graph, the main operational issue appears to be a series of warning events affecting multiple applications and their related resources. The primary affected entity is the resource `baseB:res_monitor_vm_01`, which is a virtual machine associated with the Monitoring Dashboard application (`baseB:app_monitoring_dashboard`).\n\nThe severity of this issue is HIGH, as it in",
+            "Based on the provided knowledge graph, the main operational issue appears to be a series of warning events affecting multiple applications and their related resources. The primary affected entities are the resources `baseB:res_customer_vm_01`, `baseB:res_billing_api_01`, `baseB:res_monitor_vm_01`, and `baseB:res_workforce_vm_01`, which are associated with the applications `baseB:app_customer_porta"
+          ]
+        },
+        "B_graph_plus_L1": {
+          "conformite": 0.333,
+          "hallucination": 0.0,
+          "severite": 0.667,
+          "consistance": 0.458,
+          "elapsed_s": 54.9,
+          "responses": [
+            "Based on the provided knowledge graph, the main operational issue appears to be a warning event affecting the Monitoring Dashboard Service (baseB:service_monitoring_dashboard). This service is composed of the Monitoring Dashboard Module (baseB:module_monitoring_dashboard), which in turn manages the Monitoring VM resources (baseB:res_monitor_vm_01, baseB:res_monitor_vm_02).\n\nThe warning event (base",
+            "Based on the provided knowledge graph, the main operational issue appears to be a warning event affecting the Monitoring Dashboard Service (baseB:service_monitoring_dashboard). This service is composed of the Monitoring Dashboard Module (baseB:module_monitoring_dashboard), which in turn manages the Monitoring VM resources (baseB:res_monitor_vm_01, baseB:res_monitor_vm_02).\n\nThe warning event (base",
+            "Based on the provided knowledge graph, the main operational issue appears to be a warning event affecting the Monitoring Dashboard Service (baseB:service_monitoring_dashboard). This service is composed of the Monitoring Dashboard Module (baseB:module_monitoring_dashboard), which in turn manages the Monitoring VM resources (baseB:res_monitor_vm_01, baseB:res_monitor_vm_02).\n\nThe warning event (base"
+          ]
+        },
+        "C_graph_L1_L2": {
+          "conformite": 0.889,
+          "hallucination": 0.0,
+          "severite": 1.0,
+          "consistance": 0.516,
+          "elapsed_s": 49.2,
+          "responses": [
+            "Based on the provided data, the main operational issue appears to be a warning event affecting the Monitoring Dashboard Service (baseB:service_monitoring_dashboard). This service is composed of the Monitoring Dashboard Module (baseB:module_monitoring_dashboard), which in turn manages the Monitoring VM resources (baseB:res_monitor_vm_01, baseB:res_monitor_vm_02).\n\nThe warning event (baseB:event_mon",
+            "Based on the provided data, the main operational issue appears to be a warning event affecting the Monitoring Dashboard Service (baseB:service_monitoring_dashboard). This service is composed of the Monitoring Dashboard Module (baseB:module_monitoring_dashboard), which in turn manages the Monitoring VM resources (baseB:res_monitor_vm_01, baseB:res_monitor_vm_02).\n\nThe warning event (baseB:event_mon",
+            "Based on the provided data, the main operational issue appears to be a warning event affecting the Monitoring Dashboard Service (`baseB:service_monitoring_dashboard`). This service is composed of multiple resources, including Monitoring Virtual Machines (`baseB:res_monitor_vm_01` and `baseB:res_monitor_vm_02`).\n\nThe primary affected entity is the Monitoring Virtual Machine 01, identified as `baseB"
+          ]
+        }
+      }
+    }
+  ],
+  "macro_averages": {
+    "A_graph_only": {
+      "conformite": 0.311,
+      "hallucination": 0.0,
+      "severite": 0.733,
+      "consistance": 0.328,
+      "n": 5
+    },
+    "B_graph_plus_L1": {
+      "conformite": 0.533,
+      "hallucination": 0.267,
+      "severite": 0.467,
+      "consistance": 0.433,
+      "n": 5
+    },
+    "C_graph_L1_L2": {
+      "conformite": 0.778,
+      "hallucination": 0.133,
+      "severite": 0.733,
+      "consistance": 0.42,
+      "n": 5
+    }
+  }
+}

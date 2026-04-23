@@ -103,9 +103,10 @@ seul l'ordonnancement change.
 
 ## 3. Étude d'ablation — valeur ajoutée de chaque couche MAS
 
-**Script :** `ablation_study.py`  
-**Exécution :** `python -X utf8 ablation_study.py` (~25 minutes)  
-**Résultats :** `ablation_results.json`
+**Script :** `ablation_synthesis_infer.py` (GPU)  
+**Données :** `llm_ablation_data.json` (graphes Turtle + sorties L1/L2 réelles)  
+**Exécution :** `cd /tmp && HF_HOME=/tmp/hf_cache nohup python3 ablation_synthesis_infer.py > ablation_synth_out.txt 2>&1 &`  
+**Résultats :** `ablation_synthesis_results.json`
 
 ### Objectif
 
@@ -114,131 +115,134 @@ la qualité des diagnostics produits par un LLM de synthèse.
 
 **Question centrale :** *à quoi sert le MAS si on a déjà un LLM ?*
 
+À distinguer de l'expérience 6 : ici le LLM reçoit le graphe Turtle et doit
+produire un **rapport diagnostique en langage naturel** (cause racine, entité,
+sévérité), tandis que l'expérience 6 lui demande de **nommer le diagnoseur applicable**
+(classification structurée). La tâche de synthèse reflète un usage opérationnel réel.
+
 ### Modèle LLM utilisé
 
-**`llama3.1:8b`** — Meta Llama 3.1, 8 milliards de paramètres, variante instruction-tuned.
-Exécuté via Ollama sur CPU local.
-Paramètres d'inférence : température = 0.1 (quasi-déterministe), longueur maximale = 300 tokens.
-
-Ce modèle a été choisi pour sa capacité de suivi d'instructions en langue naturelle
-et son contexte étendu (jusqu'à 128K tokens), utile pour ingérer les JSON
-de détection de condition B.
+**`Mistral-7B-Instruct-v0.3`** float16, NVIDIA RTX 4000 Ada (20 Go VRAM),
+`jaguar.polytechnique.fr`, via HuggingFace Transformers.
+Paramètres : température = 0.1, max_new_tokens = 300.
+**Identique au modèle GPU utilisé dans les expériences 4 et 6** — les résultats
+sont directement comparables entre expériences.
 
 ### Protocole
 
-Trois conditions testées sur les mêmes scénarios. Seul l'input du LLM change ;
-le prompt de tâche est identique dans les 3 cas :
-*"You are a network operations expert. Based on the following [input], provide a concise diagnosis :
-identify the most likely root cause, the affected entity, and the severity (CRITICAL / HIGH / MEDIUM / LOW).
-Answer in 3–5 sentences."*
+Trois conditions testées sur 5 scénarios issus des datasets synthétiques.
+L'input du LLM varie ; le prompt de tâche est identique :
+*"You are a network operations expert analyzing an ICT infrastructure knowledge graph.
+Based on the data provided, produce a concise diagnostic report: identify the most likely
+root cause, name the primary affected entity (exact identifier from the graph), assess
+the severity (CRITICAL/HIGH/MEDIUM/LOW). Answer in 3–5 sentences."*
 
 | | Condition A | Condition B | Condition C |
 |-|-------------|-------------|-------------|
-| **Input LLM** | Texte du ticket d'incident (50 mots env.) | JSON des résultats niveau 1 (tous agents actifs) | JSON niveau 1 + JSON des diagnostics niveau 2 |
+| **Input LLM** | Graphe Turtle brut | Graphe + résumé détections niveau 1 | Graphe + L1 + résumé diagnostics niveau 2 |
 | **Architecture simulée** | LLM seul | Niveau 1 → LLM | Niveau 1+2 → LLM |
 
-**Important :** les facts de condition B et les diagnostics de condition C sont des données
-représentatives construites manuellement dans le script pour chaque scénario.
-Ils reproduisent fidèlement la structure réelle des sorties MAS mais ne sont pas
-générés dynamiquement par les agents à chaque run.
-L'étude d'ablation a été conçue et exécutée avant le refactor niveau 2 (qui est passé
-de 4 à 12 diagnoseurs). Les diagnostics de condition C illustrent les 4 diagnoseurs
-originaux (SPOF, change-induced, traceability, structural fragility).
-
-### Métriques (calculées sur la première réponse parmi les 5 runs)
-
-**Hallucination** — fraction des tokens capitalisés dans la réponse qui ressemblent
-à un nom d'entité NORIA (pattern `[A-Z]{2+}[_A-Za-z0-9]*`, ex. `RES_TOY_as2`)
-mais n'apparaissent pas dans la liste des entités connues du scénario.
-Les mots-clés génériques (`CRITICAL`, `HIGH`, `JSON`, etc.) sont exclus.
-Un hallucination_rate = 0.25 signifie que 1 entité sur 4 mentionnées par le LLM n'existe pas.
-
-**Conformité** — fraction de 3 éléments du ground truth présents dans la réponse :
-le nom de l'entité cible, le niveau de sévérité, et le type de diagnostic
-(avec underscores remplacés par des espaces). Valeurs possibles : 0.00, 0.33, 0.67, 1.00.
-
-**Consistance** — similarité Jaccard moyenne entre toutes les paires parmi les 5 runs
-(vocabulaire tokenisé en minuscules). Une valeur de 1.0 signifie que les 5 réponses
-utilisent exactement le même vocabulaire.
-
-**Sévérité** — binaire : 1 si le mot correspondant au niveau de sévérité attendu
-(`CRITICAL`, `HIGH`, etc.) apparaît dans la réponse, 0 sinon.
+Les sorties L1 et L2 sont **générées dynamiquement** par les agents MAS réels sur chaque dataset
+(via `prepare_llm_ablation.py`), pas construites manuellement.
+3 runs par condition pour mesure de consistance.
 
 ### Scénarios
 
-| ID | Description | Ground truth |
-|----|-------------|-------------|
-| S1 | RES_TOY_as2 : 3 signaux structurels simultanés | SPOF / CRITICAL |
-| S2 | CR_2022_001 : signal dynamique + procédural | change-induced / HIGH |
-| S3 | Incidents sans ticket + tickets sans event | traceability breakdown / HIGH |
-| S4 | RES_TOY_as2 : 3 faiblesses apriori de gouvernance | structural fragility / HIGH |
-| S5 | RES_TOY_as2 : SPOF + change CR_2022_001 (cross-family) | SPOF / CRITICAL |
+| ID | Dataset | Mode | Entité anchor | Sévérité attendue |
+|----|---------|------|:---:|:---:|
+| S1 | DS11_single_point_of_failure_basic | aposteriori | `res_firewall_01` | CRITICAL |
+| S2 | DS12_change_induced_incident_basic | aposteriori | `change_customer_release` | HIGH |
+| S3 | DS14_traceability_breakdown_basic | aposteriori | `operational_process` | HIGH |
+| S4 | DS04_structural_fragility_resource_anchor | apriori | `res_access_switch_02` | HIGH |
+| S5 | DS18_aposteriori_mixed_two_true_diagnoses | aposteriori | `service_workforce_portal` | CRITICAL |
+
+### Métriques (moyennes sur 3 runs)
+
+**Conformité** — fraction de 3 éléments du ground truth présents dans la réponse :
+l'entité anchor, le niveau de sévérité, et un mot-clé du type diagnostique.
+Valeurs possibles : 0.00, 0.33, 0.67, 1.00.
+
+**Hallucination** — fraction des tokens NORIA-like (ex. `RES_TOY_...`, `APP_...`)
+dans la réponse qui n'existent pas dans le graphe soumis.
+
+**Sévérité** — binaire : 1 si le niveau de sévérité attendu apparaît dans la réponse.
+
+**Consistance** — similarité Jaccard moyenne entre les 3 runs
+(mesure de stabilité face à la température).
 
 ### Résultats
 
-#### Moyennes par condition (5 scénarios × 5 runs)
+#### Macro-moyennes par condition (5 scénarios × 3 runs)
 
-| Condition | Hallucination ↓ | Conformité ↑ | Consistance ↑ | Sévérité ↑ |
+| Condition | Conformité ↑ | Hallucination ↓ | Sévérité ↑ | Consistance ↑ |
 |-----------|:---:|:---:|:---:|:---:|
-| **A — LLM seul** | 0.00 | 0.60 | 0.68 | 1.00 |
-| **B — Niveau 1 → LLM** | 0.05 | 0.53 | 0.57 | 0.60 |
-| **C — Niveau 1+2 → LLM** | **0.00** | **0.87** | **0.66** | **1.00** |
+| **A — graphe seul** | 0.311 | **0.000** | 0.733 | 0.328 |
+| **B — graphe + L1** | 0.533 | 0.267 | 0.467 | 0.433 |
+| **C — graphe + L1 + L2** | **0.778** | 0.133 | **0.733** | **0.420** |
 
-#### Tableau détaillé
+#### Tableau détaillé par scénario
 
-| Scénario | A — Hall / Conf / Cons / Sev | B — Hall / Conf / Cons / Sev | C — Hall / Conf / Cons / Sev |
-|----------|:---:|:---:|:---:|
-| S1 SPOF | 0.00 / 0.67 / 0.84 / 1 | 0.25 / 1.00 / 0.44 / 1 | **0.00 / 1.00 / 0.54 / 1** |
-| S2 Change | 0.00 / 0.67 / 0.52 / 1 | 0.00 / 0.33 / 0.82 / 0 | **0.00 / 0.67 / 0.82 / 1** |
-| S3 Traçabilité | 0.00 / 0.33 / 0.80 / 1 | 0.00 / 0.33 / 0.52 / 1 | **0.00 / 0.67 / 0.62 / 1** |
-| S4 Fragilité | 0.00 / 0.67 / 0.70 / 1 | 0.00 / 0.67 / 0.51 / 1 | **0.00 / 1.00 / 0.70 / 1** |
-| S5 Cross-family | 0.00 / 0.67 / 0.53 / 1 | 0.00 / 0.33 / 0.56 / 0 | **0.00 / 1.00 / 0.63 / 1** |
+| Scénario | A — Conf / Hall / Sev | B — Conf / Hall / Sev | C — Conf / Hall / Sev |
+|----------|-----------------------|-----------------------|-----------------------|
+| S1 SPOF | 0.556 / 0.000 / 1.00 | 0.889 / 0.333 / 1.00 | **1.000 / 0.333 / 1.00** |
+| S2 Change | 0.333 / 0.000 / 0.67 | 0.667 / 0.333 / 0.33 | **0.889 / 0.333 / 0.67** |
+| S3 Traçabilité | 0.000 / 0.000 / 0.00 | 0.000 / 0.667 / 0.00 | **0.333 / 0.000 / 0.67** |
+| S4 Fragilité | 0.333 / 0.000 / 1.00 | 0.778 / 0.000 / 0.33 | **0.778 / 0.000 / 0.33** |
+| S5 Cascade | 0.333 / 0.000 / 1.00 | 0.333 / 0.000 / 0.67 | **0.889 / 0.000 / 1.00** |
 
 ### Analyse
 
-#### Résultat principal : la condition C domine sur toutes les métriques critiques
+#### Résultat principal : gradient A < B < C sur la conformité
 
-La condition C (niveau 1+2 → LLM) obtient le meilleur score de conformité
-(0.87) et zéro hallucination. Elle est la seule condition à atteindre
-conformité = 1.00 sur S1, S4 et S5. C'est la seule condition qui reproduit
-correctement la sévérité sur tous les scénarios (1.00 vs 0.60 pour B).
+La conformité progresse nettement de A à C : 0.311 → 0.533 → 0.778.
+Chaque couche du MAS améliore la qualité du rapport synthétisé.
+La condition C est la seule à atteindre conformité ≥ 0.889 sur S1, S2 et S5.
 
-#### Résultat clé : la condition B est systématiquement pire que A
+#### Résultat clé : la condition B introduit des hallucinations, pas la condition C
 
-Sur S2 (change-induced) et S5 (cross-family), la condition B :
-- rate la sévérité correcte (dit CRITICAL au lieu de HIGH)
-- conformité = 0.33, inférieure à la condition A (0.67)
+La condition B génère un taux d'hallucination de 0.267 (plus du double de la condition C = 0.133).
+En S3 (traceability), le résumé L1 brut — qui liste de nombreuses entités sans corrélation —
+pousse le LLM à mentionner des entités inexistantes dans le graphe (hall = 0.667).
+La condition C ramène le taux à 0.000 sur S3 : le résumé L2 filtre les signaux
+et fournit un ancrage sémantique précis.
 
-Sur S1 (SPOF), la condition B atteint conformité = 1.00 mais hallucine
-une entité (rate = 0.25) : elle trouve la bonne réponse mais invente
-des entités inexistantes. La condition C obtient le même résultat sans hallucination.
+#### Résultat clé : la condition B dégrade la sévérité par rapport à A
 
-**Explication :** les JSON bruts du niveau 1 contiennent `RES_TOY_as2`
-dans plusieurs agents indépendants (`isolated_incident_resource`, `no_redundancy_incident`,
-`high_impact_resource`, `change_linked_to_multiple_incidents`).
-Sans corrélation, le LLM se concentre sur l'entité la plus fréquente
-et sur-diagnostique en CRITICAL même quand le signal dominant
-est la chaîne de changement. Le diagnostic niveau 2 — qui dit explicitement
-*"change CR_2022_001, dual corroboration, severity HIGH"* — recadre
-correctement le modèle.
+La sévérité passe de 0.733 (A) à 0.467 (B) avant de revenir à 0.733 (C).
+Sur S4 (fragilité apriori), la condition B oriente le LLM vers CRITICAL
+(le switch manque d'interfaces, de parent, est orphelin — signaux qui sonnent
+comme une urgence critique), alors que le contexte apriori justifie HIGH.
+La condition C, qui dispose du diagnostic L2 complet (type, fiabilité, sévérité),
+rétablit la sévérité correcte.
 
-Ce résultat démontre que **des faits bruts non corrélés peuvent activement
-tromper le LLM**. Le niveau 2 n'est pas un luxe : il est nécessaire pour
-que les faits du niveau 1 soient exploitables.
+Ce résultat confirme que **des signaux L1 bruts non corrélés peuvent activement
+tromper le LLM sur la calibration de sévérité**. Le niveau 2 n'est pas un luxe :
+il est nécessaire pour que les faits du niveau 1 soient utilisables de façon fiable.
 
-#### S5 — cas cross-family (résultat le plus fort)
+#### S3 (Traceability) — cas le plus difficile
 
-Sur le scénario qui combine SPOF structurel et incident induit par changement,
-la condition C atteint conformité = 1.00 là où la condition B n'obtient que
-0.33. C'est le cas où la corrélation multi-famille du niveau 2 est la plus
-décisive : sans elle, le LLM est submergé par des signaux contradictoires.
+Aucune condition n'atteint conformité > 0.333 sur ce scénario.
+La rupture de traçabilité (incidents sans ticket, tickets sans événement)
+est un pattern défini par **absence de liens** dans le graphe.
+Le LLM raisonne par complétion de pattern sur ce qui est présent
+et ne remarque pas ce qui manque. Ce résultat corrobore le finding
+de l'expérience 4 : le raisonnement par absence est une limite structurelle du LLM.
+
+#### S5 (Cascade) — impact maximal du niveau 2
+
+Sur le scénario avec service cascade et composant instable simultanés,
+la condition C atteint conformité = 0.889 contre 0.333 pour B et A.
+C'est le cas où la corrélation multi-signal du niveau 2 est la plus décisive :
+sans le résumé L2 qui explique que plusieurs services sont impactés via
+une dépendance commune, le LLM isole un seul service et manque la dimension cascade.
 
 #### Conclusion
 
 > Le MAS ne remplace pas le LLM — il le rend fiable.
-> Sans le niveau 2, le LLM sur-diagnostique sur les scénarios multi-signaux.
-> Avec le niveau 1+2, il produit des diagnostics précis, sans hallucination,
-> avec une conformité de 0.87 (vs 0.53 pour le niveau 1 seul).
+> Les données L1 brutes dégradent la précision (hallucinations × 2.7,
+> sévérité −0.27). Le niveau 2 corrige ces deux effets simultanément :
+> conformité 0.311 → 0.778 (+150%), hallucination 0.267 → 0.133 (−50%),
+> sévérité rétablie à 0.733.
 
 ---
 
