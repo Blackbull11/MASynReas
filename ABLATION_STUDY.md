@@ -26,7 +26,7 @@ Quatre métriques sont mesurées automatiquement :
 
 - **Hallucination rate** : fraction des noms d'entités produits par le LLM qui n'existent pas dans le scénario (0 = aucune hallucination)
 - **Conformity score** : fraction des éléments du ground truth (entité cible, type de diagnostic, sévérité) présents dans la réponse (1 = parfait)
-- **Consistency score** : similarité Jaccard entre les 3 réponses du même run (1 = identiques, 0 = contradictoires)
+- **Consistency score** : similarité Jaccard entre les 5 runs de la même condition (1 = identiques, 0 = contradictoires)
 - **Severity match** : 1 si le niveau de sévérité du ground truth est correctement reproduit, 0 sinon
 
 ---

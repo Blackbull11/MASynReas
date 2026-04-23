@@ -14,14 +14,14 @@ The system has three layers:
 
 - **Level 1 — Detector agents** (54 agents across 4 families): each runs a SPARQL query against Virtuoso and writes a JSON result to `results/`
 - **Level 2 — Diagnoser agents** (4 agents): correlate level-1 results across families to produce structured diagnoses with confidence scores
-- **Level 3 — Narrative synthesis**: a local LLM (via Ollama) synthesizes a natural language diagnosis from level-1+2 outputs
+- **Level 3 — Narrative synthesis**: a local LLM (via Ollama) synthesizes a natural language diagnosis from level-1+2 outputs (evaluated via ablation study; not wired into the JaCaMo MAS)
 
 ### Agent families
 
 | Family | Apriori agents | Aposteriori agents |
 |--------|:--------------:|:-----------------:|
 | Structural | 10 | 7 |
-| Dynamic | — | 12 |
+| Dynamic | 3 | 12 |
 | Functional | 7 | 9 |
 | Procedural | 3 | 3 |
 
@@ -68,6 +68,9 @@ python -X utf8 run_all_detectors.py both
 
 # Complementarity table (non-redundancy proof)
 python -X utf8 complementarity_table.py
+
+# Sequential baseline (speedup measurement)
+python -X utf8 baseline_monoagent.py both
 
 # Ablation study — LLM value added by each MAS layer (~25 min)
 python -X utf8 ablation_study.py

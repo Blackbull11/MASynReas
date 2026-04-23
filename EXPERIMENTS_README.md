@@ -54,16 +54,16 @@ elles convergent en un diagnostic unique.
 
 | Famille | Agents actifs | Détections |
 |---------|:---:|:---:|
-| Structural | 0/7 | 0 |
+| Structural | **2/7** | **10** |
 | Dynamic | 0/12 | 0 |
 | Functional | **7/9** | **19** |
 | Procedural | 0/3 | 0 |
 
-**Finding important :** sur noria-0.2, seule la famille fonctionnelle produit
-des résultats en mode aposteriori. Cela s'explique par la nature du dataset de
-référence : les incidents présents (TroubleTickets) impactent principalement
-la couche applicative/service. Un réseau de production réel déclencherait
-également les familles structural, dynamic et procedural.
+**Finding important :** sur noria-0.2, les familles structurelle et fonctionnelle
+sont actives en mode aposteriori (10 + 19 détections). L'inactivité des familles
+dynamique et procédurale s'explique par les caractéristiques du dataset : absence
+d'instance `noria:Change`, seulement 6 `EventRecord` réseau (en dessous des seuils
+de burst/répétition), et tous les tickets sont correctement reliés à leurs événements.
 
 Ce résultat justifie l'architecture à 4 familles : la couverture complète
 de l'espace des anomalies nécessite les 4 facettes NORIA-O, même si
@@ -189,7 +189,10 @@ python -X utf8 run_all_detectors.py both
 # 2. Tableau de complémentarité
 python -X utf8 complementarity_table.py
 
-# 3. Étude d'ablation (~25 minutes)
+# 3. Baseline séquentiel (mesure du speedup MAS)
+python -X utf8 baseline_monoagent.py both
+
+# 4. Étude d'ablation (~25 minutes)
 python -X utf8 ablation_study.py
 ```
 
@@ -204,4 +207,4 @@ python -X utf8 ablation_study.py
 | `complementarity_results.json` | Données brutes du tableau de complémentarité |
 | `ablation_results.json` | Données brutes de l'étude d'ablation |
 | `ABLATION_STUDY.md` | Analyse détaillée de l'ablation |
-| `COMPLEMENTARITY_TABLE.md` | *(à générer depuis les résultats)* |
+| `baseline_results.json` | Données brutes du baseline séquentiel |

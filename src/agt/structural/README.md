@@ -128,7 +128,7 @@ Detects incident-related resources with very low visible network connectivity.
 
 Current SPARQL logic:
 - starts from `noria:TroubleTicket`
-- follows `noria:troubleTicketImpacts` toward a `noria:Resource`
+- follows `(noria:troubleTicketRelatedResource | dct:relation/noria:logOriginatingManagedObject)` toward a `noria:Resource`
 - counts connected `noria:NetworkLink` instances reachable through `noria:networkInterfaceOf` and `noria:networkInterfaceConnects`
 - returns resources with a connectivity degree less than or equal to 1
 
@@ -141,7 +141,7 @@ Agent/script note:
 
 Current SPARQL logic:
 - starts from `noria:TroubleTicket`
-- follows `noria:troubleTicketImpacts` toward a `noria:Resource`
+- follows `(noria:troubleTicketRelatedResource | dct:relation/noria:logOriginatingManagedObject)` toward a `noria:Resource`
 - retrieves the impacted resource interfaces via `noria:networkInterfaceOf`
 - retrieves the connected links via `noria:networkInterfaceConnects`
 - counts the distinct interfaces connected to each link
@@ -152,7 +152,7 @@ Detects incident-affected resources with many structural dependents.
 
 Current SPARQL logic:
 - starts from `noria:TroubleTicket`
-- follows `noria:troubleTicketImpacts` toward a `noria:Resource`
+- follows `(noria:troubleTicketRelatedResource | dct:relation/noria:logOriginatingManagedObject)` toward a `noria:Resource`
 - counts dependent resources through `noria:partOf`
 - counts supported applications through `noria:resourceForApplication`
 - returns resources whose total dependent-resource count plus dependent-application count is at least 3
@@ -166,7 +166,7 @@ Agent/script note:
 
 Current SPARQL logic:
 - starts from `noria:TroubleTicket`
-- follows `noria:troubleTicketImpacts` toward a `noria:Resource`
+- follows `(noria:troubleTicketRelatedResource | dct:relation/noria:logOriginatingManagedObject)` toward a `noria:Resource`
 - excludes resources having a sibling resource sharing the same parent via `noria:partOf`
 - excludes resources having another resource connected to the same link through interface-link relations
 - returns incident-related resources for which neither sibling-based nor link-based redundancy is visible
@@ -176,7 +176,7 @@ Detects incidents involving applications whose technical support mapping is miss
 
 Current SPARQL logic:
 - starts from `noria:TroubleTicket`
-- follows `noria:troubleTicketImpacts` toward a `noria:Application`
+- follows `(noria:troubleTicketRelatedResource | dct:relation/noria:logOriginatingManagedObject)` toward a `noria:Application`
 - collects support resources via `noria:resourceForApplication`
 - optionally groups these support resources by parent through `noria:partOf`
 - returns applications with either:
@@ -188,7 +188,7 @@ Detects clusters of incidents concentrated in the same location.
 
 Current SPARQL logic:
 - starts from `noria:TroubleTicket`
-- follows `noria:troubleTicketImpacts` toward a `noria:Resource`
+- follows `(noria:troubleTicketRelatedResource | dct:relation/noria:logOriginatingManagedObject)` toward a `noria:Resource`
 - uses `noria:locatedIn` to group impacted resources by location
 - returns locations associated with at least two distinct trouble tickets
 
@@ -197,18 +197,11 @@ Detects incidents affecting child components whose parent resource appears struc
 
 Current SPARQL logic:
 - starts from `noria:TroubleTicket`
-- follows `noria:troubleTicketImpacts` toward a child `noria:Resource`
+- follows `(noria:troubleTicketRelatedResource | dct:relation/noria:logOriginatingManagedObject)` toward a child `noria:Resource`
 - climbs to a parent resource via `noria:partOf`
 - counts sibling or child resources linked to the same parent
 - counts applications supported by that parent through `noria:resourceForApplication`
 - returns parent resources having either at least two contained resources or at least one supported application
-
-## Control Agent
-
-The `apriori` folder also contains:
-- `apriori_test_controller`
-
-This is not an anomaly detector. It is a coordination agent used to observe Python execution completion signals and stop the MAS after all a priori detectors have reported.
 
 ## Execution Model
 
