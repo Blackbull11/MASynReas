@@ -1,0 +1,194 @@
+{
+  "global_kpis": {
+    "precision_at_l2_global": 0.394,
+    "recall_at_l2_global": 0.542,
+    "f1_at_l2_global": 0.456,
+    "macro_f1_aposteriori": 0.815,
+    "macro_f1_apriori": 0.196,
+    "top1_accuracy_ds23": 1,
+    "robustness_aposteriori": "100% — no degradation on 4 robustness datasets",
+    "l1_recall_all_datasets": "1.00 — all L1 agents executed correctly on all 27 datasets",
+    "diagnosers_with_nonzero_tp": 7,
+    "diagnosers_never_triggered": 5
+  },
+  "top1_accuracy": {
+    "triggered": [
+      "single_point_of_failure_diagnoser",
+      "traceability_breakdown_diagnoser"
+    ],
+    "expected_rank": [
+      "single_point_of_failure_diagnoser",
+      "traceability_breakdown_diagnoser",
+      "unstable_component_diagnoser"
+    ],
+    "top1_predicted": "single_point_of_failure_diagnoser",
+    "top1_expected": "single_point_of_failure_diagnoser",
+    "top1_accuracy": 1,
+    "rank_scores": {
+      "single_point_of_failure_diagnoser": 71,
+      "traceability_breakdown_diagnoser": 54,
+      "unstable_component_diagnoser": "?"
+    }
+  },
+  "calibration": {
+    "ds24_apriori_metrics": {
+      "precision_at_l2": 0.5,
+      "recall_at_l2": 0.333,
+      "f1_at_l2": 0.4,
+      "tp": 1,
+      "fp": 1,
+      "fn": 2,
+      "detail": {
+        "structural_fragility_diagnoser": "TP",
+        "critical_service_exposure_diagnoser": "FN",
+        "observability_gap_diagnoser": "FN",
+        "procedural_unreadiness_diagnoser": "FP",
+        "functional_mapping_gap_diagnoser": "TN"
+      }
+    },
+    "note": "DS24 tests evidence strength calibration: strong/medium/weak signals in same graph. MAS correctly triggered structural_fragility (strong) but missed critical_service_exposure and observability_gap."
+  },
+  "robustness": {
+    "baseline": {
+      "SPOF_baseline": 1.0,
+      "traceability_baseline": 1.0
+    },
+    "degraded": {
+      "missing_data_apost": 1.0,
+      "missing_procedural": 1.0,
+      "noisy_events": 1.0,
+      "noisy_duplicates": 1.0
+    },
+    "observations": [
+      "DS19 (missing structural+temporal data, aposteriori): F1=1.00 — no expected L2 diagnosis, no false positives triggered. System correctly abstains.",
+      "DS20 (missing procedural links): F1=1.00 — traceability_breakdown correctly triggered despite partial evidence.",
+      "DS21 (noisy irrelevant events): F1=1.00 — noise-resilient, no false positives added.",
+      "DS22 (noisy duplicate records): F1=1.00 — duplicate records do not create spurious diagnoser triggers."
+    ]
+  },
+  "per_diagnoser": {
+    "apriori/structural_fragility_diagnoser": {
+      "TP": 2,
+      "FP": 3,
+      "FN": 0,
+      "TN": 11
+    },
+    "apriori/critical_service_exposure_diagnoser": {
+      "TP": 0,
+      "FP": 0,
+      "FN": 4,
+      "TN": 12
+    },
+    "apriori/observability_gap_diagnoser": {
+      "TP": 0,
+      "FP": 0,
+      "FN": 2,
+      "TN": 14
+    },
+    "apriori/procedural_unreadiness_diagnoser": {
+      "TP": 1,
+      "FP": 15,
+      "FN": 0,
+      "TN": 0
+    },
+    "apriori/functional_mapping_gap_diagnoser": {
+      "TP": 2,
+      "FP": 0,
+      "FN": 0,
+      "TN": 14
+    },
+    "aposteriori/single_point_of_failure_diagnoser": {
+      "TP": 2,
+      "FP": 0,
+      "FN": 0,
+      "TN": 18
+    },
+    "aposteriori/change_induced_incident_diagnoser": {
+      "TP": 1,
+      "FP": 0,
+      "FN": 0,
+      "TN": 19
+    },
+    "aposteriori/service_cascade_diagnoser": {
+      "TP": 2,
+      "FP": 0,
+      "FN": 0,
+      "TN": 18
+    },
+    "aposteriori/traceability_breakdown_diagnoser": {
+      "TP": 3,
+      "FP": 2,
+      "FN": 0,
+      "TN": 15
+    },
+    "aposteriori/unstable_component_diagnoser": {
+      "TP": 0,
+      "FP": 0,
+      "FN": 3,
+      "TN": 17
+    },
+    "aposteriori/application_support_failure_diagnoser": {
+      "TP": 0,
+      "FP": 0,
+      "FN": 1,
+      "TN": 19
+    },
+    "aposteriori/local_infrastructure_cluster_diagnoser": {
+      "TP": 0,
+      "FP": 0,
+      "FN": 1,
+      "TN": 19
+    }
+  },
+  "scalability": {
+    "triple_counts": {
+      "DS25_scalability_small": 170,
+      "DS26_scalability_medium": 258,
+      "DS27_scalability_large": 352
+    },
+    "timings": {
+      "DS25_scalability_small_apriori": {
+        "l1_agents": 23,
+        "l1_ms": 4707,
+        "l2_agents": 5,
+        "l2_ms": 381,
+        "total_ms": 5088
+      },
+      "DS25_scalability_small_aposteriori": {
+        "l1_agents": 31,
+        "l1_ms": 6295,
+        "l2_agents": 7,
+        "l2_ms": 377,
+        "total_ms": 6672
+      },
+      "DS26_scalability_medium_apriori": {
+        "l1_agents": 23,
+        "l1_ms": 4594,
+        "l2_agents": 5,
+        "l2_ms": 266,
+        "total_ms": 4860
+      },
+      "DS26_scalability_medium_aposteriori": {
+        "l1_agents": 31,
+        "l1_ms": 6297,
+        "l2_agents": 7,
+        "l2_ms": 413,
+        "total_ms": 6710
+      },
+      "DS27_scalability_large_apriori": {
+        "l1_agents": 23,
+        "l1_ms": 4443,
+        "l2_agents": 5,
+        "l2_ms": 264,
+        "total_ms": 4707
+      },
+      "DS27_scalability_large_aposteriori": {
+        "l1_agents": 31,
+        "l1_ms": 6481,
+        "l2_agents": 7,
+        "l2_ms": 466,
+        "total_ms": 6947
+      }
+    }
+  }
+}

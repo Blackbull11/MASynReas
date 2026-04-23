@@ -1,20 +1,22 @@
 # Expériences et Résultats — PSC INF12
 
-Ce document couvre les cinq expériences menées sur MASynReas, appliqué au dataset noria-0.2 (graphe de connaissances ICT jouet) et à un catalogue de 27 datasets synthétiques.
+Ce document couvre les six expériences menées sur MASynReas, appliqué au dataset noria-0.2 (graphe de connaissances ICT jouet) et à un catalogue de 27 datasets synthétiques.
 
 ### Fil conducteur
 
-Les expériences répondent à cinq questions dans un ordre logique :
+Les expériences répondent à six questions dans un ordre logique :
 
 1. **Les 4 familles d'agents niveau 1 sont-elles redondantes ?** → Tableau de complémentarité
 2. **Le parallélisme MAS apporte-t-il un gain de vitesse réel ?** → Baseline séquentiel
 3. **Le MAS améliore-t-il la qualité d'un LLM utilisé en synthèse ?** → Étude d'ablation
-4. **Un LLM seul peut-il remplacer le MAS pour la détection ?** → Baseline LLM monovalent
+4. **Un LLM seul peut-il remplacer le MAS pour la détection d'entités ?** → Baseline LLM monovalent
 5. **La pipeline L1+L2 est-elle précise sur ground truth contrôlé ?** → Évaluation datasets synthétiques
+6. **Un LLM peut-il effectuer la classification L2 aussi bien que le MAS ?** → Comparaison LLM vs MAS
 
-Les expériences 3 et 4 impliquent des LLM mais avec des rôles radicalement différents :
+Les expériences 3, 4 et 6 impliquent des LLM mais avec des rôles distincts :
 - En **expérience 3**, le LLM est un *consommateur* des sorties MAS — il synthétise un rapport à partir de faits déjà corrélés.
-- En **expérience 4**, le LLM est un *concurrent* du MAS — on lui donne le graphe brut et on lui demande de trouver les anomalies lui-même, sans aucun prétraitement.
+- En **expérience 4**, le LLM est un *concurrent* du MAS pour la **détection d'entités** — il reçoit le graphe brut et identifie les entités anormales sans prétraitement.
+- En **expérience 6**, le LLM est un *concurrent* du MAS pour la **classification de diagnoseurs** — il reçoit le graphe (et optionnellement les sorties L1/L2) et doit nommer quel pattern s'applique, évalué sur le même ground truth que l'expérience 5.
 
 ---
 
@@ -506,14 +508,215 @@ alors qu'il n'est pas attendu. Les critères de traçabilité
 (incidents sans ticket, tickets sans événement) sont structurellement présents
 dans plusieurs datasets aposteriori en fond.
 
+### KPIs complémentaires (kpi_analysis.py / kpi_report.json)
+
+#### Top-1 accuracy — DS23
+
+DS23 met en scène 3 diagnoseurs attendus, classés par urgence décroissante :
+SPOF (priority=71) > traceability_breakdown (priority=54) > unstable_component (non déclenché).
+Le MAS prédit correctement SPOF comme diagnostic de priorité maximale.
+
+**Top-1 accuracy = 1.00** (1 dataset, 1 scénario multi-diagnostic).
+
+#### Calibration fiabilité/sévérité — DS24
+
+DS24 contient 3 signaux de forces distinctes dans le même graphe :
+`structural_fragility` (signal fort), `critical_service_exposure` (signal moyen),
+`observability_gap` (signal faible). En mode apriori :
+- TP : `structural_fragility_diagnoser` déclenché correctement
+- FP : `procedural_unreadiness_diagnoser` (faux positif systématique, voir ci-dessus)
+- FN : `critical_service_exposure_diagnoser` et `observability_gap_diagnoser` silencieux
+
+Le MAS distingue le signal fort du bruit mais ne gradue pas encore les signaux moyen et faible.
+
+#### Robustesse — DS19/DS20/DS21/DS22
+
+4 variants de dégradation du graphe, tous évalués en mode aposteriori :
+
+| Dataset | Dégradation | Résultat |
+|---------|-------------|:--------:|
+| DS19 | Données structurelles et temporelles manquantes | F1=1.00 (abstention correcte) |
+| DS20 | Liens procéduraux manquants | F1=1.00 (traceability déclenché malgré l'absence partielle) |
+| DS21 | Événements parasites irrelevants | F1=1.00 (aucun FP ajouté) |
+| DS22 | Doublons d'enregistrements | F1=1.00 (les doublons ne créent pas de déclenchements spurieux) |
+
+**Dégradation aposteriori = 0% sur tous les variants de robustesse.**
+
+#### Scalabilité — DS25/DS26/DS27
+
+Trois datasets de tailles croissantes, même topologie que DS01 augmentée :
+
+| Dataset | Triples | L1 apriori | L2 apriori | L1 aposteriori | L2 aposteriori |
+|---------|:-------:|:----------:|:----------:|:--------------:|:--------------:|
+| DS25 (small) | 170 | 4 707ms | 381ms | 6 295ms | 377ms |
+| DS26 (medium) | 258 | 4 594ms | 266ms | 6 297ms | 413ms |
+| DS27 (large) | 352 | 4 443ms | 264ms | 6 481ms | 466ms |
+
+Le temps total reste **< 7 secondes** sur les 3 tailles testées.
+Les temps L1 et L2 restent stables malgré la croissance du graphe :
+la parallélisation MAS absorbe l'augmentation du volume sans dégradation linéaire.
+
 ### Conclusion
 
-> Le mode aposteriori est nettement plus précis (P=0.80, F1=0.70) que le mode
-> apriori (P=0.22, F1=0.30). Les 4 diagnoseurs aposteriori de base sont fiables.
+> Le mode aposteriori est nettement plus précis (P=0.80, macro-F1=0.815) que le mode
+> apriori (P=0.22, macro-F1=0.196). Les 4 diagnoseurs aposteriori de base sont fiables.
 > Le mode apriori souffre d'un seuil d'activation trop bas pour
 > `procedural_unreadiness_diagnoser` et de conditions trop strictes pour
 > `critical_service_exposure_diagnoser` et `observability_gap_diagnoser`.
 > 5 des 12 diagnoseurs n'ont produit aucun TP sur le catalogue complet.
+> La robustesse est parfaite en aposteriori, la scalabilité constante jusqu'à 352 triples.
+
+---
+
+## 6. Comparaison LLM vs MAS — classification L2 en 3 conditions
+
+**Scripts :** `prepare_llm_ablation.py` (local) + `llm_ablation_infer.py` (GPU)  
+**Données intermédiaires :** `llm_ablation_data.json`  
+**Résultats :** `llm_ablation_results.json`  
+**Exécution :** 2 phases — voir ci-dessous
+
+### Objectif
+
+Mesurer si Mistral-7B peut effectuer *la même tâche que le MAS* au niveau 2 :
+identifier quels diagnoseurs s'appliquent à un graphe ICT donné.
+Le LLM est évalué sur le même ground truth (`expected_level2.json`) que le MAS,
+avec trois niveaux d'information progressifs.
+
+À distinguer de l'expérience 4 : ici on demande au LLM de **nommer le diagnoseur applicable**
+(classification parmi 7 patterns nommés), alors que l'expérience 4 demandait au LLM
+d'identifier des **entités anormales** (détection libre). Le ground truth est aussi différent :
+L2 classification (expected_level2.json) vs L1 entity detection (résultats MAS niveau 1).
+
+### Modèle LLM utilisé
+
+**`Mistral-7B-Instruct-v0.3`** float16, exécuté sur NVIDIA RTX 4000 Ada (20 GB VRAM),
+`jaguar.polytechnique.fr`, via HuggingFace Transformers.
+Paramètres : température = 0.1, max_new_tokens = 300.
+Même variante que le run GPU de l'expérience 4 — les deux runs GPU sont directement comparables.
+
+### Protocole — architecture 2 phases
+
+Le script est divisé en deux phases pour isoler les dépendances :
+
+**Phase 1 — locale (`prepare_llm_ablation.py`)** :
+Pour chacun des 9 datasets cibles, charge le TTL dans Virtuoso, exécute les agents
+L1+L2 aposteriori, collecte les résultats, et exporte un paquet autonome
+(`llm_ablation_data.json`) contenant : le Turtle brut du graphe, un résumé des détections
+niveau 1 (entités actives par agent), un résumé des diagnostics niveau 2 (diagnoseurs
+déclenchés avec anchor, rel, sev, priority), et le ground truth attendu.
+
+**Phase 2 — GPU (`llm_ablation_infer.py`)** :
+Lit `llm_ablation_data.json`, soumet 3 prompts par dataset au LLM, parse la réponse JSON,
+calcule P/R/F1. Aucun Virtuoso ni agent MAS requis — le fichier est auto-suffisant.
+
+### Datasets ciblés
+
+9 datasets aposteriori, couvrant les 7 diagnoseurs + 1 graphe propre + 1 scénario multi-diagnosi :
+
+| Dataset | Diagnoseur attendu |
+|---------|-------------------|
+| DS01_clean_baseA | (aucun) |
+| DS11_single_point_of_failure_basic | `single_point_of_failure_diagnoser` |
+| DS12_change_induced_incident_basic | `change_induced_incident_diagnoser` |
+| DS13_service_cascade_basic | `service_cascade_diagnoser` |
+| DS14_traceability_breakdown_basic | `traceability_breakdown_diagnoser` |
+| DS15_unstable_component_basic | `unstable_component_diagnoser` |
+| DS16_application_support_failure_basic | `application_support_failure_diagnoser` |
+| DS17_local_infrastructure_cluster_basic | `local_infrastructure_cluster_diagnoser` |
+| DS23_three_diagnoses_ranked_by_urgency | SPOF + traceability + unstable |
+
+### Conditions
+
+Le prompt de tâche est identique dans les 3 conditions :
+*"You are a network operations expert analyzing an ICT infrastructure knowledge graph.
+Determine which of the following diagnostic patterns apply based on the data provided."*
+Suivi de la liste des 7 patterns avec leurs descriptions. Réponse attendue en JSON :
+`{"triggered": ["pattern_name1", ...], "primary_entities": {"pattern_name1": "entity"}}`.
+
+| | Condition A | Condition B | Condition C |
+|-|-------------|-------------|-------------|
+| **Input LLM** | Graphe Turtle brut | Graphe + résumé détections L1 | Graphe + L1 + résumé diagnostics L2 |
+| **Architecture simulée** | LLM seul | L1 → LLM | L1+L2 → LLM |
+
+### Métriques
+
+Identiques à l'évaluation MAS de l'expérience 5 :
+**Precision@L2** = TP / (TP+FP), **Recall@L2** = TP / (TP+FN), **F1@L2**.
+Évaluées contre le même `expected_level2.json`. Moyennes macro sur les 9 datasets.
+
+### Résultats
+
+#### Tableau par dataset
+
+| Dataset | MAS F1 | A (graph) F1 | B (graph+L1) F1 | C (graph+L1+L2) F1 |
+|---------|:------:|:------------:|:---------------:|:------------------:|
+| DS01 (aucun) | 1.00 | 0.00 | **1.00** | **1.00** |
+| DS11 (SPOF) | **1.00** | **1.00** | **1.00** | **1.00** |
+| DS12 (change) | **1.00** | 0.00 | 0.00 | 0.00 |
+| DS13 (cascade) | **1.00** | 0.00 | 0.00 | 0.00 |
+| DS14 (traceability) | **1.00** | 0.00 | 0.00 | 0.00 |
+| DS15 (unstable) | 0.00 | 0.00 | 0.00 | 0.00 |
+| DS16 (app support) | 0.00 | 0.00 | 0.00 | 0.00 |
+| DS17 (cluster) | 0.00 | 0.00 | 0.00 | 0.00 |
+| DS23 (3 diagnoses) | 0.80 | 0.50 | 0.50 | 0.50 |
+
+#### Macro-moyennes
+
+| Condition | Precision | Recall | F1 | TP | FP | FN |
+|-----------|:---------:|:------:|:--:|:--:|:--:|:--:|
+| **A — graph only** | 0.222 | 0.259 | 0.167 | 2 | 7 | 8 |
+| **B — graph + L1** | 0.333 | 0.259 | 0.278 | 2 | 6 | 8 |
+| **C — graph + L1 + L2** | 0.333 | 0.259 | 0.278 | 2 | 6 | 8 |
+| **MAS (référence)** | 0.667 | 0.630 | 0.644 | 6 | 1 | 4 |
+
+### Analyse
+
+#### Biais SPOF massif du LLM
+
+Sur les 9 datasets, le LLM retourne `single_point_of_failure_diagnoser` dans
+**7 cas sur 9** en condition A, quelle que soit la topologie réelle du graphe.
+Ce biais persiste en conditions B et C : fournir les sorties L1 ou L2 ne suffit pas
+à corriger la distribution de réponses du modèle.
+
+Ce biais s'explique par la prévalence du pattern SPOF dans les données
+d'entraînement (topologie critique bien documentée dans la littérature réseau)
+et par la structure visuelle du graphe Turtle : `res_firewall_01` ou `res_customer_vm_01`,
+les nœuds à forte connectivité, ressemblent à des SPOFs même dans des contextes différents.
+
+#### Effet de l'ajout d'information
+
+L'ajout du résumé L1 (condition B) réduit d'un FP (7→6) par rapport à A.
+Cela vient du dataset DS01 (graphe propre) : sans sorties L1, le LLM détecte
+à tort `service_cascade` ; avec L1 qui indique "aucun agent actif", il répond
+correctement `{"triggered": []}`.
+
+L'ajout du résumé L2 (condition C) n'apporte aucun gain supplémentaire.
+**Le LLM n'exploite pas les diagnostics L2 pour réviser ses prédictions.**
+Sur DS12–DS17, même avec un résumé L2 indiquant explicitement quel diagnoseur
+a été déclenché par le MAS, le LLM continue de retourner SPOF.
+
+#### Comparaison MAS vs LLM — tâche identique
+
+Sur la même tâche de classification L2, évaluée sur le même ground truth :
+
+- Le MAS identifie correctement 4 diagnoseurs sur 7 (SPOF, change, cascade, traceability)
+  avec zéro FP sur ces 4 — sa précision de 0.667 est limitée par ses 3 FN structurels
+  (unstable, app_support, cluster) déjà documentés dans l'expérience 5.
+
+- Le LLM identifie seulement 2 diagnoseurs (SPOF correct sur DS11, et SPOF correct en DS23),
+  mais produit 7 FP en condition A. Sa capacité à nommer le bon pattern dépend
+  entièrement de la coïncidence entre son biais SPOF et le dataset cible.
+
+**Le MAS surpasse le LLM de 2.3× en F1** (0.644 vs 0.278) sur la tâche de classification L2.
+
+#### Conclusion
+
+> Mistral-7B ne peut pas effectuer de façon fiable la classification de diagnoseurs L2
+> à partir du graphe seul. Il présente un biais fort vers `single_point_of_failure`
+> non corrigé par les sorties MAS.
+> L'ajout d'information L1 aide marginalement (DS01 propre), mais pas L2.
+> Le MAS reste supérieur de 2.3× pour cette tâche, validant son rôle de composant
+> de corrélation non substituable par un LLM généraliste 7B.
 
 ---
 
@@ -545,6 +748,18 @@ python -X utf8 evaluate_datasets.py
 # Ou un sous-ensemble :
 python -X utf8 evaluate_datasets.py DS11 DS12 DS13
 python -X utf8 evaluate_datasets.py --aposteriori
+# KPIs complémentaires (Top-1, calibration, robustesse, scalabilité) :
+python -X utf8 kpi_analysis.py
+
+# 6. Comparaison LLM vs MAS — classification L2 en 3 conditions
+# Phase 1 — locale : préparer les données (~10 minutes, nécessite Virtuoso + agents)
+python -X utf8 prepare_llm_ablation.py
+# Phase 2 — GPU : inférence sur jaguar.polytechnique.fr
+scp llm_ablation_data.json llm_ablation_infer.py jaguar.polytechnique.fr:/tmp/
+ssh jaguar.polytechnique.fr "cd /tmp && pip install --user transformers accelerate torch sentencepiece protobuf --quiet && HF_HOME=/tmp/hf_cache python3 llm_ablation_infer.py 2>&1"
+scp jaguar.polytechnique.fr:/tmp/llm_ablation_results.json .
+# Variante CPU locale via Ollama (nécessite llama3.1:8b) :
+# python -X utf8 llm_ablation_infer.py --ollama
 ```
 
 ---
@@ -563,3 +778,6 @@ python -X utf8 evaluate_datasets.py --aposteriori
 | `llm_baseline_results_gpu.json` | Résultats du baseline LLM — run GPU (Mistral-7B-Instruct-v0.3 float16) |
 | `noria_graph.ttl` | Graphe NORIA-O filtré exporté (~4 200 tokens, input LLM baseline) |
 | `eval_results.json` | Résultats complets de l'évaluation sur les 27 datasets synthétiques |
+| `kpi_report.json` | KPIs agrégés : Top-1 accuracy, calibration, robustesse, scalabilité, per-diagnoser |
+| `llm_ablation_data.json` | Données packagées pour l'inférence GPU (9 datasets × TTL + L1 + L2 summaries) |
+| `llm_ablation_results.json` | Résultats de la comparaison LLM vs MAS — run GPU (Mistral-7B-Instruct-v0.3 float16) |
