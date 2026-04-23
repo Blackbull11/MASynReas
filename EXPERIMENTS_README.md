@@ -583,9 +583,9 @@ Le LLM est évalué sur le même ground truth (`expected_level2.json`) que le MA
 avec trois niveaux d'information progressifs.
 
 À distinguer de l'expérience 4 : ici on demande au LLM de **nommer le diagnoseur applicable**
-(classification parmi 7 patterns nommés), alors que l'expérience 4 demandait au LLM
-d'identifier des **entités anormales** (détection libre). Le ground truth est aussi différent :
-L2 classification (expected_level2.json) vs L1 entity detection (résultats MAS niveau 1).
+(classification parmi 12 patterns nommés, selon le mode), alors que l'expérience 4 demandait
+au LLM d'identifier des **entités anormales** (détection libre). Le ground truth est aussi
+différent : L2 classification (expected_level2.json) vs L1 entity detection (résultats MAS N1).
 
 ### Modèle LLM utilisé
 
@@ -599,38 +599,31 @@ Même variante que le run GPU de l'expérience 4 — les deux runs GPU sont dire
 Le script est divisé en deux phases pour isoler les dépendances :
 
 **Phase 1 — locale (`prepare_llm_ablation.py`)** :
-Pour chacun des 9 datasets cibles, charge le TTL dans Virtuoso, exécute les agents
-L1+L2 aposteriori, collecte les résultats, et exporte un paquet autonome
-(`llm_ablation_data.json`) contenant : le Turtle brut du graphe, un résumé des détections
-niveau 1 (entités actives par agent), un résumé des diagnostics niveau 2 (diagnoseurs
-déclenchés avec anchor, rel, sev, priority), et le ground truth attendu.
+Pour chacun des 27 datasets dans tous les modes applicables (déterminés par `eval_results.json`),
+charge le TTL dans Virtuoso, exécute les agents L1+L2, collecte les résultats,
+et exporte un paquet autonome (`llm_ablation_data.json`) contenant : le Turtle brut du graphe,
+un résumé des détections niveau 1, un résumé des diagnostics niveau 2, le ground truth attendu.
+**36 paires (dataset, mode) exportées**, couvrant l'intégralité du catalogue évalué.
 
 **Phase 2 — GPU (`llm_ablation_infer.py`)** :
-Lit `llm_ablation_data.json`, soumet 3 prompts par dataset au LLM, parse la réponse JSON,
-calcule P/R/F1. Aucun Virtuoso ni agent MAS requis — le fichier est auto-suffisant.
+Lit `llm_ablation_data.json`, soumet 3 prompts par paire au LLM, parse la réponse JSON,
+calcule P/R/F1. Le prompt utilise la liste des **5 diagnoseurs apriori** ou **7 aposteriori**
+selon le mode de chaque paire. Aucun Virtuoso ni agent MAS requis.
 
-### Datasets ciblés
+### Couverture
 
-9 datasets aposteriori, couvrant les 7 diagnoseurs + 1 graphe propre + 1 scénario multi-diagnosi :
-
-| Dataset | Diagnoseur attendu |
-|---------|-------------------|
-| DS01_clean_baseA | (aucun) |
-| DS11_single_point_of_failure_basic | `single_point_of_failure_diagnoser` |
-| DS12_change_induced_incident_basic | `change_induced_incident_diagnoser` |
-| DS13_service_cascade_basic | `service_cascade_diagnoser` |
-| DS14_traceability_breakdown_basic | `traceability_breakdown_diagnoser` |
-| DS15_unstable_component_basic | `unstable_component_diagnoser` |
-| DS16_application_support_failure_basic | `application_support_failure_diagnoser` |
-| DS17_local_infrastructure_cluster_basic | `local_infrastructure_cluster_diagnoser` |
-| DS23_three_diagnoses_ranked_by_urgency | SPOF + traceability + unstable |
+L'expérience couvre les **36 paires (dataset, mode)** de `eval_results.json` :
+- **16 paires apriori** : DS01–DS03 (contrôles), DS04–DS10 (diagnoseurs apriori), DS19, DS22, DS24–DS27
+- **20 paires aposteriori** : DS01–DS03, DS11–DS23, DS19–DS22, DS24–DS27
+- **Diagnoseurs apriori** (5) : structural_fragility, critical_service_exposure, observability_gap, procedural_unreadiness, functional_mapping_gap
+- **Diagnoseurs aposteriori** (7) : SPOF, change_induced, service_cascade, traceability_breakdown, unstable_component, application_support_failure, local_infrastructure_cluster
 
 ### Conditions
 
 Le prompt de tâche est identique dans les 3 conditions :
 *"You are a network operations expert analyzing an ICT infrastructure knowledge graph.
 Determine which of the following diagnostic patterns apply based on the data provided."*
-Suivi de la liste des 7 patterns avec leurs descriptions. Réponse attendue en JSON :
+Suivi de la liste des patterns du mode avec leurs descriptions. Réponse attendue en JSON :
 `{"triggered": ["pattern_name1", ...], "primary_entities": {"pattern_name1": "entity"}}`.
 
 | | Condition A | Condition B | Condition C |
@@ -642,81 +635,129 @@ Suivi de la liste des 7 patterns avec leurs descriptions. Réponse attendue en J
 
 Identiques à l'évaluation MAS de l'expérience 5 :
 **Precision@L2** = TP / (TP+FP), **Recall@L2** = TP / (TP+FN), **F1@L2**.
-Évaluées contre le même `expected_level2.json`. Moyennes macro sur les 9 datasets.
+Évaluées contre le même `expected_level2.json`. Moyennes macro sur les 36 paires.
 
 ### Résultats
 
-#### Tableau par dataset
-
-| Dataset | MAS F1 | A (graph) F1 | B (graph+L1) F1 | C (graph+L1+L2) F1 |
-|---------|:------:|:------------:|:---------------:|:------------------:|
-| DS01 (aucun) | 1.00 | 0.00 | **1.00** | **1.00** |
-| DS11 (SPOF) | **1.00** | **1.00** | **1.00** | **1.00** |
-| DS12 (change) | **1.00** | 0.00 | 0.00 | 0.00 |
-| DS13 (cascade) | **1.00** | 0.00 | 0.00 | 0.00 |
-| DS14 (traceability) | **1.00** | 0.00 | 0.00 | 0.00 |
-| DS15 (unstable) | 0.00 | 0.00 | 0.00 | 0.00 |
-| DS16 (app support) | 0.00 | 0.00 | 0.00 | 0.00 |
-| DS17 (cluster) | 0.00 | 0.00 | 0.00 | 0.00 |
-| DS23 (3 diagnoses) | 0.80 | 0.50 | 0.50 | 0.50 |
-
-#### Macro-moyennes
+#### Macro-moyennes — Global (36 paires)
 
 | Condition | Precision | Recall | F1 | TP | FP | FN |
 |-----------|:---------:|:------:|:--:|:--:|:--:|:--:|
-| **A — graph only** | 0.222 | 0.259 | 0.167 | 2 | 7 | 8 |
-| **B — graph + L1** | 0.333 | 0.259 | 0.278 | 2 | 6 | 8 |
-| **C — graph + L1 + L2** | 0.333 | 0.259 | 0.278 | 2 | 6 | 8 |
-| **MAS (référence)** | 0.667 | 0.630 | 0.644 | 6 | 1 | 4 |
+| **A — graph only** | 0.111 | 0.579 | 0.088 | 4 | 32 | 20 |
+| **B — graph + L1** | 0.197 | 0.639 | 0.191 | 7 | 35 | 17 |
+| **C — graph + L1 + L2** | 0.426 | 0.685 | 0.391 | 9 | 22 | 15 |
+| **MAS (référence)** | 0.537 | 0.778 | 0.540 | 13 | 20 | 11 |
+
+#### Macro-moyennes — par mode
+
+| Condition | Apriori F1 (n=16) | Aposteriori F1 (n=20) |
+|-----------|:-----------------:|:---------------------:|
+| **A — graph only** | 0.104 | 0.075 |
+| **B — graph + L1** | 0.148 | 0.225 |
+| **C — graph + L1 + L2** | **0.244** | 0.508 |
+| **MAS (référence)** | 0.196 | **0.815** |
+
+#### Tableau complet par dataset
+
+| Dataset | Mode | Expected | MAS F1 | A | B | C |
+|---------|------|---------|:------:|:-:|:-:|:-:|
+| DS01_clean_baseA | aposteriori | (aucun) | 1.00 | 0.00 | 1.00 | 1.00 |
+| DS01_clean_baseA | apriori | (aucun) | 0.00 | 0.00 | 0.00 | 0.00 |
+| DS02_partial_evidence | aposteriori | (aucun) | 1.00 | 0.00 | 1.00 | 1.00 |
+| DS02_partial_evidence | apriori | (aucun) | 0.00 | 0.00 | 0.00 | 0.00 |
+| DS03_partial_evidence | aposteriori | (aucun) | 1.00 | 0.00 | 0.00 | 1.00 |
+| DS03_partial_evidence | apriori | (aucun) | 0.00 | 0.00 | 0.00 | 0.00 |
+| DS04_structural_fragility | apriori | structural_fragility | 0.67 | 0.00 | 0.00 | **1.00** |
+| DS05_critical_service_exposure | apriori | critical_service_exposure | 0.00 | **1.00** | 0.67 | 0.00 |
+| DS06_critical_service_exposure | apriori | critical_service_exposure | 0.00 | 0.00 | 0.40 | 0.00 |
+| DS07_observability_gap | apriori | observability_gap | 0.00 | 0.00 | 0.00 | 0.00 |
+| DS08_procedural_unreadiness | apriori | procedural_unreadiness | 1.00 | 0.00 | 0.00 | **1.00** |
+| DS09_functional_mapping_gap | apriori | functional_mapping_gap | 0.67 | 0.00 | 0.50 | **1.00** |
+| DS10_apriori_mixed (2 diag.) | apriori | critical_svc + functional_map | 0.40 | 0.67 | 0.00 | 0.40 |
+| DS11_single_point_of_failure | aposteriori | SPOF | **1.00** | **1.00** | **1.00** | **1.00** |
+| DS12_change_induced_incident | aposteriori | change_induced | **1.00** | 0.00 | 0.00 | 0.00 |
+| DS13_service_cascade | aposteriori | service_cascade | **1.00** | 0.00 | 0.00 | **1.00** |
+| DS14_traceability_breakdown | aposteriori | traceability_breakdown | **1.00** | 0.00 | 0.00 | 0.00 |
+| DS15_unstable_component | aposteriori | unstable_component | 0.00 | 0.00 | 0.00 | 0.00 |
+| DS16_application_support | aposteriori | application_support_failure | 0.00 | 0.00 | 0.00 | 0.00 |
+| DS17_local_cluster | aposteriori | local_infrastructure_cluster | 0.00 | 0.00 | 0.00 | 0.00 |
+| DS18_apost_mixed (2 diag.) | aposteriori | service_cascade + unstable | 0.50 | 0.00 | 0.00 | 0.67 |
+| DS19_missing_data | aposteriori | (aucun) | 1.00 | 0.00 | 0.00 | 0.00 |
+| DS19_missing_data | apriori | (aucun) | 0.00 | 0.00 | 0.00 | 0.00 |
+| DS20_missing_procedural | aposteriori | traceability_breakdown | **1.00** | 0.00 | 0.00 | 0.00 |
+| DS21_noisy_events | aposteriori | (aucun) | 1.00 | 0.00 | 0.00 | 1.00 |
+| DS22_noisy_duplicates | aposteriori | (aucun) | 1.00 | 0.00 | 0.00 | 0.00 |
+| DS22_noisy_duplicates | apriori | (aucun) | 0.00 | 0.00 | 0.00 | 0.00 |
+| DS23_three_diagnoses (3 diag.) | aposteriori | SPOF + traceability + unstable | 0.80 | 0.50 | 0.50 | 0.50 |
+| DS24_calibration_bundle | aposteriori | (aucun) | 1.00 | 0.00 | 0.00 | 1.00 |
+| DS24_calibration_bundle | apriori | structural_frag + critical_svc + obs_gap | 0.40 | 0.00 | 0.80 | 0.50 |
+| DS25_scalability_small | aposteriori | (aucun) | 1.00 | 0.00 | 1.00 | 1.00 |
+| DS25_scalability_small | apriori | (aucun) | 0.00 | 0.00 | 0.00 | 0.00 |
+| DS26_scalability_medium | aposteriori | (aucun) | 1.00 | 0.00 | 0.00 | 1.00 |
+| DS26_scalability_medium | apriori | (aucun) | 0.00 | 0.00 | 0.00 | 0.00 |
+| DS27_scalability_large | aposteriori | (aucun) | 1.00 | 0.00 | 0.00 | 0.00 |
+| DS27_scalability_large | apriori | (aucun) | 0.00 | 0.00 | 0.00 | 0.00 |
 
 ### Analyse
 
-#### Biais SPOF massif du LLM
+#### Résultat principal : gradient A < B < C clairement établi
 
-Sur les 9 datasets, le LLM retourne `single_point_of_failure_diagnoser` dans
-**7 cas sur 9** en condition A, quelle que soit la topologie réelle du graphe.
-Ce biais persiste en conditions B et C : fournir les sorties L1 ou L2 ne suffit pas
-à corriger la distribution de réponses du modèle.
+Sur l'ensemble du catalogue (36 paires), les trois conditions montrent une progression nette :
+**F1 : 0.088 → 0.191 → 0.391** (A→B→C). Ce gradient confirme que chaque couche du MAS
+apporte une valeur ajoutée mesurable pour la classification L2.
 
-Ce biais s'explique par la prévalence du pattern SPOF dans les données
-d'entraînement (topologie critique bien documentée dans la littérature réseau)
-et par la structure visuelle du graphe Turtle : `res_firewall_01` ou `res_customer_vm_01`,
-les nœuds à forte connectivité, ressemblent à des SPOFs même dans des contextes différents.
+- **L1 → LLM (B)** : précision améliorée (+0.086), réduction marginale des FP en aposteriori
+  (surtout sur les graphes propres où L1="aucun agent actif" permet au LLM de s'abstenir)
+- **L1+L2 → LLM (C)** : saut majeur de précision (0.197→0.426), réduction de 13 FP (35→22).
+  Sur plusieurs datasets, le résumé L2 permet au LLM de nommer correctement le bon diagnoseur
+  (DS04, DS08, DS09, DS13, DS18) alors qu'il était incapable de le faire sans ce contexte.
 
-#### Effet de l'ajout d'information
+#### Aposteriori : MAS domine, L2 aide significativement
 
-L'ajout du résumé L1 (condition B) réduit d'un FP (7→6) par rapport à A.
-Cela vient du dataset DS01 (graphe propre) : sans sorties L1, le LLM détecte
-à tort `service_cascade` ; avec L1 qui indique "aucun agent actif", il répond
-correctement `{"triggered": []}`.
+En mode aposteriori (20 paires), le MAS maintient une avance de **1.6×** (F1=0.815 vs 0.508 pour C).
+Le LLM ne peut pas déduire les patterns change_induced, traceability_breakdown, unstable, app_support,
+ou cluster à partir du graphe brut ou même avec les sorties L1 — il faut le contexte L2 pour que
+certains d'entre eux passent (DS13, DS18).
 
-L'ajout du résumé L2 (condition C) n'apporte aucun gain supplémentaire.
-**Le LLM n'exploite pas les diagnostics L2 pour réviser ses prédictions.**
-Sur DS12–DS17, même avec un résumé L2 indiquant explicitement quel diagnoseur
-a été déclenché par le MAS, le LLM continue de retourner SPOF.
+Le MAS aposteriori reste supérieur car il identifie exactement quels indicateurs L1 convergent
+vers quel diagnoseur via des règles SPARQL déterministes — le LLM ne peut pas faire cette inférence
+multi-source de façon fiable même avec les sorties disponibles.
 
-#### Comparaison MAS vs LLM — tâche identique
+#### Apriori : LLM condition C surpasse le MAS
 
-Sur la même tâche de classification L2, évaluée sur le même ground truth :
+En mode apriori (16 paires), la condition C (F1=**0.244**) surpasse le MAS (F1=0.196).
+Ce résultat s'explique par une faille du MAS : `procedural_unreadiness_diagnoser` se déclenche
+sur **tous** les datasets apriori (FP systématique), dégradant la précision du MAS.
+Le LLM avec le résumé L2 complet n'est pas victime de ce biais : sur DS04, DS08, DS09 il
+identifie le bon diagnoseur tandis que le MAS génère en plus un FP systématique.
+Ce résultat pointe la limite connue du seuil d'activation apriori (documentée dans l'expérience 5).
 
-- Le MAS identifie correctement 4 diagnoseurs sur 7 (SPOF, change, cascade, traceability)
-  avec zéro FP sur ces 4 — sa précision de 0.667 est limitée par ses 3 FN structurels
-  (unstable, app_support, cluster) déjà documentés dans l'expérience 5.
+#### Datasets notables
 
-- Le LLM identifie seulement 2 diagnoseurs (SPOF correct sur DS11, et SPOF correct en DS23),
-  mais produit 7 FP en condition A. Sa capacité à nommer le bon pattern dépend
-  entièrement de la coïncidence entre son biais SPOF et le dataset cible.
+**DS04, DS08, DS09** — condition C atteint F1=1.00 sur les apriori simples : le contexte L2
+explicite (résumé qui dit quel diagnoseur a été déclenché) permet au LLM de classifier parfaitement.
 
-**Le MAS surpasse le LLM de 2.3× en F1** (0.644 vs 0.278) sur la tâche de classification L2.
+**DS11** — F1=1.00 dans les 3 conditions : SPOF est identifiable directement depuis le graphe.
+
+**DS12, DS14, DS20** — F1=0.00 pour toutes les conditions LLM (A/B/C), même avec L2 :
+change_induced et traceability_breakdown ne sont pas reconnus par le modèle malgré le contexte.
+Le MAS y atteint F1=1.00 — démonstration que la corrélation temporelle et procédurale
+nécessite un traitement symbolique, pas une génération statistique.
+
+**DS05** — A=1.00, B=0.67, C=0.00 : le LLM identifie `critical_service_exposure` depuis le graphe
+seul, mais les résumés L1/L2 qui mentionnent `structural_fragility` (FP MAS) le font diverger.
+Ce cas montre que L2 peut **perturber** le LLM si les sorties MAS comportent des erreurs.
 
 #### Conclusion
 
-> Mistral-7B ne peut pas effectuer de façon fiable la classification de diagnoseurs L2
-> à partir du graphe seul. Il présente un biais fort vers `single_point_of_failure`
-> non corrigé par les sorties MAS.
-> L'ajout d'information L1 aide marginalement (DS01 propre), mais pas L2.
-> Le MAS reste supérieur de 2.3× pour cette tâche, validant son rôle de composant
-> de corrélation non substituable par un LLM généraliste 7B.
+> Le gradient A < B < C (F1 : 0.088 → 0.191 → 0.391) est établi sur l'intégralité
+> du catalogue — chaque couche MAS améliore les capacités de classification du LLM.
+> En aposteriori, le MAS reste supérieur (F1=0.815 vs 0.508) pour les patterns
+> nécessitant une inférence temporelle ou procédurale déterministe.
+> En apriori, le LLM condition C (F1=0.244) surpasse le MAS (F1=0.196) grâce à
+> l'absence du faux positif systématique `procedural_unreadiness`.
+> Le résumé L2 est la contribution la plus décisive : il divise les FP par 1.6×
+> et débloqueaucun les diagnoseurs les moins intuitifs depuis le graphe brut.
 
 ---
 

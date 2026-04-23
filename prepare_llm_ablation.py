@@ -1,13 +1,16 @@
 """
 prepare_llm_ablation.py  —  LOCAL phase
 
-For each target dataset:
+For ALL 27 datasets and all applicable modes (apriori / aposteriori):
   1. Loads dataset.ttl into Virtuoso
-  2. Runs all aposteriori L1+L2 agents
-  3. Exports: raw Turtle, L1 summary, L2 summary, expected diagnoses
+  2. Runs all L1+L2 agents for each applicable mode
+  3. Exports: raw Turtle, L1 summary, L2 summary, expected diagnoses, MAS results
 
 Writes llm_ablation_data.json — the self-contained package that
 llm_ablation_infer.py (GPU) will read for inference.
+
+Modes for each dataset are determined from eval_results.json so that
+we cover exactly the same (dataset, mode) pairs as the MAS evaluation.
 
 Usage:
     python -X utf8 prepare_llm_ablation.py
@@ -27,34 +30,22 @@ DATASETS_DIR = PROJECT_ROOT / "datasets"
 RESULTS_DIR  = PROJECT_ROOT / "results"
 PYTHON       = sys.executable
 
-CRUD_URL  = "http://localhost:8890/sparql-graph-crud-auth"
-_AUTH     = HTTPDigestAuth("dba", "dba")
-DS_GRAPH  = "http://dataset/"
-NR_GRAPH  = "http://noria/"
-ISQL      = Path("C:/Program Files/OpenLink Software/Virtuoso OpenSource 7.2/bin/isql.exe")
+CRUD_URL    = "http://localhost:8890/sparql-graph-crud-auth"
+_AUTH       = HTTPDigestAuth("dba", "dba")
+DS_GRAPH    = "http://dataset/"
+NR_GRAPH    = "http://noria/"
+ISQL        = Path("C:/Program Files/OpenLink Software/Virtuoso OpenSource 7.2/bin/isql.exe")
 NORIA_DUMPS = Path("C:/Program Files/OpenLink Software/Virtuoso OpenSource 7.2/database/dumps")
 
-TARGET_DATASETS = [
-    "DS01_clean_baseA",
-    "DS11_single_point_of_failure_basic",
-    "DS12_change_induced_incident_basic",
-    "DS13_service_cascade_basic",
-    "DS14_traceability_breakdown_basic",
-    "DS15_unstable_component_basic",
-    "DS16_application_support_failure_basic",
-    "DS17_local_infrastructure_cluster_basic",
-    "DS23_three_diagnoses_ranked_by_urgency",
-]
+# ── Build target map from eval_results.json ──────────────────────────────────
+# Maps each dataset_id to the list of modes that were evaluated (= modes we test)
 
-DIAGNOSERS_APOSTERIORI = [
-    "single_point_of_failure_diagnoser",
-    "change_induced_incident_diagnoser",
-    "service_cascade_diagnoser",
-    "traceability_breakdown_diagnoser",
-    "unstable_component_diagnoser",
-    "application_support_failure_diagnoser",
-    "local_infrastructure_cluster_diagnoser",
-]
+def _build_target_map() -> dict[str, list[str]]:
+    er_path = PROJECT_ROOT / "eval_results.json"
+    if not er_path.exists():
+        return {}
+    data = json.loads(er_path.read_text(encoding="utf-8"))
+    return {r["dataset_id"]: sorted(r.get("modes", {}).keys()) for r in data}
 
 # ── Virtuoso helpers ─────────────────────────────────────────────────────────
 
@@ -120,6 +111,8 @@ def collect_l1_results(mode: str) -> dict[str, list]:
 def collect_l2_results(mode: str) -> dict[str, dict]:
     results = {}
     l2_dir = RESULTS_DIR / "level2" / mode
+    if not l2_dir.exists():
+        return results
     for path in sorted(l2_dir.glob("*.json")):
         try:
             results[path.stem] = json.loads(path.read_text(encoding="utf-8"))
@@ -135,8 +128,8 @@ def _local_name(uri: str) -> str:
         local = local.split(":")[-1]
     return local
 
-def build_l1_summary(l1_results: dict[str, list]) -> str:
-    lines = ["Level-1 detector findings (aposteriori):"]
+def build_l1_summary(l1_results: dict[str, list], mode: str) -> str:
+    lines = [f"Level-1 detector findings ({mode}):"]
     active = False
     for agent, rows in sorted(l1_results.items()):
         if not rows:
@@ -153,8 +146,8 @@ def build_l1_summary(l1_results: dict[str, list]) -> str:
         lines.append("  (no detectors fired — all results empty)")
     return "\n".join(lines)
 
-def build_l2_summary(l2_results: dict[str, dict]) -> str:
-    lines = ["Level-2 correlation diagnoses (aposteriori):"]
+def build_l2_summary(l2_results: dict[str, dict], mode: str) -> str:
+    lines = [f"Level-2 correlation diagnoses ({mode}):"]
     active = False
     for agent, result in sorted(l2_results.items()):
         if result.get("activation_status") != "triggered":
@@ -184,71 +177,75 @@ def get_mas_triggered(l2_results: dict[str, dict]) -> list[str]:
 
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    mode = "aposteriori"
+
+    target_map = _build_target_map()
 
     datasets = []
     for d in sorted(DATASETS_DIR.iterdir()):
         if not d.is_dir() or not (d / "dataset.ttl").exists():
             continue
-        if d.name not in TARGET_DATASETS:
+        if d.name not in target_map:
             continue
         if args and not any(d.name.startswith(a) for a in args):
             continue
         datasets.append(d)
 
+    total_pairs = sum(len(target_map[d.name]) for d in datasets)
     print("=" * 64)
-    print(f"  PREPARING LLM ABLATION DATA ({len(datasets)} datasets)")
+    print(f"  PREPARING LLM ABLATION DATA")
+    print(f"  {len(datasets)} datasets × modes = {total_pairs} (dataset, mode) pairs")
     print("=" * 64)
 
     all_data = []
 
     for ds_dir in datasets:
         ds_id = ds_dir.name
-        print(f"\n  ── {ds_id}")
+        modes = target_map[ds_id]
+        print(f"\n  ── {ds_id}  modes={modes}")
 
         clear_virtuoso()
         print("    Loading TTL...", end="", flush=True)
         load_ttl_http(ds_dir / "dataset.ttl")
+        print(" done")
 
-        print("  L1...", end="", flush=True)
-        t0 = time.perf_counter()
-        run_l1_agents(mode)
-        l1_results = collect_l1_results(mode)
-        active_l1 = sum(1 for v in l1_results.values() if v)
-        print(f" {active_l1} active agents  {(time.perf_counter()-t0)*1000:.0f}ms", end="")
+        graph_ttl = (ds_dir / "dataset.ttl").read_text(encoding="utf-8-sig")
 
-        print("  L2...", end="", flush=True)
-        t1 = time.perf_counter()
-        run_l2_agents(mode)
-        l2_results = collect_l2_results(mode)
-        mas_triggered = get_mas_triggered(l2_results)
-        print(f" {len(mas_triggered)} triggered  {(time.perf_counter()-t1)*1000:.0f}ms")
-        if mas_triggered:
-            print(f"    MAS triggered: {mas_triggered}")
+        for mode in modes:
+            print(f"    [{mode}] L1...", end="", flush=True)
+            t0 = time.perf_counter()
+            run_l1_agents(mode)
+            l1_results = collect_l1_results(mode)
+            active_l1 = sum(1 for v in l1_results.values() if v)
+            print(f" {active_l1} active  {(time.perf_counter()-t0)*1000:.0f}ms  L2...", end="", flush=True)
 
-        graph_ttl    = (ds_dir / "dataset.ttl").read_text(encoding="utf-8-sig")
-        l1_summary   = build_l1_summary(l1_results)
-        l2_summary   = build_l2_summary(l2_results)
-        expected     = get_expected(ds_dir, mode)
+            t1 = time.perf_counter()
+            run_l2_agents(mode)
+            l2_results = collect_l2_results(mode)
+            mas_triggered = get_mas_triggered(l2_results)
+            print(f" {len(mas_triggered)} triggered  {(time.perf_counter()-t1)*1000:.0f}ms")
 
-        print(f"    Expected: {expected}")
+            l1_summary = build_l1_summary(l1_results, mode)
+            l2_summary = build_l2_summary(l2_results, mode)
+            expected   = get_expected(ds_dir, mode)
 
-        all_data.append({
-            "dataset_id":   ds_id,
-            "mode":         mode,
-            "expected":     expected,
-            "mas_triggered": mas_triggered,
-            "graph_ttl":    graph_ttl,
-            "l1_summary":   l1_summary,
-            "l2_summary":   l2_summary,
-        })
+            print(f"      expected={expected}  mas_triggered={mas_triggered}")
+
+            all_data.append({
+                "dataset_id":    ds_id,
+                "mode":          mode,
+                "expected":      expected,
+                "mas_triggered": mas_triggered,
+                "graph_ttl":     graph_ttl,
+                "l1_summary":    l1_summary,
+                "l2_summary":    l2_summary,
+            })
 
     restore_noria()
 
     out = PROJECT_ROOT / "llm_ablation_data.json"
     out.write_text(json.dumps(all_data, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"\n  Data saved to {out.name}  ({len(all_data)} datasets)")
-    print("  Next: scp llm_ablation_data.json llm_ablation_infer.py to jaguar and run --gpu")
+    print(f"\n  Data saved to {out.name}  ({len(all_data)} (dataset, mode) pairs)")
+    print("  Next: scp llm_ablation_data.json llm_ablation_infer.py to jaguar and run")
 
 
 if __name__ == "__main__":

@@ -2,10 +2,13 @@
 llm_ablation_infer.py  —  GPU / INFERENCE phase
 
 Reads llm_ablation_data.json (produced by prepare_llm_ablation.py)
-and runs 3 LLM conditions per dataset:
+and runs 3 LLM conditions per (dataset, mode) pair:
   A: LLM ← raw knowledge graph (Turtle)
   B: LLM ← graph + level-1 detector outputs
   C: LLM ← graph + level-1 + level-2 diagnoses
+
+Supports both apriori and aposteriori modes. The diagnoser list and
+descriptions in the prompt are selected based on each entry's mode field.
 
 Writes llm_ablation_results.json with Precision@L2 / Recall@L2 / F1@L2
 per condition — directly comparable to the MAS evaluation results.
@@ -29,7 +32,7 @@ OLLAMA_MODEL     = "llama3.1:8b"
 DATA_FILE        = Path("llm_ablation_data.json")
 OUT_FILE         = Path("llm_ablation_results.json")
 
-DIAGNOSERS = [
+DIAGNOSERS_APOSTERIORI = [
     "single_point_of_failure_diagnoser",
     "change_induced_incident_diagnoser",
     "service_cascade_diagnoser",
@@ -39,7 +42,16 @@ DIAGNOSERS = [
     "local_infrastructure_cluster_diagnoser",
 ]
 
+DIAGNOSERS_APRIORI = [
+    "structural_fragility_diagnoser",
+    "critical_service_exposure_diagnoser",
+    "observability_gap_diagnoser",
+    "procedural_unreadiness_diagnoser",
+    "functional_mapping_gap_diagnoser",
+]
+
 DIAGNOSER_DESCRIPTIONS = {
+    # aposteriori
     "single_point_of_failure_diagnoser":
         "A resource involved in an incident is isolated (weak connectivity), has no redundant peer, and has high impact on dependent applications.",
     "change_induced_incident_diagnoser":
@@ -54,6 +66,17 @@ DIAGNOSER_DESCRIPTIONS = {
         "An application has an active incident but its support escalation chain is broken: missing procedure links or absent resource coverage.",
     "local_infrastructure_cluster_diagnoser":
         "Multiple resources with simultaneous incidents share a location attribute or belong to the same local cluster.",
+    # apriori
+    "structural_fragility_diagnoser":
+        "A resource or application exhibits multiple structural weaknesses (missing interface, missing redundancy, no support application) simultaneously, indicating architectural fragility.",
+    "critical_service_exposure_diagnoser":
+        "A critical service is exposed: its supporting resources lack redundancy, or the service has excessive dependency concentration on a single resource or application.",
+    "observability_gap_diagnoser":
+        "Events or changes exist without proper linkage to observable elements, or monitoring coverage is missing for key resources, creating blind spots.",
+    "procedural_unreadiness_diagnoser":
+        "Trouble tickets exist without assigned resolution procedures, or change requests are missing scheduled execution times, indicating operational unpreparedness.",
+    "functional_mapping_gap_diagnoser":
+        "Applications exist without supporting resources or modules, or services exist without application coverage, indicating incomplete functional mapping.",
 }
 
 # ── Backend ──────────────────────────────────────────────────────────────────
@@ -107,35 +130,35 @@ def call_llm(prompt: str) -> tuple[str, float]:
         text = r.json().get("response", "").strip()
     return text, time.perf_counter() - t0
 
-# ── Prompt ───────────────────────────────────────────────────────────────────
+# ── Prompt builders ───────────────────────────────────────────────────────────
 
-_LIST = "\n".join(f"- {n}: {d}" for n, d in DIAGNOSER_DESCRIPTIONS.items())
-
-_TASK = (
-    "You are a network operations expert analyzing an ICT infrastructure knowledge graph.\n"
-    "Determine which of the following diagnostic patterns apply based on the data provided.\n\n"
-    "Patterns:\n" + _LIST + "\n\n"
-    "Respond with ONLY valid JSON (no explanation, no markdown):\n"
-    '{"triggered": ["pattern_name1", ...], "primary_entities": {"pattern_name1": "entity"}}\n'
-    "Use exact pattern names. If nothing applies: "
-    '{"triggered": [], "primary_entities": {}}'
-)
-
-
-def prompt_A(graph_ttl: str) -> str:
-    return _TASK + "\n\n--- KNOWLEDGE GRAPH (Turtle) ---\n" + graph_ttl
+def _build_task(diagnosers: list[str]) -> str:
+    desc_list = "\n".join(f"- {n}: {DIAGNOSER_DESCRIPTIONS[n]}" for n in diagnosers)
+    return (
+        "You are a network operations expert analyzing an ICT infrastructure knowledge graph.\n"
+        "Determine which of the following diagnostic patterns apply based on the data provided.\n\n"
+        "Patterns:\n" + desc_list + "\n\n"
+        "Respond with ONLY valid JSON (no explanation, no markdown):\n"
+        '{"triggered": ["pattern_name1", ...], "primary_entities": {"pattern_name1": "entity"}}\n'
+        "Use exact pattern names. If nothing applies: "
+        '{"triggered": [], "primary_entities": {}}'
+    )
 
 
-def prompt_B(graph_ttl: str, l1: str) -> str:
-    return _TASK + "\n\n--- KNOWLEDGE GRAPH (Turtle) ---\n" + graph_ttl + "\n\n--- " + l1
+def prompt_A(graph_ttl: str, task: str) -> str:
+    return task + "\n\n--- KNOWLEDGE GRAPH (Turtle) ---\n" + graph_ttl
 
 
-def prompt_C(graph_ttl: str, l1: str, l2: str) -> str:
-    return _TASK + "\n\n--- KNOWLEDGE GRAPH (Turtle) ---\n" + graph_ttl + "\n\n--- " + l1 + "\n\n--- " + l2
+def prompt_B(graph_ttl: str, l1: str, task: str) -> str:
+    return task + "\n\n--- KNOWLEDGE GRAPH (Turtle) ---\n" + graph_ttl + "\n\n--- " + l1
+
+
+def prompt_C(graph_ttl: str, l1: str, l2: str, task: str) -> str:
+    return task + "\n\n--- KNOWLEDGE GRAPH (Turtle) ---\n" + graph_ttl + "\n\n--- " + l1 + "\n\n--- " + l2
 
 # ── Parsing & metrics ────────────────────────────────────────────────────────
 
-def parse_response(text: str) -> list[str]:
+def parse_response(text: str, diagnosers: list[str]) -> list[str]:
     m = re.search(r'\{.*\}', text, re.DOTALL)
     if m:
         try:
@@ -144,7 +167,7 @@ def parse_response(text: str) -> list[str]:
             result = []
             for t in triggered:
                 t_norm = str(t).strip().lower().replace(" ", "_").replace("-", "_")
-                for name in DIAGNOSERS:
+                for name in diagnosers:
                     base = name.replace("_diagnoser", "")
                     if t_norm == name or base in t_norm or t_norm in base:
                         result.append(name)
@@ -154,7 +177,7 @@ def parse_response(text: str) -> list[str]:
             pass
     found = []
     tl = text.lower()
-    for name in DIAGNOSERS:
+    for name in diagnosers:
         base = name.replace("_diagnoser", "").replace("_", " ")
         if name in tl or base in tl:
             found.append(name)
@@ -172,6 +195,22 @@ def metrics(predicted: list[str], expected: list[str]) -> dict:
     return {"precision": round(prec, 3), "recall": round(rec, 3), "f1": round(f1, 3),
             "tp": tp, "fp": fp, "fn": fn, "predicted": sorted(predicted), "expected": sorted(expected)}
 
+# ── Aggregation helpers ───────────────────────────────────────────────────────
+
+def macro_avg(ms: list[dict]) -> dict:
+    if not ms:
+        return {}
+    n = len(ms)
+    return {
+        "precision": round(sum(m["precision"] for m in ms) / n, 3),
+        "recall":    round(sum(m["recall"]    for m in ms) / n, 3),
+        "f1":        round(sum(m["f1"]        for m in ms) / n, 3),
+        "tp": sum(m["tp"] for m in ms),
+        "fp": sum(m["fp"] for m in ms),
+        "fn": sum(m["fn"] for m in ms),
+        "n":  n,
+    }
+
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 def main():
@@ -182,32 +221,41 @@ def main():
     data = json.loads(DATA_FILE.read_text(encoding="utf-8"))
     model_label = HF_MODEL if not FORCE_OLLAMA else OLLAMA_MODEL
 
+    n_apriori    = sum(1 for e in data if e["mode"] == "apriori")
+    n_aposteriori = sum(1 for e in data if e["mode"] == "aposteriori")
+
     print("=" * 64)
     print(f"  LLM ABLATION INFERENCE  model={model_label}")
-    print(f"  {len(data)} datasets × 3 conditions = {len(data)*3} calls")
+    print(f"  {len(data)} (dataset,mode) pairs × 3 conditions = {len(data)*3} calls")
+    print(f"  apriori={n_apriori}  aposteriori={n_aposteriori}")
     print("=" * 64)
 
     all_results = []
 
     for entry in data:
-        ds_id       = entry["dataset_id"]
-        expected    = entry["expected"]
-        mas_ref     = entry["mas_triggered"]
-        graph_ttl   = entry["graph_ttl"]
-        l1_summary  = entry["l1_summary"]
-        l2_summary  = entry["l2_summary"]
+        ds_id    = entry["dataset_id"]
+        mode     = entry["mode"]
+        expected = entry["expected"]
+        mas_ref  = entry["mas_triggered"]
 
-        print(f"\n  ── {ds_id}  (expected: {expected})")
+        diagnosers = DIAGNOSERS_APRIORI if mode == "apriori" else DIAGNOSERS_APOSTERIORI
+        task       = _build_task(diagnosers)
+
+        graph_ttl  = entry["graph_ttl"]
+        l1_summary = entry["l1_summary"]
+        l2_summary = entry["l2_summary"]
+
+        print(f"\n  ── {ds_id} [{mode}]  (expected: {expected})")
 
         conditions = {}
         for cond_name, prompt in [
-            ("A_graph_only",    prompt_A(graph_ttl)),
-            ("B_graph_plus_L1", prompt_B(graph_ttl, l1_summary)),
-            ("C_graph_L1_L2",   prompt_C(graph_ttl, l1_summary, l2_summary)),
+            ("A_graph_only",    prompt_A(graph_ttl, task)),
+            ("B_graph_plus_L1", prompt_B(graph_ttl, l1_summary, task)),
+            ("C_graph_L1_L2",   prompt_C(graph_ttl, l1_summary, l2_summary, task)),
         ]:
             print(f"    [{cond_name}]...", end="", flush=True)
             response, elapsed = call_llm(prompt)
-            predicted = parse_response(response)
+            predicted = parse_response(response, diagnosers)
             m = metrics(predicted, expected)
             print(f" {elapsed:.1f}s  predicted={predicted}  P={m['precision']:.2f} R={m['recall']:.2f} F1={m['f1']:.2f}")
             conditions[cond_name] = {
@@ -220,41 +268,48 @@ def main():
 
         all_results.append({
             "dataset_id": ds_id,
+            "mode": mode,
             "model": model_label,
             "expected": expected,
             "mas_reference": mas_metrics,
             "conditions": conditions,
         })
 
-    # Summary
+    # ── Summary ───────────────────────────────────────────────────────────────
     print(f"\n{'='*64}")
-    print("  MACRO AVERAGES (across datasets)")
+    print("  MACRO AVERAGES")
     print(f"{'='*64}")
-    agg = {c: [] for c in ["A_graph_only", "B_graph_plus_L1", "C_graph_L1_L2", "MAS_reference"]}
-    for r in all_results:
-        for c, d in r["conditions"].items():
-            agg[c].append(d["metrics"])
-        agg["MAS_reference"].append(r["mas_reference"])
 
-    rows = []
-    for cond, ms in agg.items():
-        if not ms:
-            continue
-        ap = sum(m["precision"] for m in ms) / len(ms)
-        ar = sum(m["recall"]    for m in ms) / len(ms)
-        af = sum(m["f1"]        for m in ms) / len(ms)
-        tp = sum(m["tp"] for m in ms)
-        fp = sum(m["fp"] for m in ms)
-        fn = sum(m["fn"] for m in ms)
-        rows.append((cond, ap, ar, af, tp, fp, fn))
-        print(f"  {cond:<25} P={ap:.3f}  R={ar:.3f}  F1={af:.3f}  TP={tp} FP={fp} FN={fn}")
+    CONDITIONS = ["A_graph_only", "B_graph_plus_L1", "C_graph_L1_L2"]
+
+    def summarize(subset: list[dict], label: str):
+        if not subset:
+            return []
+        print(f"\n  {label} ({len(subset)} pairs):")
+        rows = []
+        for cond in CONDITIONS:
+            ms = [r["conditions"][cond]["metrics"] for r in subset]
+            agg = macro_avg(ms)
+            print(f"    {cond:<25} P={agg['precision']:.3f}  R={agg['recall']:.3f}  F1={agg['f1']:.3f}  TP={agg['tp']} FP={agg['fp']} FN={agg['fn']}")
+            rows.append({"condition": cond, **agg})
+        mas_ms = [r["mas_reference"] for r in subset]
+        agg_mas = macro_avg(mas_ms)
+        print(f"    {'MAS_reference':<25} P={agg_mas['precision']:.3f}  R={agg_mas['recall']:.3f}  F1={agg_mas['f1']:.3f}  TP={agg_mas['tp']} FP={agg_mas['fp']} FN={agg_mas['fn']}")
+        rows.append({"condition": "MAS_reference", **agg_mas})
+        return rows
+
+    all_rows   = summarize(all_results, "ALL (36 pairs)")
+    apri_rows  = summarize([r for r in all_results if r["mode"] == "apriori"],  "APRIORI")
+    apost_rows = summarize([r for r in all_results if r["mode"] == "aposteriori"], "APOSTERIORI")
 
     OUT_FILE.write_text(json.dumps({
-        "model": model_label, "results": all_results, "macro_averages": [
-            {"condition": r[0], "precision": round(r[1],3), "recall": round(r[2],3),
-             "f1": round(r[3],3), "tp": r[4], "fp": r[5], "fn": r[6]}
-            for r in rows
-        ]
+        "model": model_label,
+        "results": all_results,
+        "macro_averages": {
+            "all":         all_rows,
+            "apriori":     apri_rows,
+            "aposteriori": apost_rows,
+        },
     }, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"\n  Results saved to {OUT_FILE}")
 

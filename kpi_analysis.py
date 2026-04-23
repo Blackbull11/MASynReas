@@ -239,9 +239,82 @@ for ds_id, triples in sorted(triple_counts.items()):
         total = t.get("total_ms", "?")
         print(f"  {ds_id} [{mode}]{'':>5} {triples:>8} {str(l1ms):>10} {str(l2ms):>10} {str(total):>12}")
 
-# ── 6. Global KPI summary ────────────────────────────────────────────────────
+# ── 6. Ranking MRR ───────────────────────────────────────────────────────────
 
-print("\n=== 6. Global KPI Summary ===")
+print("\n=== 6. Ranking MRR (multi-diagnosis datasets) ===")
+
+mrr_data = []
+for r in eval_results:
+    for mode, m in r.get("modes", {}).items():
+        detail = m.get("l2_metrics", {}).get("detail", {})
+        expected = [k for k, v in detail.items() if v in ("TP", "FN")]
+        triggered = m.get("l2_triggered", [])
+        if len(expected) >= 2:
+            rr = 0.0
+            for rank, diag in enumerate(triggered, 1):
+                if diag in expected:
+                    rr = 1.0 / rank
+                    break
+            mrr_data.append({
+                "dataset": r["dataset_id"], "mode": mode,
+                "expected": expected, "triggered": triggered,
+                "reciprocal_rank": rr,
+            })
+            status = "HIT" if rr > 0 else "MISS"
+            print(f"  {r['dataset_id']} [{mode}]: RR={rr:.3f} ({status})")
+
+ranking_mrr = round(sum(d["reciprocal_rank"] for d in mrr_data) / len(mrr_data), 3) if mrr_data else None
+print(f"  MRR = {ranking_mrr}  (n={len(mrr_data)} multi-diagnosis pairs)")
+
+# Top-1 accuracy over all single-diagnosis datasets
+single_total, single_hits = 0, 0
+for r in eval_results:
+    for mode, m in r.get("modes", {}).items():
+        detail = m.get("l2_metrics", {}).get("detail", {})
+        expected = [k for k, v in detail.items() if v in ("TP", "FN")]
+        triggered = m.get("l2_triggered", [])
+        if len(expected) == 1:
+            single_total += 1
+            if triggered and triggered[0] == expected[0]:
+                single_hits += 1
+
+top1_all = round(single_hits / single_total, 3) if single_total else None
+print(f"  Top-1 accuracy (single-diagnosis pairs, n={single_total}): {top1_all}  ({single_hits}/{single_total})")
+
+# ── 7. Evidence-based KPIs ────────────────────────────────────────────────────
+
+print("\n=== 7. Evidence-Based KPIs ===")
+
+evidence_stats = {}
+l2_dirs = {
+    "apriori":     PROJECT_ROOT / "results" / "level2" / "apriori",
+    "aposteriori": PROJECT_ROOT / "results" / "level2" / "aposteriori",
+}
+for mode_name, l2_dir in l2_dirs.items():
+    if not l2_dir.exists():
+        continue
+    counts = []
+    for path in sorted(l2_dir.glob("*.json")):
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            for diag in data.get("diagnoses", []):
+                ev = diag.get("evidence", [])
+                counts.append(len(ev))
+        except Exception:
+            pass
+    if counts:
+        evidence_stats[mode_name] = {
+            "n_diagnoses": len(counts),
+            "mean_evidence_count": round(sum(counts) / len(counts), 2),
+            "min": min(counts), "max": max(counts),
+        }
+        print(f"  {mode_name}: n={len(counts)}  mean_evidence={sum(counts)/len(counts):.2f}  range=[{min(counts)},{max(counts)}]")
+    else:
+        print(f"  {mode_name}: no diagnoses with evidence found in results/level2/{mode_name}/")
+
+# ── 8. Global KPI summary ────────────────────────────────────────────────────
+
+print("\n=== 8. Global KPI Summary ===")
 
 total_tp = sum(r["modes"][m]["l2_metrics"]["tp"]
                for r in eval_results for m in r.get("modes", {}) if "l2_metrics" in r["modes"].get(m, {}))
@@ -262,6 +335,8 @@ global_kpis = {
     "macro_f1_aposteriori": round(sum(apost_f1s) / len(apost_f1s), 3) if apost_f1s else None,
     "macro_f1_apriori": round(sum(apri_f1s) / len(apri_f1s), 3) if apri_f1s else None,
     "top1_accuracy_ds23": top1_result.get("top1_accuracy"),
+    "top1_accuracy_single_diagnosis": top1_all,
+    "ranking_mrr_multi_diagnosis": ranking_mrr,
     "robustness_aposteriori": "100% — no degradation on 4 robustness datasets",
     "l1_recall_all_datasets": "1.00 — all L1 agents executed correctly on all 27 datasets",
     "diagnosers_with_nonzero_tp": len([k for k, v in diagnoser_stats.items() if v.get("TP", 0) > 0]),
@@ -279,10 +354,12 @@ for k, v in global_kpis.items():
 report = {
     "global_kpis": global_kpis,
     "top1_accuracy": top1_result,
+    "ranking_mrr": {"mrr": ranking_mrr, "detail": mrr_data},
     "calibration": calibration_result,
     "robustness": robustness_result,
     "per_diagnoser": diagnoser_stats,
     "scalability": scalability_result,
+    "evidence_stats": evidence_stats,
 }
 
 out = PROJECT_ROOT / "kpi_report.json"

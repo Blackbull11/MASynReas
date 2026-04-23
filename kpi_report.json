@@ -6,6 +6,8 @@
     "macro_f1_aposteriori": 0.815,
     "macro_f1_apriori": 0.196,
     "top1_accuracy_ds23": 1,
+    "top1_accuracy_single_diagnosis": 0.5,
+    "ranking_mrr_multi_diagnosis": 0.833,
     "robustness_aposteriori": "100% — no degradation on 4 robustness datasets",
     "l1_recall_all_datasets": "1.00 — all L1 agents executed correctly on all 27 datasets",
     "diagnosers_with_nonzero_tp": 7,
@@ -25,10 +27,70 @@
     "top1_expected": "single_point_of_failure_diagnoser",
     "top1_accuracy": 1,
     "rank_scores": {
-      "single_point_of_failure_diagnoser": 71,
-      "traceability_breakdown_diagnoser": 54,
+      "single_point_of_failure_diagnoser": "?",
+      "traceability_breakdown_diagnoser": "?",
       "unstable_component_diagnoser": "?"
     }
+  },
+  "ranking_mrr": {
+    "mrr": 0.833,
+    "detail": [
+      {
+        "dataset": "DS10_apriori_mixed_two_true_diagnoses",
+        "mode": "apriori",
+        "expected": [
+          "critical_service_exposure_diagnoser",
+          "functional_mapping_gap_diagnoser"
+        ],
+        "triggered": [
+          "structural_fragility_diagnoser",
+          "procedural_unreadiness_diagnoser",
+          "functional_mapping_gap_diagnoser"
+        ],
+        "reciprocal_rank": 0.3333333333333333
+      },
+      {
+        "dataset": "DS18_aposteriori_mixed_two_true_diagnoses",
+        "mode": "aposteriori",
+        "expected": [
+          "service_cascade_diagnoser",
+          "unstable_component_diagnoser"
+        ],
+        "triggered": [
+          "service_cascade_diagnoser",
+          "traceability_breakdown_diagnoser"
+        ],
+        "reciprocal_rank": 1.0
+      },
+      {
+        "dataset": "DS23_three_diagnoses_ranked_by_urgency",
+        "mode": "aposteriori",
+        "expected": [
+          "single_point_of_failure_diagnoser",
+          "traceability_breakdown_diagnoser",
+          "unstable_component_diagnoser"
+        ],
+        "triggered": [
+          "single_point_of_failure_diagnoser",
+          "traceability_breakdown_diagnoser"
+        ],
+        "reciprocal_rank": 1.0
+      },
+      {
+        "dataset": "DS24_reliability_calibration_bundle",
+        "mode": "apriori",
+        "expected": [
+          "structural_fragility_diagnoser",
+          "critical_service_exposure_diagnoser",
+          "observability_gap_diagnoser"
+        ],
+        "triggered": [
+          "structural_fragility_diagnoser",
+          "procedural_unreadiness_diagnoser"
+        ],
+        "reciprocal_rank": 1.0
+      }
+    ]
   },
   "calibration": {
     "ds24_apriori_metrics": {
@@ -149,46 +211,54 @@
     "timings": {
       "DS25_scalability_small_apriori": {
         "l1_agents": 23,
-        "l1_ms": 4707,
+        "l1_ms": 4505,
         "l2_agents": 5,
-        "l2_ms": 381,
-        "total_ms": 5088
+        "l2_ms": 254,
+        "total_ms": 4759
       },
       "DS25_scalability_small_aposteriori": {
         "l1_agents": 31,
-        "l1_ms": 6295,
+        "l1_ms": 6009,
         "l2_agents": 7,
-        "l2_ms": 377,
-        "total_ms": 6672
+        "l2_ms": 361,
+        "total_ms": 6370
       },
       "DS26_scalability_medium_apriori": {
         "l1_agents": 23,
-        "l1_ms": 4594,
+        "l1_ms": 4366,
         "l2_agents": 5,
-        "l2_ms": 266,
-        "total_ms": 4860
+        "l2_ms": 242,
+        "total_ms": 4608
       },
       "DS26_scalability_medium_aposteriori": {
         "l1_agents": 31,
-        "l1_ms": 6297,
+        "l1_ms": 5823,
         "l2_agents": 7,
-        "l2_ms": 413,
-        "total_ms": 6710
+        "l2_ms": 356,
+        "total_ms": 6179
       },
       "DS27_scalability_large_apriori": {
         "l1_agents": 23,
-        "l1_ms": 4443,
+        "l1_ms": 4295,
         "l2_agents": 5,
-        "l2_ms": 264,
-        "total_ms": 4707
+        "l2_ms": 246,
+        "total_ms": 4541
       },
       "DS27_scalability_large_aposteriori": {
         "l1_agents": 31,
-        "l1_ms": 6481,
+        "l1_ms": 6073,
         "l2_agents": 7,
-        "l2_ms": 466,
-        "total_ms": 6947
+        "l2_ms": 361,
+        "total_ms": 6434
       }
+    }
+  },
+  "evidence_stats": {
+    "apriori": {
+      "n_diagnoses": 4,
+      "mean_evidence_count": 1.0,
+      "min": 1,
+      "max": 1
     }
   }
 }
