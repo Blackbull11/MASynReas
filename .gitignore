@@ -11,3 +11,5 @@ result_narrative.txt
 .claude/
 benchmark.py
 benchmark_results.json
+noria_graph.ttl
+llm_baseline_results.json
