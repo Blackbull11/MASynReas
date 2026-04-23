@@ -1,1 +1,62 @@
-[]
+[
+  {
+    "ticket": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/document/TT_TOY2022TT"
+    },
+    "resource": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/RES_TOY_as2"
+    },
+    "connectivityDegree": {
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+      "value": "0"
+    }
+  },
+  {
+    "ticket": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/document/TT_TOY2022TT"
+    },
+    "resource": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/RES_TOY_srv1"
+    },
+    "connectivityDegree": {
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+      "value": "0"
+    }
+  },
+  {
+    "ticket": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/document/TT_TOY2022TT"
+    },
+    "resource": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/RES_TOY_term1"
+    },
+    "connectivityDegree": {
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+      "value": "0"
+    }
+  },
+  {
+    "ticket": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/document/TT_TOY2022TT02"
+    },
+    "resource": {
+      "type": "uri",
+      "value": "https://w3id.org/noria/object/RES_TOY_pe_1_1"
+    },
+    "connectivityDegree": {
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+      "value": "0"
+    }
+  }
+]

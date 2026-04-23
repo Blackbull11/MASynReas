@@ -49,7 +49,7 @@ on the same element, rather than through explicit history on a single ticket.
 Important note
 --------------
 This implementation assumes:
-- tickets are linked to impacted elements through noria:troubleTicketImpacts,
+- tickets are linked to impacted elements through (noria:troubleTicketRelatedResource | (dct:relation/noria:logOriginatingManagedObject)),
 - ticket times are stored in noria:troubleTicketDetectionDateTime,
 - current ticket statuses are stored in noria:troubleTicketStatusCurrent.
 
@@ -88,6 +88,7 @@ REOPEN_WINDOW_DAYS = 7
 
 QUERY = f"""
 PREFIX noria: <https://w3id.org/noria/ontology/>
+PREFIX dct:   <http://purl.org/dc/terms/>
 PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>
 
 SELECT ?closedTicket ?newTicket ?relatedElement
@@ -100,12 +101,12 @@ SELECT ?closedTicket ?newTicket ?relatedElement
         ) AS ?delayDays)
 WHERE {{
   ?closedTicket a noria:TroubleTicket ;
-                noria:troubleTicketImpacts ?relatedElement ;
+                (noria:troubleTicketRelatedResource | (dct:relation/noria:logOriginatingManagedObject)) ?relatedElement ;
                 noria:troubleTicketDetectionDateTime ?closedTicketTime ;
                 noria:troubleTicketStatusCurrent ?closedStatus .
 
   ?newTicket a noria:TroubleTicket ;
-             noria:troubleTicketImpacts ?relatedElement ;
+             (noria:troubleTicketRelatedResource | (dct:relation/noria:logOriginatingManagedObject)) ?relatedElement ;
              noria:troubleTicketDetectionDateTime ?newTicketTime ;
              noria:troubleTicketStatusCurrent ?newStatus .
 

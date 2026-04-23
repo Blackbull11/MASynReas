@@ -50,7 +50,7 @@ Important note
 --------------
 This first version assumes:
 - the ticket is connected to the impacted object through
-  noria:troubleTicketImpacts,
+  (noria:troubleTicketRelatedResource | (dct:relation/noria:logOriginatingManagedObject)),
 - the current status is stored in noria:troubleTicketStatusCurrent,
 - unresolved statuses can be approximated through textual matching.
 
@@ -91,6 +91,7 @@ MIN_FOLLOWUP_EVENTS = 1
 
 QUERY = f"""
 PREFIX noria: <https://w3id.org/noria/ontology/>
+PREFIX dct:   <http://purl.org/dc/terms/>
 PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>
 
 SELECT ?ticket ?relatedElement ?ticketTime ?ticketStatus
@@ -99,7 +100,7 @@ SELECT ?ticket ?relatedElement ?ticketTime ?ticketStatus
        (MAX(?eventTime) AS ?lastFollowupEventTime)
 WHERE {{
   ?ticket a noria:TroubleTicket ;
-          noria:troubleTicketImpacts ?relatedElement ;
+          (noria:troubleTicketRelatedResource | (dct:relation/noria:logOriginatingManagedObject)) ?relatedElement ;
           noria:troubleTicketDetectionDateTime ?ticketTime ;
           noria:troubleTicketStatusCurrent ?ticketStatus .
 

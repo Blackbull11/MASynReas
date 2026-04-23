@@ -61,13 +61,14 @@ ENDPOINT = "http://localhost:8890/sparql"
 
 QUERY = """
 PREFIX noria: <https://w3id.org/noria/ontology/>
+PREFIX dct:   <http://purl.org/dc/terms/>
 
 SELECT ?ticket ?childResource ?parentResource
        (COUNT(DISTINCT ?siblingOrChild) AS ?childCount)
        (COUNT(DISTINCT ?supportedApplication) AS ?supportedApplicationCount)
 WHERE {
   ?ticket a noria:TroubleTicket .
-  ?ticket noria:troubleTicketImpacts ?childResource .
+  ?ticket (noria:troubleTicketRelatedResource | (dct:relation/noria:logOriginatingManagedObject)) ?childResource .
   ?childResource a noria:Resource .
   ?childResource noria:partOf ?parentResource .
   ?parentResource a noria:Resource .

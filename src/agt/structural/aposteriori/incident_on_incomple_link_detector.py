@@ -58,11 +58,12 @@ ENDPOINT = "http://localhost:8890/sparql"
 
 QUERY = """
 PREFIX noria: <https://w3id.org/noria/ontology/>
+PREFIX dct:   <http://purl.org/dc/terms/>
 
 SELECT DISTINCT ?ticket ?resource ?interface ?link (COUNT(DISTINCT ?endpointInterface) AS ?endpointCount)
 WHERE {
   ?ticket a noria:TroubleTicket .
-  ?ticket noria:troubleTicketImpacts ?resource .
+  ?ticket (noria:troubleTicketRelatedResource | (dct:relation/noria:logOriginatingManagedObject)) ?resource .
   ?resource a noria:Resource .
 
   ?interface a noria:NetworkInterface .
