@@ -459,7 +459,7 @@ diagnostic unique de fragilité structurelle.
 \hline
 \textbf{Famille} & \textbf{Agents actifs} & \textbf{Détections} & \textbf{Agents totaux} \\
 \hline
-Structurelle  &  0 &  0 &  7 \\
+Structurelle  & \textbf{2} & \textbf{10} &  7 \\
 Dynamique     &  0 &  0 & 12 \\
 Fonctionnelle & \textbf{7} & \textbf{19} &  9 \\
 Procédurale   &  0 &  0 &  3 \\
@@ -469,20 +469,41 @@ Procédurale   &  0 &  0 &  3 \\
 \label{tab:compl-apost}
 \end{table}
 
-Sur noria-0.2, seule la famille fonctionnelle produit des résultats en
-mode aposteriori.
-Cela s'explique par la nature du dataset de référence : les incidents
-présents (\texttt{TroubleTickets}) impactent principalement la couche
-applicative/service.
-Un réseau de production réel activerait également les familles
-structurelle, dynamique et procédurale.
+En mode aposteriori, les familles structurelle et fonctionnelle sont
+actives sur noria-0.2, avec respectivement 10 et 19 détections.
+L'inactivité des familles dynamique et procédurale s'explique par les
+caractéristiques du jeu de données et non par un défaut de conception :
+
+\begin{itemize}
+  \item \textbf{Famille dynamique (0/12) :} les 12 agents détectent des
+    patrons temporels (burst d'événements, réouverture de ticket, état
+    instable, changement suivi d'incident). Or noria-0.2 ne contient
+    aucune instance de \texttt{noria:Change} et seulement six
+    \texttt{EventRecord} réseau~--- en deçà des seuils de burst ou
+    de répétition~--- et les tickets présents ne présentent pas de
+    réouverture ni de dépassement de délai.
+  \item \textbf{Famille procédurale (0/3) :} les deux détecteurs
+    \emph{incident-sans-ticket} et \emph{ticket-sans-événement} ne
+    trouvent aucune anomalie car tous les tickets sont correctement
+    reliés à leurs événements~--- ce qui constitue en soi un résultat
+    valide (absence d'anomalie procédurale dans ce dataset).
+    Le troisième détecteur (\emph{changement lié à plusieurs incidents})
+    requiert également un \texttt{noria:Change}, absent du graphe.
+\end{itemize}
+
+Un réseau de production réel, comportant des enregistrements de
+changements et un historique d'événements dense, activerait les quatre
+familles.
 
 \begin{insight}
-  Ce résultat justifie l'architecture à quatre familles : la couverture
-  complète de l'espace des anomalies requiert les quatre facettes NORIA-O,
-  même si certaines ne sont actives que sur des topologies spécifiques.
-  Un système mono-famille aurait produit zéro détection en mode aposteriori
-  sur trois familles sur quatre.
+  Ce résultat justifie l'architecture à quatre familles : deux familles
+  actives sur noria-0.2 couvrent déjà 29 anomalies distinctes, et les
+  deux familles silencieuses sont silencieuses \emph{parce que} le
+  dataset ne contient pas les entités qu'elles surveillent~--- ce qui
+  confirme la spécificité de chaque capteur.
+  Un système mono-famille fonctionnelle aurait manqué les 10 détections
+  structurelles liées aux ressources non-redondantes impactées par
+  TT\_TOY2022TT.
 \end{insight}
 
 % ------------------------------------------------------------
