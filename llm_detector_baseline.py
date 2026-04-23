@@ -43,23 +43,61 @@ OLLAMA_ENDPOINT = "http://localhost:11434/api/generate"
 MODEL           = "mistral:latest"
 RESULTS_DIR     = PROJECT_ROOT / "results"
 
-NORIA_PREFIXES = (
-    "https://w3id.org/noria/",
-    "http://purl.org/dc/terms/",
-)
-
 # ─────────────────────────────────────────────────────────────────────────────
-# GRAPH EXPORT
+# GRAPH EXPORT  (diagnostic predicates only — strips prov/foaf/label noise)
 # ─────────────────────────────────────────────────────────────────────────────
 
+# Only keep predicates that carry diagnostic information.
+# Eliminates: prov:wasDerivedFrom (×96), foaf:* (×45), rdfs:label (×24),
+#             resourceHostName/LogisticId/ProductModel (×32), org:memberOf (×9)
 GRAPH_QUERY = """
+PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX noria: <https://w3id.org/noria/ontology/>
+PREFIX seas:  <https://w3id.org/seas/>
+PREFIX dct:   <http://purl.org/dc/terms/>
+PREFIX pep:   <https://w3id.org/pep/>
+
 CONSTRUCT { ?s ?p ?o }
 WHERE {
   ?s ?p ?o .
-  FILTER(
-    STRSTARTS(STR(?s), 'https://w3id.org/noria/') ||
-    STRSTARTS(STR(?s), 'http://purl.org/dc/terms/')
-  )
+  FILTER(STRSTARTS(STR(?s), 'https://w3id.org/noria/'))
+  FILTER(?p IN (
+    rdf:type,
+    noria:networkInterfaceOf,
+    noria:networkInterfaceConnects,
+    noria:networkLinkTerminationResource,
+    noria:resourceForApplication,
+    noria:applicationModuleOf,
+    noria:applicationShortIdentifier,
+    noria:applicationType,
+    noria:businessCriticality,
+    seas:subSystemOf,
+    noria:resourceManagedBy,
+    noria:resourceType,
+    noria:partOf,
+    noria:locatedIn,
+    dct:relation,
+    noria:logOriginatingManagedObject,
+    noria:logOriginatingManagementSystem,
+    noria:troubleTicketRelatedResource,
+    noria:troubleTicketStatusCurrent,
+    noria:troubleTicketDetectionDateTime,
+    noria:alarmPerceivedSeverity,
+    noria:alarmProposedRepairAction,
+    noria:conformsTo,
+    noria:loggingTime,
+    dct:type,
+    dct:description,
+    dct:created,
+    noria:documentStatusHistory,
+    noria:hasPart,
+    noria:alarmSeverity,
+    noria:changeRequestActualStartTime,
+    noria:changeRequestActualEndTime,
+    noria:plannedStartDate,
+    noria:plannedEndDate,
+    noria:changeStatus
+  ))
 }
 """
 
@@ -216,7 +254,7 @@ def call_llm(prompt: str) -> str:
             "num_ctx": 16384,
         },
     }
-    r = requests.post(OLLAMA_ENDPOINT, json=payload, stream=True, timeout=1800)
+    r = requests.post(OLLAMA_ENDPOINT, json=payload, stream=True, timeout=3600)
     r.raise_for_status()
 
     chunks: list[str] = []
