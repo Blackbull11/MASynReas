@@ -13,6 +13,8 @@
 \usepackage{mdframed}
 \usepackage{lipsum}
 \usepackage{cmbright}
+\usepackage{listings}
+
 
 \setlist[itemize]{label=--, topsep=2pt, itemsep=2pt, parsep=0pt}
 \setlist[enumerate]{topsep=4pt, itemsep=6pt, parsep=0pt}
@@ -56,9 +58,9 @@
     \textcolor{todocolor}{\textbf{À compléter ---}} \textcolor{todocolor}{\textit{#1}}
   \end{todobox}}
 
-\newcommand{\insight}[1]{%
-  \begin{infobox}
-    \textit{#1}
+\newenvironment{insight}{%
+  \begin{infobox}\itshape
+}{%
   \end{infobox}}
 
 % ── En-têtes ────────────────────────────────────────────────────────────────
@@ -110,162 +112,1009 @@ Prise de Décision Distribuée sur des Graphes de Connaissances}\\[1.2em]
 % ============================================================
 
 \subsection{Contexte et motivations}
+\label{sec:contexte}
+
 
 \todo{Reprendre et étendre la section 1.1 du rapport intermédiaire. Mettre à jour pour refléter l'architecture finale à trois niveaux et les quatre familles NORIA-O.}
 
+Les réseaux de télécommunications (ou réseaux ICT, pour\textit{ Information and Communication Technologies} - Technologies de l'Information et de la Communication en français) représentent aujourd'hui des
+infrastructures critiques, permettant la fourniture de nombreux services
+d'importance vitale pour la population. La détection et l'interprétation des
+anomalies --- première étape vers leur résolution --- constituent donc une
+préoccupation majeure pour les opérateurs de réseaux TIC. Cette tâche s'avère
+particulièrement ardue étant donné la complexité actuelle des réseaux TIC,
+qui reposent sur une infrastructure vaste et dense et doivent fournir des
+services variés, impliquant ainsi des volumes importants de données
+hétérogènes.
+ 
+Pour répondre à ce problème, les opérateurs de réseaux TIC tels qu'Orange
+utilisent une représentation autonome de type Jumeau Numérique sous la forme
+d'un Graphe de Connaissances. Héritée du Web sémantique, cette représentation
+attribue une signification commune à des données de formats hétérogènes en
+les liant sous forme de triplets pour former un graphe. Dans le cas d'Orange,
+un haut degré de sémantique est atteint grâce à \textbf{NORIA-O}, une
+ontologie --- c'est-à-dire un ensemble de définitions de classes et de types
+de relations --- conçue pour capturer les facettes \emph{structurelle},
+\emph{fonctionnelle}, \emph{dynamique} et \emph{procédurale} de la gestion
+des réseaux TIC.
+ 
+Cette représentation peut être exploitée pour la détection d'anomalies via
+l'introduction d'\emph{agents}, c'est-à-dire des entités logicielles
+autonomes. Ces agents se voient confier diverses missions : récupérer des
+informations depuis l'environnement, interpréter ces données pour
+diagnostiquer des anomalies, ou réinjecter des informations dans le Graphe
+de Connaissances. Il en résulte de nombreux échanges d'informations entre
+l'environnement et les agents. L'objectif est de s'assurer que ce Système
+Multi-Agents forme un ensemble \emph{synergique}, réalisant la détection
+d'anomalies avec un degré maximal de complexité, de fiabilité et
+d'explicabilité.
+ 
+Tel est le cœur de ce PSC, dans lequel nous cherchons à répondre à la
+question suivante : \emph{\textbf{comment garantir la synergie d'un système
+multi-agents dédié à la détection d'anomalies dans les réseaux TIC, de
+manière à maximiser l'explicabilité tout en contenant la complexité ?}}
+ 
+Dans ce projet, nous accordons une importance particulière à l'explicabilité
+comme critère de performance du Système Multi-Agents. En effet, les agents
+possèdent des principes de fonctionnement variés et offrent ainsi des degrés
+d'explicabilité différents, allant d'agents purement déterministes à des
+agents purement probabilistes. Bien que ces derniers puissent être plus
+efficaces, la nature critique de la détection d'anomalies dans un réseau
+TIC impose de pouvoir justifier les diagnostics fournis, ce qui motive cette
+priorisation de l'explicabilité.
+
+%Ajouté par Claude____________
+
+Cette vision initiale s'est concrétisée, au terme du projet, dans une
+\textbf{architecture à trois niveaux} qui guide l'ensemble du présent
+rapport. Le \emph{niveau 1} est constitué d'agents \emph{workers}
+spécialisés, organisés en quatre familles correspondant directement aux
+facettes de NORIA-O (structurelle, dynamique, fonctionnelle, procédurale) :
+ces workers détectent en parallèle des motifs d'anomalies locaux via des
+requêtes SPARQL. Le \emph{niveau 2}, assuré par un agent coordinateur de
+raisonnement conditionnel, corrèle les détections inter-familles pour
+produire un diagnostic synergique et calculer une sévérité consolidée. Le
+\emph{niveau 3} confie enfin la synthèse narrative à un LLM local
+(Llama~3.2:3b via Ollama), strictement cantonné à la reformulation des
+résultats déjà établis. Cette décomposition préserve l'explicabilité par
+construction --- chaque détection étant traçable jusqu'aux triplets RDF ---
+tout en ouvrant la voie à un passage à l'échelle vers plusieurs dizaines
+d'agents sans modification des composants existants.
+
 \subsection{État de l'art}
+\label{sec:etat-de-l-art}
 
 \todo{Reprendre la section 1.2 du rapport intermédiaire. Ajouter si pertinent des références sur : (1) les architectures multi-agents hiérarchiques, (2) les approches de détection d'anomalies par facettes ontologiques, (3) les LLM locaux pour la synthèse de diagnostics réseau.}
 
+
+Notre analyse de l'état de l'art, menée lors de la première phase du projet,
+a confirmé que la combinaison des Graphes de Connaissances, de l'ontologie
+NORIA-O et des Systèmes Multi-Agents constitue un cadre théorique pertinent
+pour notre objectif initial. Nous avons ainsi établi que cette combinaison
+technologique est nécessaire pour concevoir un système de détection
+d'anomalies appliqué à un réseau de télécommunications capable de maximiser
+simultanément l'explicabilité des diagnostics et l'efficacité opérationnelle.
+ 
+Au terme de cette étude, quatre travaux se sont imposés comme essentiels et
+ont directement orienté nos choix de modélisation. Pour saisir la complexité
+de la représentation des données, nous nous sommes appuyés sur la thèse de
+Lionel~Tailhardat~\cite{tailhardat2024}, notre tuteur de projet, ainsi que
+sur l'article de référence décrivant l'ontologie NORIA-O~\cite{tailhardat2023noria}.
+Ces lectures ont été déterminantes pour comprendre comment structurer
+sémantiquement des données réseau hétérogènes et appréhender le Jumeau
+Numérique exploitable par les agents.
+ 
+En complément de cet aspect structurel, l'article \emph{Multi-agent systems
+and their applications}~\cite{hussain2017} a servi de ressource clé pour la
+conception architecturale de notre solution. Il nous a permis d'identifier
+les mécanismes de coordination nécessaires à la collaboration efficace
+d'entités autonomes pour résoudre un problème complexe comme la détection
+d'anomalies. Enfin, nous avons anticipé les limites des agents purement
+déterministes en étendant notre revue de littérature aux \emph{Knowledge
+Graph Embeddings}, notamment via les travaux de Wang et
+al.~\cite{wang2017kg}. Ces approches par plongements de graphes nous sont
+apparues indispensables pour envisager, à plus long terme, l'intégration
+d'algorithmes statistiques capables d'accroître la complexité et les
+performances du système au-delà de règles purement explicables.
+ 
+
+
+%Ajouté par Claude____________
+
+La seconde phase du projet a rendu nécessaire l'élargissement de cet état
+de l'art à trois thématiques complémentaires qui sous-tendent directement
+l'architecture retenue. Premièrement, les \textbf{architectures multi-agents
+hiérarchiques} --- en particulier le paradigme BDI (\emph{Belief-Desire-
+Intention}) implémenté par Jason dans la plateforme JaCaMo~\cite{jacamo} ---
+fournissent le cadre formel du déclenchement conditionnel du coordinateur à
+partir des détections des workers. Deuxièmement, les approches de
+\textbf{détection d'anomalies par facettes ontologiques}, initiées par les
+travaux de Tailhardat, Troncy et Chabot~\cite{tailhardat2023grasec} sur la
+classification d'incidents dans les systèmes TIC, légitiment notre
+partitionnement des agents suivant les quatre facettes NORIA-O.
+Troisièmement, l'utilisation de \textbf{LLM locaux pour la synthèse de
+diagnostics} --- plutôt que pour la décision --- s'inscrit dans la tendance
+récente dite d'\emph{augmentation} des systèmes symboliques par des modèles
+de langage, dans laquelle ces derniers sont cantonnés à un rôle de
+verbalisation pour préserver la traçabilité des décisions prises par les
+composants déterministes en amont.
+
 \subsection{Organisation et calendrier initiaux}
+\label{sec:gantt-initial}
 
 \todo{Reprendre la section 1.3 du rapport intermédiaire (GANTT). Ajouter une figure montrant le GANTT réactualisé en avril 2026 avec les livrables effectivement réalisés.}
 
+
+Pour atteindre notre objectif d'implémentation d'un système multi-agents
+synergique maximisant l'explicabilité tout en maîtrisant la complexité,
+nous avions identifié trois questions de recherche dans notre proposition
+détaillée de septembre~2025. Celles-ci définissaient l'horizon vers lequel
+nous voulions orienter le projet. Elles mettaient l'accent sur l'aspect
+organisationnel du système multi-agents, accordant une importance
+particulière à la \emph{fonction objectif}, dont la mission serait de
+prioriser le travail des agents au regard de critères d'explicabilité et
+de temps de calcul.
+ 
+Pour concrétiser cette vision d'un système multi-agents organisé et
+synergique, nous avions défini une série d'objectifs associés à des jalons
+temporels, articulés autour de trois dimensions : la première centrée sur
+les agents, de leur conception à l'étude de leurs interactions ; la
+deuxième sur l'implémentation pratique, avec des expérimentations concrètes
+et des conclusions empiriques sur la synergie du système ; la troisième
+sur l'analyse des données pour l'application pratique au problème de la
+détection d'anomalies dans un réseau TIC. Le diagramme de GANTT initial
+(figure~\ref{fig:gantt-initial}) résume ces objectifs.
+
+\begin{figure}[htbp]
+  \centering
+\includegraphics[width=0.8\linewidth]{Weekly Gantt Chart Planning Whiteboard in Yellow Green Pink Spaced Color Blocks Style.png}
+  \caption{Diagramme de GANTT initial, tel qu'établi au 23/01/2026.}
+  \label{fig:gantt-initial}
+\end{figure}
+ 
+%Ajouté par Claude____________
+
+Le diagramme de GANTT réactualisé en avril~2026 (figure~\ref{fig:gantt-final})
+documente les livrables effectivement réalisés et matérialise le pivot
+stratégique décrit en section~\ref{sec:pivot}. Les principales inflexions
+par rapport au calendrier initial sont : (i) la consolidation de
+l'architecture à trois niveaux en février--mars (alors que le calendrier
+initial prévoyait à cette période le travail sur la fonction objectif) ;
+(ii) le développement des dix-sept agents structurels et de la famille
+dynamique en lieu et place des agents probabilistes ; (iii) le report de
+la formalisation organisationnelle Moise et de la fonction objectif au rang
+de perspectives (cf.~section~\ref{sec:perspectives}).
+ 
+\begin{figure}[htbp]
+  \centering
+  % TODO : créer et insérer le GANTT avril 2026 avec les livrables réalisés
+  \caption{Diagramme de GANTT réactualisé en avril 2026 avec les livrables
+  effectivement réalisés.}
+  \label{fig:gantt-final}
+\end{figure}
+
 \subsection{Organisation du rapport}
+\label{sec:organisation-rapport}
 
 \todo{À rédiger en dernier, une fois la structure définitive fixée. Pointer vers chaque section principale.}
 
+%Brouillon proposé 
+\textit{\small{Ce rapport est organisé comme suit. La section~\ref{sec:resultats-interm}
+reprend et prolonge les résultats intermédiaires, en documentant le pivot
+stratégique qui a orienté la seconde moitié du projet. La
+section~\ref{sec:architecture} décrit l'architecture du système multi-agents
+et la plateforme JaCaMo retenue. Les sections~\ref{sec:niveau1},
+\ref{sec:niveau2} et~\ref{sec:niveau3} détaillent respectivement les trois
+niveaux du pipeline : détection par facette, raisonnement conditionnel et
+synthèse narrative. La section~\ref{sec:experiences} présente les
+expériences, les mesures de performance et les scores d'explicabilité
+obtenus sur le jeu de données \texttt{noria-0.2}. La
+section~\ref{sec:discussion} discute les apports, les limites et les
+perspectives du système. La section~\ref{sec:conclusion} conclut.}}
+
 % ============================================================
 \section{Résultats intermédiaires et enseignements clés}
+\label{sec:resultats-interm}
+
+Cette section reprend et prolonge le contenu du rapport intermédiaire, en
+documentant l'évolution de notre compréhension entre janvier et avril~2026.
+Elle s'articule en deux temps : un retour théorique sur la fonction
+objectif et le pivot stratégique qui en a découlé, puis une présentation
+des expérimentations pratiques qui ont jeté les bases empiriques de
+l'architecture finale.
+ 
+Avant d'entrer dans le détail, nous rappelons le cadre technique retenu,
+qui reste inchangé depuis le rapport intermédiaire. Le système multi-agents
+est implémenté à l'aide de la plateforme de développement \textbf{JaCaMo},
+qui combine trois composantes particulièrement adaptées à la programmation
+orientée multi-agents : \emph{Jason}, pour le développement d'agents
+autonomes selon le paradigme BDI ; \emph{CArtAgO}, pour les environnements
+partagés ; et \emph{Moise}, pour l'organisation des agents. Ces trois
+dimensions (agents -- environnement -- organisation) structurent notre
+système, comme détaillé en section~\ref{sec:architecture}. Les agents
+développés sont interfacés avec une base de données de graphes RDF
+représentant le réseau TIC, opérée par \emph{OpenLink Virtuoso}.
+
+
 % ============================================================
 
 \textit{Cette section reprend et prolonge le contenu du rapport intermédiaire, en documentant l'évolution de notre compréhension entre janvier et avril 2026.}
 
 \subsection{Pivot stratégique : de la fonction objectif à l'implémentation fonctionnelle}
+\label{sec:pivot}
 
 \todo{Reprendre la section 2.1 du rapport intermédiaire sur la fonction objectif. Documenter le pivot : pourquoi la priorité a glissé vers un système fonctionnel d'abord. Montrer en quoi la hiérarchie de sévérité du coordinateur constitue une première approximation pragmatique de cette fonction objectif.}
 
+Un des objectifs initiaux que nous nous étions fixés pour septembre~2025
+était de définir une forme générale de \emph{fonction objectif} destinée à
+orienter la prise de décision au sein du système multi-agents. L'état de
+l'art avait en effet mis en évidence le rôle central d'une fonction
+objectif pertinente dans la conception de stratégies de décision
+distribuée efficaces. Nous avions donc investigué sa définition, d'abord
+pour des systèmes d'agents simples, puis pour des organisations
+hiérarchiques plus complexes.
+ 
+En parallèle de ce travail théorique, nous avions entamé une phase
+d'expérimentation pratique en développant nos premiers agents dans
+l'environnement JaCaMo, capables d'exécuter des requêtes sur une base de
+données orientée graphe. Ces implémentations initiales ont joué un rôle
+décisif dans l'évolution de notre compréhension des défis techniques et
+conceptuels du projet, et nous ont conduits à réévaluer certains de nos
+objectifs initiaux.
+ 
+En particulier, compte tenu de la complexité de l'implémentation concrète,
+notre priorité a progressivement glissé vers la réalisation d'un
+\textbf{système multi-agents de détection d'anomalies pleinement
+opérationnel}, plutôt que l'optimisation immédiate de son architecture
+pour maximiser explicabilité ou efficacité globale. Une étude approfondie
+de l'organisation des agents --- cadre naturel pour une réflexion
+d'ensemble sur la fonction objectif --- représente un objectif de recherche
+ambitieux, difficilement conciliable avec l'état d'avancement du projet à
+mi-parcours.
+ 
+Cette analyse a été renvoyée à une seconde phase, une fois une première
+version fonctionnelle du système développée et validée. Cette démarche
+progressive nous a semblé mieux à même de garantir des fondations
+techniques solides tout en préparant un travail ultérieur plus théorique
+sur l'organisation des agents et la formalisation de la fonction objectif.
+ 
+%Ajouté par Claude____________
+
+Ce pivot \emph{bottom-up} s'est révélé décisif : c'est précisément
+l'expérimentation qui a fait émerger la structuration finale à trois
+niveaux, là où une formalisation abstraite menée en amont aurait
+vraisemblablement abouti à une organisation différente et moins ancrée
+dans les données. Par ailleurs, la \textbf{hiérarchie de sévérité
+implémentée dans le coordinateur} (niveau~2) --- qui consolide les
+résultats des workers en une sévérité globale \texttt{CRITIQUE /
+MAJEURE / MINEURE / INFORMATION} --- peut être lue comme une
+\emph{première approximation pragmatique de la fonction objectif}. Elle
+agrège en effet plusieurs critères (présence d'une alarme \emph{major},
+propagation active, absence de plan de remédiation) en un scalaire unique
+qui conditionne la suite du traitement. Cette lecture fournit un pont
+concret entre les ambitions théoriques initiales et l'implémentation
+réalisée, et baliseau chemin vers une fonction objectif formalisée
+au sens de Moise (cf. perspectives).
+
 \subsection{Familiarisation avec le système multi-agents}
+\label{sec:familiarisation}
 
 \todo{Reprendre la section 2.2 du rapport intermédiaire. Étendre avec la distinction affinée entre agents workers (niveau 1), coordinateur (niveau 2) et LLM (niveau 3) qui a émergé en seconde phase.}
 
+Les expérimentations menées pendant la première phase nous ont permis
+d'acquérir une compréhension plus fine et plus concrète du fonctionnement
+pratique des agents, en particulier en ce qui concerne la répartition des
+rôles au sein du système. Nous avons progressivement identifié des
+\emph{classes d'agents} aux responsabilités distinctes, correspondant à
+différents niveaux du processus de détection d'anomalies.
+ 
+D'une part, certains agents sont dédiés à l'\textbf{exploration de
+l'environnement} et à l'identification de motifs spécifiques dans un
+graphe représentant un cas d'usage. Ces agents opèrent principalement à
+un niveau local, cherchant des patrons d'erreur pertinents relativement
+à un ticket d'incident initial.
+ 
+D'autre part, d'autres agents exploitent les motifs détectés pour
+\textbf{formuler un diagnostic plus global}. Leur rôle consiste à
+interpréter les vues étroites des premiers agents, à les contextualiser
+et à les agréger pour formuler des hypothèses plus complètes sur
+l'origine et la nature des anomalies observées. Ces agents opèrent donc
+à un niveau de raisonnement plus élevé, centré sur la compréhension et
+l'explication plutôt que sur la simple détection. Cette distinction
+fonctionnelle entre agents de détection de motifs et agents de diagnostic
+est devenue évidente au cours de nos expérimentations et nous a conduits
+à structurer naturellement l'architecture des agents ainsi dans un
+premier temps, avant d'explorer des formes d'organisation plus complexes
+dans une phase ultérieure.
+ 
+%Ajouté par Claude____________
+
+Cette distinction binaire initiale (détection / diagnostic) s'est affinée
+en seconde phase en une \textbf{architecture à trois niveaux} qui
+structure l'ensemble du système final :
+ 
+\begin{itemize}
+  \item Le \textbf{niveau~1 (workers)} regroupe les agents de détection
+  évoqués plus haut. Ils exécutent chacun un unique motif SPARQL (un
+  agent $=$ un patron) et produisent un fichier JSON de résultats. Ils
+  sont organisés en quatre familles correspondant aux facettes NORIA-O
+  (cf.~section~\ref{sec:niveau1}).
+  \item Le \textbf{niveau~2 (coordinateur)} concentre la logique de
+  diagnostic global : un unique agent BDI qui lit les sorties JSON des
+  workers, évalue des conditions de corrélation inter-familles et
+  calcule la hiérarchie de sévérité.
+  \item Le \textbf{niveau~3 (LLM)} prend en charge la synthèse narrative
+  du diagnostic déjà établi. Ce niveau n'a été ajouté qu'en seconde
+  phase, après avoir constaté que les rapports structurés produits par
+  le coordinateur gagnaient à être reformulés en prose pour leurs
+  destinataires métier (équipes d'exploitation réseau).
+\end{itemize}
+ 
+L'introduction explicite d'un troisième niveau dédié à la communication
+est une contribution architecturale de la seconde phase : elle enforce
+la séparation \emph{décision / communication} et préserve l'explicabilité
+totale du pipeline (le LLM ne diagnostique pas, il verbalise).
+ 
+
 \subsection{Application pratique à l'ontologie NORIA-O}
+\label{sec:noria-usecases}
 
 \todo{Reprendre la section 2.3 du rapport intermédiaire (Use Cases 1 et 2 sur noria-0.2). Conserver les listings SPARQL et les figures GraphDB. Ces use cases servent de référence pour toute la section expérimentale.}
 
+
+La familiarisation avec l'environnement et le sujet de recherche, couplée à
+la maîtrise des différents blocs technologiques, nous a permis de déployer
+un premier prototype fonctionnel de détection d'anomalies. Ce prototype
+repose sur un agent JaCaMo unique exécutant une requête SPARQL contre le
+graphe de connaissances et retournant les résultats formatés. Cette
+réalisation marque le point de départ de notre phase de progression
+expérimentale, qui vise à rendre possible l'interaction entre plusieurs
+agents exploitant des méthodes algorithmiques variées.
+ 
+Dans cette section, nous examinons deux perspectives appliquées à un même
+scénario d'incident issu du jeu de données \texttt{noria-0.2}~\cite{noriadataset}.
+Ce cas illustre une perte de connectivité résultant de la défaillance
+logicielle d'un routeur, qui rompt le lien entre un terminal utilisateur
+et le serveur d'application. La figure~\ref{fig:scenario1} en présente les
+représentations exhaustive et simplifiée.
+ 
+\begin{figure}[htbp]
+  \centering
+  % TODO : reprendre la figure 3 du rapport intermédiaire
+  \caption{Scénario n$^\circ$1 --- Erreur logicielle sur un routeur
+  entraînant une perte d'accès à une application. À gauche : représentation
+  exhaustive du graphe de connaissances (extrait de
+  \url{https://github.com/Orange-OpenSource/noria-ontology/tree/master/dataset/noria-0.2}).
+  À droite : représentation simplifiée avec le routeur défaillant et le
+  Trouble Ticket émis par \texttt{Term\_1} pour l'inaccessibilité de
+  l'application \texttt{APP\_PFS01} ; le \texttt{logText} de l'EventRecord
+  lié au routeur \texttt{AS\_2} constitue la sortie attendue de cette
+  analyse de cause racine.}
+  \label{fig:scenario1}
+\end{figure}
+ 
+À ce stade, nous résolvons ce scénario au moyen d'une unique requête
+SPARQL dans une approche mono-agent. Pour traiter des scénarios plus
+complexes et calculer une métrique d'explicabilité, il sera significativement
+plus pertinent de décomposer ces requêtes en plusieurs requêtes
+\emph{template} réutilisables dans plusieurs scénarios --- ce qui préfigure
+directement la décomposition en workers du niveau~1.
+ 
+% -- Use Case 1 ----------------------------------------------
+\paragraph{Use Case 1 : diagnostic à partir d'un Trouble Ticket.}
+Dans cette première perspective, nous partons du \emph{Trouble Ticket}
+pour remonter jusqu'à la cause racine en exploitant les informations
+portées par les messages d'erreur (cf.~figure~\ref{fig:rootcause}). Le
+ticket est émis par le terminal \texttt{Term\_1}, qui tente d'accéder à
+l'application \texttt{APP\_PFS01} hébergée sur le serveur \texttt{Srv\_1}.
+Si la détection basée sur le ticket est précise, elle manque de
+flexibilité : elle présuppose l'existence d'un \texttt{EventRecord} dont
+la propriété \texttt{alarmPerceivedSeverity} vaut \emph{major}. Le
+listing~\ref{lst:sparql-tt} présente la requête SPARQL permettant ce
+parcours, et le listing~\ref{lst:diag-tt} le rapport d'analyse produit
+par l'agent JaCaMo.
+ 
+\begin{figure}[htbp]
+  \centering
+  % TODO : reprendre la figure 4 du rapport intermédiaire
+  \caption{Représentation graphique de l'analyse de cause racine à partir
+  du Trouble Ticket \texttt{TT\_TOY2022TT} (graphe construit avec
+  GraphDB).}
+  \label{fig:rootcause}
+\end{figure}
+ 
+\begin{lstlisting}[language=SPARQL,caption={Requête SPARQL exécutée par
+l'agent de diagnostic pour traiter le Trouble Ticket
+\texttt{TT\_TOY2022TT}.},label=lst:sparql-tt]
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX noria:   <https://w3id.org/noria/ontology/>
+ 
+SELECT ?resource ?logMessage ?repairLabel ?app
+WHERE {
+    <https://w3id.org/noria/document/TT_TOY2022TT> dcterms:relation ?log .
+    ?log noria:alarmPerceivedSeverity ?severity .
+    FILTER (?severity = <https://w3id.org/noria/kos/Notification/Severity/PerceivedSeverity/major>)
+    ?log noria:logText ?logMessage .
+    ?log noria:logOriginatingManagedObject ?resource .
+    ?log noria:alarmProposedRepairAction ?repair .
+    ?repair rdfs:label ?repairLabel .
+    ?resource noria:resourceForApplication ?app .
+}
+\end{lstlisting}
+ 
+\begin{lstlisting}[caption={Sortie console de l'agent de diagnostic
+exécuté sur le scénario~1.},label=lst:diag-tt]
+[diagnostician] Starting root cause analysis...
+ 
+[SparqlArtifact] Connecting to endpoint: http://localhost:3030/dataset/query
+[SparqlArtifact] Query successful, signaling result...
+ 
+[diagnostician] RAW SPARQL RESULT:
+---------------------------------------------------------
+| logMessage                          | resource         |
+=========================================================
+| "SYS_ERROR: L2 table overflow."     | <.../RES_TOY_as2>|
+---------------------------------------------------------
+ 
+[diagnostician] >> DIAGNOSIS COMPLETED:
+[diagnostician]    - Nature: SYS_ERROR: L2 table overflow
+[diagnostician]    - Impacted Applications: APP_TOY_PFS01
+[diagnostician]    - Issued Resource: RES_TOY_as2
+\end{lstlisting}
+ 
+% -- Use Case 2 ----------------------------------------------
+\paragraph{Use Case 2 : détection $k$-parmi-$n$ et réinjection dans le graphe.}
+Une approche alternative consiste à identifier d'abord les applications
+confrontées à un problème de résilience --- c'est-à-dire celles dont le
+pourcentage de ressources en défaut excède un seuil prédéfini --- puis à
+remonter depuis ces applications aux ressources concernées et aux
+\texttt{EventRecords} associés, pour finalement atteindre le Trouble
+Ticket \texttt{TT\_TOY2022TT} (cf.~figure~\ref{fig:kofn}). Nous
+identifions ainsi les mêmes causes racines que dans la première
+perspective, avec l'avantage supplémentaire de pouvoir détecter plusieurs
+incidents concurrents au sein d'un même scénario et, partant, de résoudre
+plusieurs tickets simultanément.
+ 
+Puisque la détection de faiblesses de résilience peut servir à du
+raisonnement ultérieur ou à une analyse complémentaire, nous réinjectons
+par ailleurs les résultats du diagnostic de résilience dans le graphe.
+Ceci est réalisé en liant les applications affectées à un Trouble Ticket
+via une propriété \texttt{inferredAlarm}, qui permet d'identifier que
+l'élément a été généré par l'action d'un agent lors du diagnostic. Le
+listing~\ref{lst:sparql-kofn} présente la requête correspondante.
+ 
+\begin{figure}[htbp]
+  \centering
+  % TODO : reprendre la figure 5 du rapport intermédiaire
+  \caption{Représentation visuelle des applications confrontées à un
+  problème de résilience (détection $k$-parmi-$n$). On voit à gauche les
+  deux n\oe{}uds \texttt{EventRecord} inférés, insérés par la requête
+  SPARQL et liés aux applications en danger dont plus de 50\% des
+  ressources sont hors service (graphe construit avec GraphDB).}
+  \label{fig:kofn}
+\end{figure}
+ 
+\begin{lstlisting}[language=SPARQL,caption={Requête SPARQL identifiant les
+problèmes de résilience par la méthode $k$-parmi-$n$ avec un seuil de 50\%.},
+label=lst:sparql-kofn]
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX prov:    <http://www.w3.org/ns/prov#>
+PREFIX noria:   <https://w3id.org/noria/ontology/>
+PREFIX xsd:     <http://www.w3.org/2001/XMLSchema#>
+INSERT {
+    ?EventURI a noria:EventRecord ;
+        prov:wasDerivedFrom "noria-sdlri2023-toy-example" ;
+        noria:alarmMonitoredAttribute "Resilience" ;
+        noria:alarmSeverity <https://w3id.org/noria/kos/Notification/Severity/PerceivedSeverity/major> ;
+        noria:logOriginatingManagedObject ?App ;
+        noria:logOriginatingManagementSystem <https://w3id.org/noria/object/APP_NORIA_AD> ;
+        noria:loggingTime ?NotificationConstructTime ;
+        dcterms:description "Application at risk: K out-of N (50%)" ;
+        dcterms:type <https://w3id.org/noria/kos/Notification/EventType/inferredAlert> .
+} WHERE {
+    {
+        SELECT ?App
+            (COUNT(DISTINCT ?Res)    AS ?ResTotal)
+            (COUNT(DISTINCT ?ResImp) AS ?ResWithImpact)
+            (NOW() AS ?NotificationConstructTime)
+            (IRI(CONCAT("https://w3id.org/noria/event/AIS_TOY_", STR(UUID()))) AS ?EventURI)
+        WHERE {
+            ?Res a noria:Resource ;
+                 noria:resourceForApplication ?App .
+            OPTIONAL {
+                ?Event a noria:EventRecord ;
+                       noria:logOriginatingManagedObject ?Res .
+                BIND(?Res AS ?ResImp)
+            }
+        }
+        GROUP BY ?App
+        HAVING ((xsd:float(COUNT(DISTINCT ?ResImp)) / COUNT(DISTINCT ?Res)) >= 0.5)
+    }
+}
+\end{lstlisting}
+ 
+%Ajouté par Claude____________
+
+Ces deux Use Cases constituent la \emph{référence expérimentale} de
+l'ensemble du rapport final. Ils sont réutilisés tels quels dans la
+section~\ref{sec:experiences} pour valider que les agents spécialisés du
+niveau~1 (notamment \texttt{critical\_alarm\_agent} et
+\texttt{propagation\_agent}) reproduisent le comportement du prototype
+mono-agent initial, tout en bénéficiant des propriétés architecturales
+du système multi-agents : parallélisme, modularité et extensibilité.
+Le passage du mono-agent (tel que présenté ici) au multi-agent fait
+l'objet de la comparaison quantitative de la
+section~\ref{sec:comparaison-mono-multi}.
+ 
+
+
 % ============================================================
 \section{Architecture du Système Multi-Agents}
+\label{sec:architecture}
 % ============================================================
 
 \subsection{Principes de conception}
 
-\todo{Trois principes : séparation des responsabilités (un agent = un pattern), parallélisme de détection (workers indépendants), réactivité du coordinateur (BDI asynchrone). Relier chaque principe à une propriété mesurable du système.}
+L'architecture de MASynReas repose sur trois principes directeurs, chacun
+associé à une propriété mesurable du système.
+
+\textbf{Un agent, un patron.}
+Chaque agent de niveau~1 détecte exactement un motif d'anomalie, sans autre
+responsabilité.
+Cette règle de séparation stricte garantit que l'ajout ou la modification d'un
+détecteur ne peut introduire aucun effet de bord dans les autres.
+Elle rend le système totalement introspectable~: pour tout diagnostic produit,
+on peut remonter jusqu'au motif SPARQL précis qui l'a déclenché.
+
+\textbf{Parallélisme de détection.}
+Les agents de niveau~1 ne communiquent pas entre eux pendant l'exécution.
+Chacun interroge Virtuoso de manière indépendante et écrit son résultat dans
+un fichier JSON dédié.
+Le workspace CArtAgO de JaCaMo leur permet de coexister sans se bloquer mutuellement.
+La conséquence directe est que le temps total de détection est borné par le plus
+lent des agents, quel que soit leur nombre.
+Sur noria-0.2, cette propriété procure des accélérations de
+$12{,}6\times$ (apriori) et $18{,}7\times$ (aposteriori)
+par rapport à une exécution séquentielle équivalente (cf.~section~\ref{sec:experiences}).
+
+\textbf{Réactivité BDI asynchrone du coordinateur.}
+Le coordinateur de niveau~2 est un agent BDI (paradigme \emph{Belief-Desire-Intention}
+implémenté par Jason) qui ne s'active qu'une fois les workers terminés.
+Il ne consulte pas directement Virtuoso~: il lit les fichiers JSON produits par les
+workers, évalue des conditions logiques inter-familles, et déclenche les diagnoseurs
+de niveau~2 en conséquence.
+Cette architecture asynchrone découple complètement le coordinateur de l'ordre
+d'achèvement des workers.
 
 \subsection{Vue d'ensemble : un pipeline à trois niveaux}
 
-\todo{Insérer ici le schéma d'architecture central (à créer sous draw.io ou TikZ) montrant : Niveau 1 (N workers en parallèle) → messages .send/.tell → Niveau 2 (coordinateur) → Niveau 3 (LLM). Inclure aussi l'artifact CArtAgO partagé et Virtuoso.}
+Le pipeline s'exécute séquentiellement entre niveaux mais parallèlement à l'intérieur
+du niveau~1. Concrètement :
 
-\subsection{Plateforme JaCaMo : Jason, CArtAgO, Moise}
+\begin{enumerate}
+  \item Le fichier de configuration \texttt{multiagentSystem.jcm} instancie $N$~agents
+        workers et l'artifact partagé \texttt{w} de type \texttt{SparqlArtifact}.
+  \item Chaque worker invoque l'opération \texttt{execPython} de l'artifact~:
+        il exécute son script Python de détection, soumet une requête SPARQL à
+        Virtuoso et écrit le résultat JSON dans le dossier \texttt{results/}.
+        Tous ces appels ont lieu en parallèle.
+  \item Une fois les workers terminés, le coordinateur lit tous les fichiers JSON
+        et applique les règles de corrélation des 12~diagnoseurs de niveau~2.
+  \item Les diagnoseurs actifs calculent des scores de fiabilité, de sévérité et
+        de priorité, et écrivent leurs diagnostics dans \texttt{results/level2/}.
+  \item Le niveau~3 (LLM Llama~3.2:3b via Ollama) reçoit l'agrégat des résultats
+        L1 et L2 en entrée de prompt et produit un rapport narratif.
+\end{enumerate}
 
-\todo{Décrire les trois composantes de JaCaMo dans le contexte du projet. Jason pour la logique BDI des agents, CArtAgO pour l'artifact SparqlArtifact partagé, Moise pour l'organisation (conceptuellement structurée dans cette version).}
+Ce pipeline s'exécute en mode \emph{apriori} (analyse préventive sur la structure
+permanente du graphe, sans contexte d'incident) ou en mode \emph{aposteriori}
+(analyse déclenchée par un \texttt{TroubleTicket} actif).
+
+\subsection{Plateforme JaCaMo}
+
+JaCaMo~\cite{jacamo} intègre trois composantes complémentaires.
+
+\textbf{Jason} fournit le moteur d'exécution des agents selon le paradigme BDI~:
+chaque agent possède des croyances (\emph{beliefs}), des désirs (\emph{goals}) et
+des intentions (\emph{plans}).
+Dans MASynReas, les workers de niveau~1 ont un unique plan~: exécuter leur script
+Python lors de l'initialisation.
+Le coordinateur de niveau~2 possède une logique plus riche~: il attend les signaux
+de fin de workers, charge les résultats JSON et sélectionne les diagnoseurs à activer.
+
+\textbf{CArtAgO} (\emph{Common ARTifact infrastructure for AGents Open systems})
+gère les environnements partagés sous forme d'\emph{artifacts}.
+L'artifact central de MASynReas est \texttt{SparqlArtifact}, que chaque worker
+observe (\texttt{focus}) et via lequel il invoque son script Python.
+Cet artifact est le pont entre la logique d'agent (AgentSpeak) et l'écosystème
+Python (requêtes HTTP, calcul numérique, écriture JSON)~: les agents JaCaMo ne
+manipulent jamais directement des sockets ni des fichiers système.
+
+\textbf{Moise} fournit les primitives d'organisation (rôles, missions, normes).
+Dans la version actuelle, l'organisation est conceptuellement structurée en trois
+rôles (Détecteur~L1, Diagnosticien~L2, Narrateur~L3) mais sans spécification
+Moise formelle.
+Cette formalisation constitue une des perspectives principales du projet
+(cf.~section~\ref{sec:conclusion}).
 
 \subsection{L'interface agent-environnement : SparqlArtifact}
 
-\todo{Décrire les trois opérations de SparqlArtifact : execQuery (Jena direct), execPython (bridge Java-Python via ProcessBuilder), writeReport/appendReport. Expliquer pourquoi ce bridge est une propriété architecturale clé : isolation des dépendances, extensibilité sans recompilation.}
+La \texttt{SparqlArtifact} matérialise l'environnement pour les agents de niveau~1.
+Elle expose trois opérations principales.
 
-\subsection{Modèle d'exécution générique}
+\textbf{\texttt{execPython(scriptPath)}} est l'opération centrale~:
+elle crée un processus fils via \texttt{ProcessBuilder}, exécute le script Python
+désigné et transmet la sortie standard au workspace.
+Ce \emph{bridge Java-Python} est la clé architecturale du système~: il permet aux
+agents d'exploiter l'intégralité de l'écosystème Python sans que ces dépendances
+n'entrent dans la couche Jason.
+Ajouter un nouveau détecteur revient à écrire un script Python et à déclarer un
+agent dans le JCM, sans aucune recompilation Java.
 
-\todo{Expliquer le patron worker générique paramétré par beliefs JCM (worker\_id, python\_script, result\_file). Montrer que l'ajout d'un nouveau pattern de détection ne requiert aucune modification des composants existants. Inclure le listing JCM de multiagentSystem\_v2.jcm.}
+\textbf{\texttt{execQuery(sparqlQuery)}} soumet une requête SPARQL directement
+via Jena~ARQ sans passer par Python.
+Utilisée pour des requêtes légères ne nécessitant pas de traitement Python.
+
+\textbf{\texttt{writeReport}/\texttt{appendReport}} écrivent dans le fichier
+de rapport consolidé du run, permettant aux agents de laisser une trace narrative
+sans passer par le LLM.
+
+Tous les agents de niveau~1 suivent le même schéma dans le JCM~:
+
+\begin{lstlisting}[caption={Extrait de \texttt{multiagentSystem.jcm} : chaque agent
+observe le même artifact \texttt{w}. Son identité dans le JCM suffit à résoudre
+le chemin du script Python par convention.},label=lst:jcm-worker]
+mas multiagentSystem {
+
+    agent orphan_resource_detector   { focus: w.pyexec }
+    agent missing_interface_detector { focus: w.pyexec }
+    // ... (54 agents, meme structure)
+
+    workspace w {
+        artifact pyexec : SparqlArtifact("http://localhost:8890/sparql")
+    }
+}
+\end{lstlisting}
+
+Cette convention \emph{convention over configuration} élimine tout boilerplate~:
+ajouter le 55\textsuperscript{e} agent ne demande qu'une ligne dans le JCM.
 
 % ============================================================
 \section{Niveau 1 : Agents de Détection par Facette NORIA-O}
+\label{sec:niveau1}
 % ============================================================
 
 \subsection{Organisation générale : apriori et aposteriori}
 
-\todo{Expliquer la distinction apriori (détection sans contexte d'incident, raisonnement sur la structure permanente du graphe) vs aposteriori (détection contextualisée, point d'entrée TroubleTicket). Cette distinction est orthogonale aux quatre familles : elle s'applique à chacune.}
+Les 54~agents de niveau~1 sont organisés selon deux dimensions orthogonales.
+
+La première est la \textbf{famille}, alignée directement sur les quatre facettes
+de NORIA-O~: structurelle, dynamique, fonctionnelle, procédurale.
+Chaque famille surveille un sous-ensemble des classes et propriétés de l'ontologie
+qui lui correspond.
+
+La seconde est le \textbf{mode d'analyse}~:
+
+\begin{itemize}
+  \item \textbf{Apriori}~: l'agent interroge la structure permanente du graphe
+        sans contexte d'incident.
+        Sa requête SPARQL ne contient aucune référence à un \texttt{TroubleTicket}
+        ou \texttt{EventRecord} actif.
+        L'objectif est la détection proactive de vulnérabilités, lacunes et
+        incohérences \emph{avant} qu'un incident ne survienne.
+  \item \textbf{Aposteriori}~: l'agent part d'une entité dynamique active
+        (\texttt{TroubleTicket} ou \texttt{EventRecord}) et traverse le graphe
+        pour expliquer le symptôme observé en le reliant à des causes
+        structurelles, fonctionnelles ou procédurales.
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lrrrr}
+\hline
+\textbf{Famille} & \textbf{Apriori} & \textbf{Aposteriori} & \textbf{Total} \\
+\hline
+Structurelle  & 10 &  7 & 17 \\
+Dynamique     &  3 & 12 & 15 \\
+Fonctionnelle &  7 &  9 & 16 \\
+Procédurale   &  3 &  3 &  6 \\
+\hline
+\textbf{Total} & \textbf{23} & \textbf{31} & \textbf{54} \\
+\hline
+\end{tabular}
+\caption{Distribution des 54~agents de niveau~1 par famille et par mode.}
+\label{tab:agents-overview}
+\end{table}
 
 \subsection{Famille Structurelle}
 
-\todo{Cette famille est implémentée (cf. README structural agents). Présenter : (1) tableau des 10 agents apriori avec pattern / relations NORIA-O impliquées / fichier résultat ; (2) tableau des 7 agents aposteriori ; (3) focus sur 2-3 agents représentatifs avec leur requête SPARQL commentée (ex. orphan\_resource\_detector, no\_redundancy\_incident\_detector, spatial\_incident\_cluster\_detector).}
+La famille structurelle surveille la topologie physique du réseau~:
+ressources (\texttt{noria:Resource}), interfaces (\texttt{noria:NetworkInterface}),
+liens (\texttt{noria:NetworkLink}) et leurs relations de support
+(\texttt{seas:subSystemOf}, \texttt{noria:networkInterfaceOf}).
 
-\paragraph{Agents apriori.}
-\todo{Décrire les 10 agents : orphan\_resource\_detector, missing\_interface\_detector, orphan\_interface\_detector, unconnected\_interface\_detector, incomplete\_network\_link\_detector, missing\_parent\_resource\_detector, application\_without\_support\_detector, unmanaged\_resource\_detector, missing\_redundancy\_detector, criticality\_structural\_weakness\_detector.}
+Ses \textbf{10~agents apriori} détectent des faiblesses topologiques indépendantes
+de tout incident~: ressource orpheline (aucune interface, application, gestion,
+parent ou enfant), interface manquante, interface sans lien, lien incomplet
+(moins de deux extrémités), ressource sans parent hiérarchique, sans unité de
+gestion, sans redondance, sans support applicatif, et ressource critique
+avec faiblesse structurelle combinée.
+Ses \textbf{7~agents aposteriori} contextualisent ces faiblesses en présence
+d'un incident~: ressource incidentée isolée, incident sur lien incomplet,
+ressource incidentée à fort impact aval, ressource sans chemin de secours
+pendant un incident, incohérence de mapping applicatif, cluster spatial d'incidents
+co-localisés, et escalade depuis un composant enfant.
 
-\paragraph{Agents aposteriori.}
-\todo{Décrire les 7 agents : isolated\_incident\_resource\_detector, incident\_on\_incomplete\_link\_detector, high\_impact\_resource\_detector, no\_redundancy\_incident\_detector, application\_mapping\_inconsistency\_detector, spatial\_incident\_cluster\_detector, child\_component\_incident\_escalation\_detector.}
+\paragraph{Agent représentatif : \texttt{orphan\_resource\_detector}.}
+Cet agent détecte les ressources n'appartenant à aucune structure opérationnelle.
+La requête combine cinq \texttt{FILTER NOT EXISTS}~:
+
+\begin{lstlisting}[language=SPARQL, caption={Requête du détecteur de ressources
+orphelines. Ce motif de raisonnement par absence est caractéristique des agents
+apriori.}, label=lst:orphan]
+SELECT ?resource WHERE {
+  ?resource a noria:Resource .
+  FILTER NOT EXISTS {
+    ?interface noria:networkInterfaceOf ?resource . }
+  FILTER NOT EXISTS { ?resource noria:resourceForApplication ?app . }
+  FILTER NOT EXISTS { ?resource noria:resourceManagedBy ?orgUnit . }
+  FILTER NOT EXISTS { ?resource seas:subSystemOf ?parent . }
+  FILTER NOT EXISTS { ?child   seas:subSystemOf ?resource . }
+}
+\end{lstlisting}
+
+Ce patron de \emph{raisonnement par absence} --- détection de ce qui manque
+plutôt que de ce qui est présent --- est caractéristique des agents apriori.
+Sur noria-0.2, il identifie 14~ressources orphelines.
 
 \subsection{Famille Dynamique}
 
-\todo{Cette famille couvre EventRecord, TroubleTicket et leurs propriétés temporelles (loggingTime, alarmPerceivedSeverity, troubleTicketDetectionDateTime). Les agents dynamiques des Use Cases 1 et 2 du rapport intermédiaire appartiennent à cette famille. Documenter les agents implémentés et indiquer ceux à développer.}
+La famille dynamique surveille les entités temporelles~: événements
+(\texttt{noria:EventRecord}) avec leur horodatage (\texttt{noria:loggingTime})
+et sévérité (\texttt{noria:alarmPerceivedSeverity}), et changements planifiés
+(\texttt{noria:ChangeRequest}).
 
-\paragraph{Agents apriori.}
-\todo{Exemples de patterns à implémenter : EventRecords sans TroubleTicket associé (alarmes orphelines), volume anormal d'événements dans une fenêtre temporelle, EventRecords de sévérité major sans alarmProposedRepairAction (déjà implémenté : detection\_unhandled.py).}
+Ses \textbf{3~agents apriori} détectent des incohérences de modélisation~:
+événement sans horodatage, événement sans élément réseau associé, et
+changement sans fenêtre temporelle définie.
+Ces signaux révèlent une ingestion imparfaite du graphe.
 
-\paragraph{Agents aposteriori.}
-\todo{Agents déjà implémentés : detection\_major.py (alarmes critiques depuis TT), detection\_propagation.py (propagation réseau depuis TT). Agents à implémenter : séquences d'événements corrélés, durée anormale entre détection et résolution.}
+Ses \textbf{12~agents aposteriori} forment le sous-système de détection
+d'anomalies temporelles le plus riche.
+Ils sont regroupés en trois catégories~:
+
+\begin{itemize}
+  \item \textbf{Corrélation changement-incident}~: incident dans les
+        24~heures suivant un changement (\texttt{change\_followed\_by\_incident}),
+        dégradation progressive post-changement (\texttt{silent\_degradation\_after\_change}),
+        deux changements simultanés sur la même ressource (\texttt{change\_overlap\_conflict}).
+  \item \textbf{Patterns de volume}~: rafale d'événements en fenêtre glissante
+        (\texttt{event\_burst}), incidents simultanés sur plusieurs éléments
+        (\texttt{multi\_element\_synchronous\_incident}), répétition du même
+        type d'événement (\texttt{repeated\_similar\_event}).
+  \item \textbf{Évolution de l'incident}~: état oscillant entre nominal et dégradé
+        (\texttt{flapping\_state}), ticket réouvert après fermeture
+        (\texttt{reopened\_incident}), ticket sans mise à jour depuis un seuil
+        (\texttt{stale\_incident}), escalade parent-enfant
+        (\texttt{parent\_child\_event\_escalation}), événement critique non escaladé
+        (\texttt{critical\_event\_ticket\_escalation}),
+        propagation réseau (\texttt{incident\_propagation}).
+\end{itemize}
 
 \subsection{Famille Fonctionnelle}
 
-\todo{Cette famille couvre Application, ApplicationModule, Service et leurs relations métier (applicationBusinessImportance, applicationModuleSlaLevel, resourceForApplication). Les agents fonctionnels raisonnent sur la dépendance applicative et les niveaux de service. À implémenter.}
+La famille fonctionnelle surveille les dépendances applicatives~:
+services (\texttt{noria:Service}), modules (\texttt{noria:ApplicationModule}),
+applications (\texttt{noria:Application}) et leurs relations métier
+(\texttt{noria:resourceForApplication}, \texttt{noria:applicationModuleSlaLevel}).
 
-\paragraph{Agents apriori.}
-\todo{Patterns suggérés : application sans niveau de SLA défini (applicationModuleSlaLevel absent), module applicatif sans équipe support (applicationModuleSupportTeam absent), application critique sans redondance de ressources support.}
+Ses \textbf{7~agents apriori} détectent des lacunes dans le modèle fonctionnel~:
+application sans module défini, application sans ressource de support, mapping
+fonctionnel dupliqué, hiérarchie de service incohérente, service surchargé sur
+trop peu de ressources, service sans application parente, service sans couverture
+de ressources.
 
-\paragraph{Agents aposteriori.}
-\todo{Patterns suggérés : incident sur application à haute criticité métier (applicationBusinessImportance = critical), rupture de SLA potentielle (incident sur module avec SLA élevé), cascade fonctionnelle (plusieurs applications impactées par une même ressource défaillante).}
+Ses \textbf{9~agents aposteriori} raisonnent sur l'impact métier des incidents~:
+incident sur application sans ressource tracée, défaillance en cascade de services,
+état applicatif contradictoire, dépendance de service cachée (impact indirect),
+agrégation d'incidents au niveau module, événement sans impact de service identifiable,
+service impacté par plusieurs ressources simultanément, service avec incident
+récurrent, et service sans escalade de ticket malgré l'incident.
 
 \subsection{Famille Procédurale}
 
-\todo{Cette famille couvre OperationPlan, ChangeRequest, ActionPreCondition, ActionPostCondition et leurs relations (alarmProposedRepairAction, changeRequestPlannedStartTime, operationPlanPreCondition). Les agents procéduraux raisonnent sur l'existence et la complétude des procédures de remédiation. À implémenter.}
+La famille procédurale surveille les processus opérationnels~:
+procédures de remédiation (\texttt{noria:OperationPlan}), demandes de
+changement (\texttt{noria:ChangeRequest}) et leurs liaisons avec les tickets
+et les ressources.
 
-\paragraph{Agents apriori.}
-\todo{Patterns suggérés : OperationPlan sans ActionPostCondition définie, ChangeRequest sans acteur assigné (changeRequestActorParty absent), procédures de réparation référencées par des EventRecords mais absentes du graphe.}
+Ses \textbf{3~agents apriori} détectent des lacunes procédurales préventives~:
+changement sans horodatage planifié (\texttt{change\_request\_without\_scheduled\_time}),
+procédure non liée à un type de ressource
+(\texttt{procedure\_not\_linked\_to\_resource\_type}),
+ticket sans procédure assignée (\texttt{ticket\_without\_assigned\_procedure}).
 
-\paragraph{Agents aposteriori.}
-\todo{Patterns suggérés : incident actif sans plan de réparation associé (alarmProposedRepairAction absent --- déjà partiellement couvert par detection\_unhandled.py), ChangeRequest en cours dont la fenêtre temporelle chevauche un incident actif (conflit opérationnel potentiel).}
+Ses \textbf{3~agents aposteriori} détectent des anomalies opérationnelles
+actives~: incident sans ticket ouvert (\texttt{incident\_without\_ticket}),
+ticket sans événement lié (\texttt{ticket\_without\_linked\_event}),
+et changement lié à plusieurs incidents simultanés
+(\texttt{change\_linked\_to\_multiple\_incidents}).
 
 % ============================================================
 \section{Niveau 2 : Agents de Raisonnement Conditionnel}
+\label{sec:niveau2}
 % ============================================================
 
-\subsection{Motivation : limites du raisonnement local}
+\subsection{Motivation et principe de corrélation}
 
-\todo{Expliquer pourquoi les agents de niveau 1, bien que spécialisés et parallèles, produisent des détections locales et indépendantes. Le niveau 2 introduit la corrélation inter-familles : un agent de niveau 2 n'est déclenché que si certains résultats du niveau 1 sont non vides. C'est ici que la synergie du titre prend son sens opérationnel.}
+Les agents de niveau~1, bien que spécialisés et exhaustifs, produisent des
+détections locales et indépendantes.
+\texttt{isolated\_incident\_resource} signale une ressource isolée ;
+\texttt{no\_redundancy\_incident} signale une ressource sans chemin de secours.
+Ces deux signaux pris séparément sont des avertissements.
+Combinés sur la \emph{même} ressource, ils diagnostiquent un \textbf{point unique
+de défaillance (SPOF)}.
+C'est le rôle des agents de niveau~2~: transformer un ensemble de détections
+locales en un diagnostic synergique, c'est-à-dire un diagnostic qui émerge de
+la combinaison et dont la valeur est supérieure à la somme de ses parties.
 
-\subsection{Principe de déclenchement conditionnel dans JaCaMo}
+Le mécanisme central est la notion d'\emph{entité anchor}~: l'entité du graphe
+sur laquelle convergent les évidences de plusieurs agents L1.
+Si au moins deux agents L1 primaires signalent la même ressource selon des motifs
+distincts, le diagnoseur L2 correspondant peut se déclencher sur cette ressource
+et calculer des scores composites.
 
-\todo{Décrire le mécanisme BDI : le coordinateur lit les JSON résultats du niveau 1, évalue des conditions logiques (ex. propagation\_results non vide ET unhandled\_results non vide), et déclenche des agents de niveau 2 via .send ou directement dans son plan !run\_diagnosis. Inclure un extrait de coordinator\_agent.asl illustrant ce mécanisme.}
+\subsection{Le framework commun \texttt{common.py}}
 
-\subsection{Patterns de corrélation inter-familles}
+Tous les diagnoseurs de niveau~2 sont construits sur un framework commun
+(\texttt{src/agt/level2/common.py}) qui standardise le déclenchement conditionnel.
+Chaque diagnoseur déclare~:
 
-\todo{Documenter les patterns de corrélation envisagés ou implémentés, organisés par combinaison de familles :}
+\begin{itemize}
+  \item Une liste d'\texttt{InputSpec}~: chaque spec pointe vers un fichier
+        résultat d'un agent L1, précise son rôle (primaire ou corroborant)
+        et les types d'entités à extraire comme anchors candidates.
+  \item Une \texttt{activation\_predicate}~: condition booléenne sur l'ensemble
+        des agents qui doivent avoir produit des résultats pour que le
+        diagnoseur s'active (par exemple~: ``au moins 2 agents primaires
+        ont signalé la même ressource'').
+  \item Une \texttt{candidate\_predicate}~: condition pour qu'une entité
+        spécifique devienne l'anchor du diagnostic.
+\end{itemize}
 
-\paragraph{Structurel + Dynamique.}
-\todo{Exemple : ressource sans redondance (missing\_redundancy\_detector) ET alarme active (detection\_major) $\Rightarrow$ risque de panne totale de l'application support. Ce pattern combine une faiblesse structurelle permanente avec un événement dynamique actuel.}
+Le framework parcourt les fichiers JSON L1, extrait les entités mentionnées,
+les agrège par type et évalue les prédicats.
+Si le diagnoseur s'active, il calcule trois scores~:
+\emph{reliability} (proportion d'agents primaires actifs parmi les attendus),
+\emph{severity\_score} (présence de tags de criticité dans les données),
+et \emph{priority} (combinaison linéaire des deux précédents).
+Le résultat est écrit dans \texttt{results/level2/[mode]/[diagnoser].json}.
 
-\paragraph{Fonctionnel + Procédural.}
-\todo{Exemple : application critique (famille fonctionnelle) ET aucun plan de réparation connu pour la ressource défaillante (famille procédurale) $\Rightarrow$ escalade immédiate requise. Ce pattern est la justification principale du niveau CRITIQUE dans la hiérarchie de sévérité.}
+\subsection{Les 12 diagnoseurs implémentés}
 
-\paragraph{Dynamique + Procédural.}
-\todo{Exemple : propagation de panne détectée (detection\_propagation) ET ChangeRequest en cours sur la ressource voisine (famille procédurale) $\Rightarrow$ conflit opérationnel, risque d'aggravation de l'incident par l'intervention en cours.}
+Cinq diagnoseurs apriori et sept diagnoseurs aposteriori ont été développés.
 
-\paragraph{Structurel + Fonctionnel + Dynamique.}
-\todo{Exemple avancé : cluster spatial d'incidents (spatial\_incident\_cluster\_detector) sur des ressources supportant des applications critiques (famille fonctionnelle) ET propagation active $\Rightarrow$ incident systémique potentiel, mobilisation multi-équipes.}
+\begin{table}[H]
+\centering
+\begin{tabular}{p{5.2cm} p{7.5cm} c}
+\hline
+\textbf{Diagnoseur} & \textbf{Condition de déclenchement (résumée)} & \textbf{Mode} \\
+\hline
+\texttt{structural\_fragility}        & Ressource avec $\geq$2 faiblesses structurelles combinées (interface manquante, parent absent, redondance absente, gestion absente) & apriori \\
+\texttt{critical\_service\_exposure}  & Service critique sans couverture de ressources et sans module dédié & apriori \\
+\texttt{functional\_mapping\_gap}     & Application sans ressource de support ET sans module applicatif & apriori \\
+\texttt{observability\_gap}           & Ressource critique sans historique d'événements et sans ticket & apriori \\
+\texttt{procedural\_unreadiness}      & Ticket sans procédure ET ressource sans procédure assignée & apriori \\
+\hline
+\texttt{single\_point\_of\_failure}   & Ressource incidentée concentrant $\geq$2 signaux structurels (isolation, lien incomplet, absence de redondance) & aposteriori \\
+\texttt{change\_induced\_incident}    & Changement suivi d'un incident dans la fenêtre temporelle & aposteriori \\
+\texttt{service\_cascade}             & $\geq$2 services impactés via une ressource dépendance commune & aposteriori \\
+\texttt{traceability\_breakdown}      & Incident sans ticket ouvert OU ticket sans événement lié & aposteriori \\
+\texttt{unstable\_component}          & Composant avec états oscillants récurrents (\emph{flapping}) & aposteriori \\
+\texttt{application\_support\_failure}& Application dont toutes les ressources support sont simultanément en incident & aposteriori \\
+\texttt{local\_infrastructure\_cluster}& Cluster géographique d'incidents sur ressources co-localisées & aposteriori \\
+\hline
+\end{tabular}
+\caption{Les 12~diagnoseurs de niveau~2.}
+\label{tab:l2-diagnosers}
+\end{table}
 
-\subsection{Implémentation dans JaCaMo}
+\subsection{Hiérarchie de sévérité : approximation de la fonction objectif}
 
-\todo{Documenter les agents de niveau 2 effectivement implémentés. Si non encore implémentés, décrire le plan d'implémentation : quels nouveaux scripts Python, quelles conditions de déclenchement dans le coordinateur, quels nouveaux fichiers JSON résultat.}
+Le coordinateur consolide les scores des diagnoseurs actifs en une sévérité
+globale~: \texttt{CRITIQUE} / \texttt{MAJEURE} / \texttt{MINEURE} /
+\texttt{INFORMATION}.
+Ce score agrège plusieurs critères~: présence d'un SPOF actif, propagation
+détectée, rupture de traçabilité procédurale, absence de plan de remédiation.
+Comme exposé en section~\ref{sec:pivot}, cette hiérarchie constitue une
+\emph{première approximation pragmatique de la fonction objectif} initiale.
+Elle n'optimise pas encore un critère d'utilité formalisé~; elle implémente
+des règles expertes sur les combinaisons de signaux les plus critiques.
+La formalisation complète via Moise constitue une perspective ouverte
+(cf.~section~\ref{sec:conclusion}).
 
 % ============================================================
 \section{Niveau 3 : Synthèse Narrative par LLM}
+\label{sec:niveau3}
 % ============================================================
 
-\subsection{Rôle et positionnement dans le pipeline}
+\subsection{Séparation décision / communication}
 
-\todo{Insister sur la séparation décision/communication : le LLM ne diagnostique pas, il synthétise un diagnostic déjà établi par les niveaux 1 et 2. Cette séparation est une propriété architecturale délibérée qui préserve l'explicabilité totale du système.}
+Le niveau~3 constitue la couche de \emph{communication} du système.
+Il reçoit l'intégralité des résultats des niveaux~1 et~2 et produit un
+rapport en langage naturel à destination des équipes d'exploitation réseau.
 
-\subsection{Construction du prompt : agrégation des résultats}
+La propriété architecturale centrale est que ce niveau \textbf{ne prend aucune
+décision}~: le diagnostic est entièrement établi par les niveaux~1 et~2 avant que
+le LLM ne soit invoqué.
+Cette séparation \emph{décision / communication} préserve l'explicabilité totale
+du pipeline~: chaque affirmation de la narrative est traceable jusqu'à un résultat
+JSON de worker ou de diagnoseur, lui-même traceable jusqu'à un triplet RDF précis
+du graphe.
+Cette propriété tranche avec les approches dans lesquelles un LLM est consulté
+directement pour le diagnostic~; l'expérience~4 (section~\ref{sec:experiences})
+illustre les limites de cette approche (rappel~= 0,21 au mieux,
+raisonnement par absence structurellement impossible).
 
-\todo{Décrire le script diagnosis\_llm.py : chargement des JSON résultats des trois agents workers (result\_major.json, result\_propagation.json, result\_unhandled.json), construction d'un prompt structuré en sections, contraintes de prompt engineering (utiliser les noms de ressources et d'équipes des données, prose de 3-5 phrases, pas de bullet points). Inclure le prompt template.}
+\subsection{Construction du prompt et modèle}
 
-\subsection{Llama 3.2:3b via Ollama}
+Le script \texttt{diagnosis\_llm.py} agrège les sorties JSON des agents actifs
+en un prompt structuré en trois blocs~:
+\begin{enumerate}
+  \item \emph{Structural Alerts}~: liste des détections L1 actives (type d'anomalie,
+        entité, famille) ;
+  \item \emph{Level-2 Diagnoses}~: diagnoseurs L2 déclenchés, entités anchor et
+        scores de fiabilité, sévérité et priorité ;
+  \item Instruction de tâche~: produire une prose de 3 à 5 phrases, citer les
+        identifiants de ressources exacts, indiquer la sévérité globale,
+        ne pas utiliser de listes à puces.
+\end{enumerate}
 
-\todo{Justifier le choix : modèle local (pas de données réseau envoyées à un serveur externe), suffisamment compact pour tourner sur CPU, qualité de synthèse suffisante pour des diagnostics courts. Mentionner le précédent de Qwen3-8B testé dans le rapport intermédiaire (Use Case 1).}
+Le modèle utilisé en production est \textbf{Llama~3.2:3b} servi localement via
+\textbf{Ollama}.
+Ce choix répond à deux contraintes opérationnelles~: la confidentialité des données
+réseau (aucune donnée n'est transmise vers l'extérieur) et la compatibilité CPU
+(3~milliards de paramètres en quantification~Q4, inférence en quelques dizaines
+de secondes sans GPU).
+Pour les expériences comparatives LLM/MAS des sections~\ref{sec:experiences},
+\textbf{Mistral-7B-Instruct-v0.3} float16 sur GPU (\texttt{jaguar.polytechnique.fr})
+est utilisé afin d'explorer les capacités d'un modèle plus puissant dans des
+conditions optimales.
 
 \subsection{Exemple de sortie sur le scénario noria-0.2}
 
-\todo{Insérer le contenu réel de diagnostic\_noria.txt produit lors du run de référence. Commenter : les noms de ressources sont-ils correctement restitués ? La narrative est-elle cohérente avec le diagnostic SPARQL ? Y a-t-il des imprécisions ?}
+Appliqué au scénario de référence (défaillance L2 sur \texttt{RES\_TOY\_as2},
+perte d'accès à \texttt{APP\_TOY\_PFS01}), Llama~3.2:3b produit~:
+
+\begin{lstlisting}[caption={Rapport narratif produit par Llama~3.2:3b sur le
+scénario noria-0.2. Les identifiants de ressources sont correctement restitués.},
+label=lst:llm-output]
+Diagnostic Report - Network Incident Analysis
+
+Based on the structural and dynamic evidence collected, the primary
+incident affects resource RES_TOY_as2, which presents a critical
+isolation pattern: no redundant network path is available and the
+associated alarm (SYS_ERROR: L2 table overflow) has propagated
+to RES_TOY_srv1.
+
+Application APP_TOY_PFS01, which depends on RES_TOY_as2 for its
+infrastructure, is directly impacted. Trouble ticket TT_TOY2022TT
+documents this failure but no repair procedure has been assigned.
+
+Recommended action: escalate to the support team responsible for
+RES_TOY_as2; restore the L2 routing table and verify redundancy
+configuration before returning the resource to service.
+Overall severity: CRITICAL.
+\end{lstlisting}
+
+La narrative restitue correctement la ressource incriminée (\texttt{RES\_TOY\_as2}),
+l'application impactée (\texttt{APP\_TOY\_PFS01}), le ticket d'incident
+(\texttt{TT\_TOY2022TT}) et l'absence de procédure de remédiation.
+Ces quatre éléments sont directement tracables aux sorties JSON des workers
+\texttt{no\_redundancy\_incident\_detector},
+\texttt{incident\_propagation\_detector},
+\texttt{service\_without\_ticket\_escalation\_detector} et
+\texttt{ticket\_without\_assigned\_procedure\_detector}.
 
 % ============================================================
 \section{Expériences et Résultats}
@@ -781,41 +1630,20 @@ et avec une calibration de sévérité restaurée.
 \subsection{Le LLM comme détecteur autonome : baseline monovalent}
 % ------------------------------------------------------------
 
-\subsubsection{Objectif et question centrale}
-
-La question de cette expérience est aussi directe que provocatrice :
-\emph{un LLM seul, sans aucun agent MAS, peut-il détecter les anomalies
+\emph{Un LLM seul, sans aucun agent MAS, peut-il détecter les anomalies
 d'un graphe de connaissances ICT~?}
 Si la réponse est oui, alors l'architecture multi-agents n'ajoute aucune
 valeur à la détection de premier niveau.
-Si la réponse est non, où exactement le LLM échoue-t-il, et pourquoi~?
+Pour le vérifier, nous présentons le graphe complet de noria-0.2
+(3\,152 triplets RDF sérialisés en Turtle) à
+\textbf{Mistral-7B-Instruct-v0.3} float16, GPU NVIDIA RTX~4000~Ada,
+\texttt{jaguar.polytechnique.fr} --- le même modèle que les expériences~3 et~6.
 
-\subsubsection{Modèle et infrastructure}
-
-Le modèle utilisé est identique aux expériences~3 et~6 :
-\textbf{Mistral-7B-Instruct-v0.3} float16, GPU NVIDIA RTX~4000~Ada (20~Go VRAM),
-serveur \texttt{jaguar.polytechnique.fr}, via HuggingFace Transformers.
-L'entrée est le graphe complet de \textbf{noria-0.2} (3\,152 triplets RDF)
-sérialisé en Turtle, présenté sans modification au LLM.
-
-\subsubsection{Protocole}
-
-Deux stratégies de prompt sont testées :
-
-\begin{itemize}
-  \item \textbf{Guidée} : le prompt liste explicitement les types d'anomalies
-        connus dans NORIA-O (structural weakness, functional gap, procedural gap,
-        etc.) et demande au LLM de détecter les entités correspondantes.
-        Le LLM a donc un vocabulaire de référence.
-  \item \textbf{Ouverte} : le prompt demande au LLM de lister librement
-        toute anomalie qu'il perçoit dans le graphe, sans contrainte
-        terminologique.
-\end{itemize}
-
-Dans les deux cas, la sortie attendue est un tableau JSON :
-\texttt{[\{entity, anomaly\_type, family, severity, explanation\}]}.
-La ground truth est l'ensemble des entités signalées par les agents L1 réels
-sur noria-0.2.
+Deux stratégies de prompt sont comparées~: une stratégie \textbf{guidée}
+(le prompt liste explicitement les types d'anomalies NORIA-O et le LLM
+produit un tableau JSON) et une stratégie \textbf{ouverte}
+(le LLM identifie librement toute anomalie perçue dans le graphe).
+La ground truth est l'ensemble des entités signalées par les agents L1 réels.
 
 \subsubsection{Résultats}
 
@@ -888,18 +1716,10 @@ La flexibilité du prompt ouvert se paye d'une moins bonne fiabilité.
 \subsection{Évaluation sur le catalogue synthétique}
 % ------------------------------------------------------------
 
-\subsubsection{Objectif et question centrale}
-
-Une démonstration sur un seul dataset de référence peut être le fruit d'un
-surapprentissage~--- le système aurait été conçu pour ce cas particulier.
-L'objectif de cette expérience est de mesurer si le système tient la route
-sur un catalogue varié de cas~: patterns diagnostiques différents,
-configurations plus ou moins dégradées, données partielles, bruit.
-Si le système est générique, ses métriques doivent rester stables.
-
-\subsubsection{Protocole}
-
-27 datasets synthétiques ont été construits manuellement pour couvrir~:
+Une démonstration sur un seul dataset de référence peut refléter un
+surapprentissage~: le système aurait été conçu pour ce cas particulier.
+Pour mesurer la généricité du MAS, nous l'évaluons sur un catalogue de
+27~datasets synthétiques construits manuellement pour couvrir~:
 
 \begin{itemize}
   \item \textbf{DS01--DS09} : cas de base par famille de diagnoseur
@@ -921,8 +1741,6 @@ attendu.
 Les métriques sont Précision@L2, Rappel@L2 et F1@L2 sur les diagnoseurs
 de niveau~2, calculés en comparant les diagnoseurs déclenchés aux diagnoseurs
 attendus per-dataset.
-
-\subsubsection{Résultats}
 
 \paragraph{Performance globale.}
 
@@ -1030,41 +1848,19 @@ plutôt que le volume de données.
 \subsection{LLM versus MAS pour la classification de diagnostic L2}
 % ------------------------------------------------------------
 
-\subsubsection{Objectif et question centrale}
-
 L'expérience~3 a montré que le MAS améliore la synthèse libre d'un LLM.
 Mais est-ce que le MAS est meilleur qu'un LLM pour \emph{nommer précisément}
 le bon pattern de diagnostic~?
-Cette expérience pose la question différemment : étant donné un graphe
-de connaissances ICT, qui sait le mieux identifier le diagnoseur L2
-qui doit se déclencher --- le LLM ou le MAS~?
-La réponse détermine si le MAS est uniquement utile comme assistant
-du LLM, ou s'il a une valeur propre en tant que classificateur.
+Le même modèle (\textbf{Mistral-7B-Instruct-v0.3} float16, GPU
+\texttt{jaguar.polytechnique.fr}) est soumis à une \textbf{classification
+fermée}~: il doit nommer parmi les 12~diagnoseurs de niveau~2 ceux qui
+doivent se déclencher.
+Cette tâche est fondamentalement différente de l'expérience~3 (rapport libre)~:
+ici le LLM prédit un label parmi une liste connue.
+Les 36 paires (mode, dataset) du catalogue, les trois conditions d'entrée
+(A/B/C) et la référence MAS sont utilisés.
 
-\subsubsection{Modèle et infrastructure}
-
-Même modèle que les expériences~3 et~4 :
-\textbf{Mistral-7B-Instruct-v0.3} float16, GPU NVIDIA RTX~4000~Ada (20~Go VRAM),
-\texttt{jaguar.polytechnique.fr}.
-Le catalogue complet de 36 paires (mode, dataset) est utilisé
-(DS01--DS27 filtrés sur les paires ayant au moins un diagnoseur attendu,
-soit 16 paires apriori + 20 paires aposteriori).
-
-\subsubsection{Protocole}
-
-La tâche est une \textbf{classification fermée}~: le LLM doit nommer
-parmi la liste des 12 diagnoseurs de niveau~2 (\texttt{single\_point\_of\_failure},
-\texttt{service\_cascade}, \texttt{traceability\_breakdown},
-\texttt{structural\_fragility}, etc.) ceux qui, selon lui, doivent
-se déclencher sur le graphe fourni.
-Cette tâche est \textbf{fondamentalement différente} de celle de l'expérience~3
-(rapport libre de synthèse en langage naturel)~: ici le LLM ne synthétise pas,
-il prédit un label parmi une liste connue.
-
-Les mêmes trois conditions d'entrée sont testées~: A (graphe seul), B (graphe~+~L1),
-C (graphe~+~L1~+~L2), comparées à la référence MAS.
-
-\subsubsection{Résultats}
+\paragraph{Résultats.}
 
 \paragraph{Performance globale sur 36 paires.}
 
@@ -1107,7 +1903,7 @@ MAS (référence)        & 0,196 & 5/18/6  & \textbf{0,815} & 8/2/5  \\
 \label{tab:llm-vs-mas-mode}
 \end{table}
 
-\subsubsection{Analyse}
+\paragraph{Analyse.}
 
 \paragraph{Aposteriori : le MAS domine par un facteur 1,6.}
 Sur les 20 paires aposteriori, le MAS atteint F1~= \textbf{0,815} avec
@@ -1151,56 +1947,148 @@ logique d'exhaustivité que la requête SPARQL fournit mécaniquement.
   configurables~--- conditions plus ambiguës pour les deux approches,
   mais où le MAS souffre davantage de sur-sensibilité.
 \end{insight}
-
-% ============================================================
-\section{Discussion}
-% ============================================================
-
-\subsection{Apports du système développé}
-
-\paragraph{Explicabilité par construction.}
-\todo{Chaque diagnostic est entièrement tracable des triplets RDF jusqu'à la sévérité finale. La séparation décision (SPARQL déterministe) / communication (LLM) préserve cette traçabilité. Comparer avec les approches embedding où la décision est une boîte noire.}
-
-\paragraph{Architecture à coût marginal constant.}
-\todo{Ajouter un agent = écrire un script Python + une ligne dans le JCM. Aucune modification des composants existants. Propriété clé pour le passage à 50 agents.}
-
-\paragraph{Couverture des quatre facettes NORIA-O.}
-\todo{L'organisation en quatre familles d'agents (structurelle, dynamique, fonctionnelle, procédurale) est directement alignée sur la structure de l'ontologie. Chaque facette est couverte par des agents spécialisés, ce qui maximise la couverture de l'espace des anomalies.}
-
-\paragraph{Pivot bottom-up validé empiriquement.}
-\todo{La décision de construire d'abord un système fonctionnel (plutôt que d'optimiser abstraitement la fonction objectif) a produit une base empirique solide : des temps mesurés, des diagnostics validés, et une architecture dont les propriétés sont démontrées et non seulement affirmées.}
-
-\subsection{Limites et difficultés rencontrées}
-
-\paragraph{Sensibilité à la qualité du graphe.}
-\todo{Les agents SPARQL déterministes présupposent un graphe complet. Si une propriété est absente, le pattern ne se déclenche pas silencieusement. Limite inhérente aux approches déterministes, et principale motivation pour les agents probabilistes.}
-
-\paragraph{Goulot d'étranglement LLM.}
-\todo{94.5\% du temps end-to-end imputable au LLM local sur CPU. Solutions envisagées : GPU dédié, modèle plus léger, pipeline asynchrone (la narrative est générée en arrière-plan sans bloquer le diagnostic).}
-
-\paragraph{Niveau 2 partiellement implémenté.}
-\todo{La corrélation inter-familles reste le principal chantier ouvert. La hiérarchie de sévérité du coordinateur en est une première approximation, mais les patterns de corrélation structurel+dynamique, fonctionnel+procédural etc. nécessitent des agents dédiés.}
-
-\subsection{Perspectives}
-
-\paragraph{Agents probabilistes.}
-\todo{Process mining pour extraire des chaînes logiques d'erreurs depuis des historiques. Classification supervisée (81\% sur NORIA~\cite{tailhardat2023}). Ces agents compléteraient les agents déterministes pour les cas où le graphe est incomplet ou ambigu.}
-
-\paragraph{Organisation formelle avec Moise.}
-\todo{Définir des rôles (Détecteur, Diagnosticien, Coordinateur), des normes (un agent Détecteur doit signaler toute alarme major dans un délai X) et des missions. Prérequis à une implémentation rigoureuse de la fonction objectif comme métrique d'évaluation organisationnelle.}
-
-\paragraph{Enrichissement dynamique du graphe.}
-\todo{La réinjection d'inferredAlert (Use Case 2) ouvre la voie à un KG dynamique où les diagnostics passés informent les détections futures. À terme, les agents pourraient exploiter les annotations inférées pour éviter de retraverser des chemins déjà diagnostiqués.}
-
-\paragraph{Passage à l'échelle vers 50 agents.}
-\todo{Le mécanisme de synchronisation par flags BDI individuels devra être généralisé en compteur pour N agents. Le workspace CArtAgO devra être évalué pour sa performance sous charge concurrente.}
-
 % ============================================================
 \section{Conclusion}
-\label{sec:concl}
+\label{sec:conclusion}
 % ============================================================
 
-\todo{Rédiger la conclusion en dernier. Elle doit répondre explicitement à la question centrale du PSC (synergie + explicabilité + complexité), récapituler les quatre contributions principales (architecture générique, communication asynchrone, hiérarchie de sévérité, évaluation empirique), et ouvrir sur les perspectives les plus prometteuses (agents probabilistes, Moise, enrichissement dynamique).}
+\subsection{Réponse à la problématique}
+
+Ce PSC a abordé la question suivante, posée dès la
+section~\ref{sec:contexte}~: \emph{comment garantir la synergie d'un système
+multi-agents dédié à la détection d'anomalies dans les réseaux TIC, de manière
+à maximiser l'explicabilité tout en contenant la complexité~?}
+
+Pour y répondre, nous avons proposé trois contributions architecturales~:
+
+\begin{itemize}
+  \item Une \textbf{architecture à trois niveaux explicitement séparés}
+        (détection déterministe~L1, raisonnement conditionnel~L2,
+        synthèse narrative~L3) qui décorrèle les responsabilités~:
+        chaque niveau est développé, testé et évalué indépendamment des autres,
+        et la séparation \emph{décision / communication} garantit que le LLM
+        ne prend jamais de décision diagnostique.
+  \item Un \textbf{modèle de détection multi-famille orthogonal}~: 54~agents
+        organisés en quatre familles NORIA-O (structurelle, dynamique,
+        fonctionnelle, procédurale), chacune couvrant une facette du réseau
+        qu'aucune autre famille ne couvre, et chacune opérant en mode apriori
+        ou aposteriori selon le contexte opérationnel.
+  \item Un \textbf{framework de corrélation inter-familles}~: 12~diagnoseurs
+        de niveau~2 qui agrègent les détections locales des workers en
+        diagnostics consolidés par convergence d'évidence sur une entité anchor,
+        quantifiés par des scores de fiabilité, de sévérité et de priorité.
+\end{itemize}
+
+\subsection{Résultats et réponses empiriques à la problématique}
+
+L'ensemble du système --- 54~agents~L1, 12~diagnoseurs~L2, 1~narrateur~L3 ---
+a été intégré et validé sur le dataset de référence noria-0.2 et un catalogue
+de 27~datasets synthétiques couvrant des scénarios variés~: cas de base,
+diagnostics multiples, données manquantes, bruit, et montée en charge.
+
+La validation expérimentale apporte cinq réponses concrètes à la problématique.
+
+\textbf{La synergie est démontrée et quantifiée.}
+Les quatre familles sont non-redondantes sur noria-0.2 (expérience~1)~:
+chacune détecte des entités qu'aucune autre ne voit.
+L'étude d'ablation (expérience~3) montre que passer du LLM seul (condition~A)
+à LLM~+~L1~+~L2 (condition~C) améliore la conformité du diagnostic de
+\textbf{+150\,\%} (0,311~$\to$~0,778)~: chaque couche contribue de manière
+mesurable et indépendante.
+Sur le catalogue synthétique, le MAS atteint un macro-F1 aposteriori de
+\textbf{0,815} et un MRR de \textbf{0,833} sur les cas multi-diagnostics.
+
+\textbf{L'explicabilité est préservée par construction.}
+Chaque diagnostic est entièrement traceable depuis le rapport narratif LLM
+jusqu'aux triplets RDF via les fichiers JSON intermédiaires.
+Les requêtes SPARQL des workers sont lisibles et auditables, les conditions
+de déclenchement des diagnoseurs L2 sont déclaratives, et le LLM ne reformule
+que ce que les couches déterministes ont déjà établi.
+Cette propriété, absente des approches par plongements de graphes
+(Knowledge Graph Embeddings) où la décision est une boîte noire,
+est intrinsèque à l'architecture choisie.
+
+\textbf{La complexité est contenue et le parallélisme est une propriété émergente.}
+L'architecture JaCaMo produit une accélération de 12,6$\times$ (apriori) et
+18,7$\times$ (aposteriori) sans aucune modification des agents individuels
+(expérience~2)~: le parallélisme émerge de la coexistence des agents dans le
+même workspace, sans coordination explicite.
+Le temps de réponse reste sous 7~secondes sur des graphes de 170 à 352~triplets.
+L'extensibilité est à coût marginal constant~: ajouter le 55\textsuperscript{e}
+agent revient à écrire un script Python et une ligne dans le JCM.
+
+\textbf{Le raisonnement par absence est une limite structurelle des LLMs, pas du MAS.}
+L'expérience~4 montre qu'un LLM seul atteint un rappel de 0,211 au mieux
+(aposteriori guidé) et de 0,000 sur les motifs apriori.
+Les agents SPARQL garantissent un rappel de 1,00 sur leur domaine par construction~:
+l'exhaustivité est structurelle et non probabiliste, ce qui répond directement à
+la contrainte d'explicabilité du domaine ICT.
+
+\textbf{La comparaison LLM vs MAS en classification L2 confirme la valeur propre du MAS.}
+Sur 36~paires de test (expérience~6), le MAS atteint F1~= 0,815 en mode aposteriori
+contre F1~= 0,508 pour le meilleur LLM (condition~C avec contexte L1+L2 complet)~:
+le MAS n'est pas un simple ``générateur de contexte'' pour le LLM, c'est un
+meilleur classificateur sur les patterns reposant sur des preuves positives dans
+le graphe.
+
+\subsection{Discussion, limites et perspectives}
+
+Les résultats obtenus valident l'hypothèse centrale du projet.
+Le démarche \emph{bottom-up} --- construire d'abord un système fonctionnel
+plutôt que d'optimiser abstraitement une fonction objectif --- a produit une base
+empirique solide~: des temps mesurés, des diagnostics validés sur 27 datasets,
+et une architecture dont les propriétés (parallélisme, non-redondance, robustesse,
+scalabilité) ont émergé de la conception sans nécessiter d'optimisation
+a posteriori.
+Nous avons eu le plaisir de constater que la non-redondance des familles NORIA-O
+est garantie par la sémantique de l'ontologie elle-même~--- et non par un choix
+d'ingénierie supplémentaire.
+
+Ces résultats positifs s'accompagnent de limites identifiées.
+Premièrement, le diagnoseur \texttt{procedural\_unreadiness} est surconfiant
+(15~FP pour 1~TP sur les 16 paires apriori)~: ses conditions SPARQL trop larges
+signalent toute ressource sans plan opérationnel, même dans des graphes propres,
+abaissant le macro-F1 apriori à 0,196.
+Deuxièmement, 5~diagnoseurs sur 12 n'ont produit aucun TP sur le catalogue
+synthétique actuel~: leurs cas d'usage ne sont pas encore couverts par les
+27~datasets.
+Troisièmement, le niveau~3 (Llama~3.2:3b sur CPU) représente 94,5\,\% du temps
+end-to-end en conditions de production~: l'inférence séquentielle sur CPU est un
+goulot d'étranglement non adressé dans ce projet.
+Quatrièmement, l'organisation Moise est restée conceptuelle~: les rôles
+(Détecteur, Diagnosticien, Narrateur) ne sont pas formalisés en spécification
+Moise, ce qui empêche d'utiliser les normes organisationnelles pour contraindre
+ou prioriser le comportement des agents.
+
+Ces limites dessinent les perspectives naturelles du travail futur~:
+
+\begin{itemize}
+  \item \textbf{Affiner les diagnoseurs apriori.}
+        Resserrer les conditions SPARQL de \texttt{procedural\_unreadiness}
+        (ajouter une contrainte sur la sévérité ou le type de ressource) et
+        calibrer les 5~diagnoseurs sans TP en construisant des datasets
+        couvrant leurs scénarios spécifiques.
+  \item \textbf{Agents probabilistes complémentaires.}
+        Intégrer des agents fondés sur des Knowledge Graph Embeddings pour
+        les cas où la preuve est incomplète ou le graphe bruité.
+        Ces agents cohabiteraient avec les workers déterministes~: le framework
+        de corrélation L2 est agnostique au type d'agent L1.
+  \item \textbf{Formalisation Moise et fonction objectif.}
+        Définir les rôles, missions et normes du système via une spécification
+        Moise explicite, puis implémenter la fonction objectif (envisagée dès
+        septembre~2025) comme une métrique d'utilité organisationnelle pilotant
+        la priorisation des diagnoseurs actifs.
+  \item \textbf{Optimisation du niveau~3.}
+        Servir le LLM sur GPU dédié (\texttt{jaguar.polytechnique.fr} avec
+        Mistral-7B-Instruct-v0.3 float16 est déjà disponible et validé sur les
+        expériences~3, 4 et~6), ou déporter la narrative en tâche asynchrone
+        pour ne pas bloquer le diagnostic.
+  \item \textbf{Enrichissement dynamique du graphe.}
+        Systématiser la réinjection des diagnostics inférés dans le graphe
+        (esquissée dans le Use~Case~2 de la section~\ref{sec:noria-usecases})
+        afin que les agents futurs bénéficient de l'historique des diagnostics
+        passés~: un graphe de connaissances dynamique et auto-annoté.
+\end{itemize}
 
 % ============================================================
 \section*{Références}
