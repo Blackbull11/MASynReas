@@ -1,7 +1,464 @@
 {
   "agent": "structural_fragility_diagnoser",
   "mode": "apriori",
-  "activation_status": "not_triggered",
-  "reason": "No coherent anchor accumulates enough structural weakness evidence.",
-  "diagnoses": []
+  "activation_status": "triggered",
+  "reason": "Activation conditions satisfied around Resource 'res_access_switch_02'.",
+  "diagnoses": [
+    {
+      "diagnosis_id": "L2-A1-001",
+      "diagnosis_type": "structural_fragility",
+      "mode": "apriori",
+      "target_type": "Resource",
+      "target_id": "https://example.org/masynreas/datasets/baseA/res_access_switch_02",
+      "activation_status": "triggered",
+      "reliability_score": 75,
+      "severity_score": 26,
+      "priority_score": 53,
+      "evidence": [
+        {
+          "level1_agent": "missing_interface_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseA/res_access_switch_02",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_interface_results.json"
+        },
+        {
+          "level1_agent": "missing_parent_resource_detector",
+          "role": "supporting",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseA/res_access_switch_02",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_parent_resource_results.json"
+        },
+        {
+          "level1_agent": "orphan_resource_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseA/res_access_switch_02",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/orphan_resource_results.json"
+        },
+        {
+          "level1_agent": "unmanaged_resource_detector",
+          "role": "supporting",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseA/res_access_switch_02",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/unmanaged_resource_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 8,
+        "concentration": 0,
+        "temporal_aggravation": 0,
+        "governance_weakness": 10,
+        "family_base_bonus": 8
+      },
+      "criticalities": [],
+      "explanation": "Structural fragility is diagnosed for Resource 'res_access_switch_02' because interface information is missing; hierarchical parentage is incomplete; resource isolation is detected; management assignment is absent converge on the same anchor. The evidence spans structural signal family/families.",
+      "recommended_action": "Inspect the support chain, topology completeness, redundancy, and management assignment for this anchor."
+    },
+    {
+      "diagnosis_id": "L2-A1-003",
+      "diagnosis_type": "structural_fragility",
+      "mode": "apriori",
+      "target_type": "Resource",
+      "target_id": "http://example.org/noria/resource/as1",
+      "activation_status": "triggered",
+      "reliability_score": 45,
+      "severity_score": 18,
+      "priority_score": 33,
+      "evidence": [
+        {
+          "level1_agent": "missing_interface_detector",
+          "role": "primary",
+          "matched_anchor": "http://example.org/noria/resource/as1",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_interface_results.json"
+        },
+        {
+          "level1_agent": "missing_parent_resource_detector",
+          "role": "supporting",
+          "matched_anchor": "http://example.org/noria/resource/as1",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_parent_resource_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 5,
+        "concentration": 0,
+        "temporal_aggravation": 0,
+        "governance_weakness": 5,
+        "family_base_bonus": 8
+      },
+      "criticalities": [],
+      "explanation": "Structural fragility is diagnosed for Resource 'as1' because interface information is missing; hierarchical parentage is incomplete converge on the same anchor. The evidence spans structural signal family/families.",
+      "recommended_action": "Inspect the support chain, topology completeness, redundancy, and management assignment for this anchor."
+    },
+    {
+      "diagnosis_id": "L2-A1-004",
+      "diagnosis_type": "structural_fragility",
+      "mode": "apriori",
+      "target_type": "Resource",
+      "target_id": "http://example.org/noria/resource/pe_1_1",
+      "activation_status": "triggered",
+      "reliability_score": 45,
+      "severity_score": 18,
+      "priority_score": 33,
+      "evidence": [
+        {
+          "level1_agent": "missing_interface_detector",
+          "role": "primary",
+          "matched_anchor": "http://example.org/noria/resource/pe_1_1",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_interface_results.json"
+        },
+        {
+          "level1_agent": "missing_parent_resource_detector",
+          "role": "supporting",
+          "matched_anchor": "http://example.org/noria/resource/pe_1_1",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_parent_resource_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 5,
+        "concentration": 0,
+        "temporal_aggravation": 0,
+        "governance_weakness": 5,
+        "family_base_bonus": 8
+      },
+      "criticalities": [],
+      "explanation": "Structural fragility is diagnosed for Resource 'pe_1_1' because interface information is missing; hierarchical parentage is incomplete converge on the same anchor. The evidence spans structural signal family/families.",
+      "recommended_action": "Inspect the support chain, topology completeness, redundancy, and management assignment for this anchor."
+    },
+    {
+      "diagnosis_id": "L2-A1-005",
+      "diagnosis_type": "structural_fragility",
+      "mode": "apriori",
+      "target_type": "Resource",
+      "target_id": "http://example.org/noria/resource/pe_1_2",
+      "activation_status": "triggered",
+      "reliability_score": 45,
+      "severity_score": 18,
+      "priority_score": 33,
+      "evidence": [
+        {
+          "level1_agent": "missing_interface_detector",
+          "role": "primary",
+          "matched_anchor": "http://example.org/noria/resource/pe_1_2",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_interface_results.json"
+        },
+        {
+          "level1_agent": "missing_parent_resource_detector",
+          "role": "supporting",
+          "matched_anchor": "http://example.org/noria/resource/pe_1_2",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_parent_resource_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 5,
+        "concentration": 0,
+        "temporal_aggravation": 0,
+        "governance_weakness": 5,
+        "family_base_bonus": 8
+      },
+      "criticalities": [],
+      "explanation": "Structural fragility is diagnosed for Resource 'pe_1_2' because interface information is missing; hierarchical parentage is incomplete converge on the same anchor. The evidence spans structural signal family/families.",
+      "recommended_action": "Inspect the support chain, topology completeness, redundancy, and management assignment for this anchor."
+    },
+    {
+      "diagnosis_id": "L2-A1-006",
+      "diagnosis_type": "structural_fragility",
+      "mode": "apriori",
+      "target_type": "Resource",
+      "target_id": "http://example.org/noria/resource/pe_2_1",
+      "activation_status": "triggered",
+      "reliability_score": 45,
+      "severity_score": 18,
+      "priority_score": 33,
+      "evidence": [
+        {
+          "level1_agent": "missing_interface_detector",
+          "role": "primary",
+          "matched_anchor": "http://example.org/noria/resource/pe_2_1",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_interface_results.json"
+        },
+        {
+          "level1_agent": "missing_parent_resource_detector",
+          "role": "supporting",
+          "matched_anchor": "http://example.org/noria/resource/pe_2_1",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_parent_resource_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 5,
+        "concentration": 0,
+        "temporal_aggravation": 0,
+        "governance_weakness": 5,
+        "family_base_bonus": 8
+      },
+      "criticalities": [],
+      "explanation": "Structural fragility is diagnosed for Resource 'pe_2_1' because interface information is missing; hierarchical parentage is incomplete converge on the same anchor. The evidence spans structural signal family/families.",
+      "recommended_action": "Inspect the support chain, topology completeness, redundancy, and management assignment for this anchor."
+    },
+    {
+      "diagnosis_id": "L2-A1-007",
+      "diagnosis_type": "structural_fragility",
+      "mode": "apriori",
+      "target_type": "Resource",
+      "target_id": "http://example.org/noria/resource/pe_2_2",
+      "activation_status": "triggered",
+      "reliability_score": 45,
+      "severity_score": 18,
+      "priority_score": 33,
+      "evidence": [
+        {
+          "level1_agent": "missing_interface_detector",
+          "role": "primary",
+          "matched_anchor": "http://example.org/noria/resource/pe_2_2",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_interface_results.json"
+        },
+        {
+          "level1_agent": "missing_parent_resource_detector",
+          "role": "supporting",
+          "matched_anchor": "http://example.org/noria/resource/pe_2_2",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_parent_resource_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 5,
+        "concentration": 0,
+        "temporal_aggravation": 0,
+        "governance_weakness": 5,
+        "family_base_bonus": 8
+      },
+      "criticalities": [],
+      "explanation": "Structural fragility is diagnosed for Resource 'pe_2_2' because interface information is missing; hierarchical parentage is incomplete converge on the same anchor. The evidence spans structural signal family/families.",
+      "recommended_action": "Inspect the support chain, topology completeness, redundancy, and management assignment for this anchor."
+    },
+    {
+      "diagnosis_id": "L2-A1-008",
+      "diagnosis_type": "structural_fragility",
+      "mode": "apriori",
+      "target_type": "Resource",
+      "target_id": "http://example.org/noria/resource/pe_3_1",
+      "activation_status": "triggered",
+      "reliability_score": 45,
+      "severity_score": 18,
+      "priority_score": 33,
+      "evidence": [
+        {
+          "level1_agent": "missing_interface_detector",
+          "role": "primary",
+          "matched_anchor": "http://example.org/noria/resource/pe_3_1",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_interface_results.json"
+        },
+        {
+          "level1_agent": "missing_parent_resource_detector",
+          "role": "supporting",
+          "matched_anchor": "http://example.org/noria/resource/pe_3_1",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_parent_resource_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 5,
+        "concentration": 0,
+        "temporal_aggravation": 0,
+        "governance_weakness": 5,
+        "family_base_bonus": 8
+      },
+      "criticalities": [],
+      "explanation": "Structural fragility is diagnosed for Resource 'pe_3_1' because interface information is missing; hierarchical parentage is incomplete converge on the same anchor. The evidence spans structural signal family/families.",
+      "recommended_action": "Inspect the support chain, topology completeness, redundancy, and management assignment for this anchor."
+    },
+    {
+      "diagnosis_id": "L2-A1-009",
+      "diagnosis_type": "structural_fragility",
+      "mode": "apriori",
+      "target_type": "Resource",
+      "target_id": "http://example.org/noria/resource/pe_3_2",
+      "activation_status": "triggered",
+      "reliability_score": 45,
+      "severity_score": 18,
+      "priority_score": 33,
+      "evidence": [
+        {
+          "level1_agent": "missing_interface_detector",
+          "role": "primary",
+          "matched_anchor": "http://example.org/noria/resource/pe_3_2",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_interface_results.json"
+        },
+        {
+          "level1_agent": "missing_parent_resource_detector",
+          "role": "supporting",
+          "matched_anchor": "http://example.org/noria/resource/pe_3_2",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_parent_resource_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 5,
+        "concentration": 0,
+        "temporal_aggravation": 0,
+        "governance_weakness": 5,
+        "family_base_bonus": 8
+      },
+      "criticalities": [],
+      "explanation": "Structural fragility is diagnosed for Resource 'pe_3_2' because interface information is missing; hierarchical parentage is incomplete converge on the same anchor. The evidence spans structural signal family/families.",
+      "recommended_action": "Inspect the support chain, topology completeness, redundancy, and management assignment for this anchor."
+    },
+    {
+      "diagnosis_id": "L2-A1-010",
+      "diagnosis_type": "structural_fragility",
+      "mode": "apriori",
+      "target_type": "Resource",
+      "target_id": "http://example.org/noria/resource/pe_4_1",
+      "activation_status": "triggered",
+      "reliability_score": 45,
+      "severity_score": 18,
+      "priority_score": 33,
+      "evidence": [
+        {
+          "level1_agent": "missing_interface_detector",
+          "role": "primary",
+          "matched_anchor": "http://example.org/noria/resource/pe_4_1",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_interface_results.json"
+        },
+        {
+          "level1_agent": "missing_parent_resource_detector",
+          "role": "supporting",
+          "matched_anchor": "http://example.org/noria/resource/pe_4_1",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_parent_resource_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 5,
+        "concentration": 0,
+        "temporal_aggravation": 0,
+        "governance_weakness": 5,
+        "family_base_bonus": 8
+      },
+      "criticalities": [],
+      "explanation": "Structural fragility is diagnosed for Resource 'pe_4_1' because interface information is missing; hierarchical parentage is incomplete converge on the same anchor. The evidence spans structural signal family/families.",
+      "recommended_action": "Inspect the support chain, topology completeness, redundancy, and management assignment for this anchor."
+    },
+    {
+      "diagnosis_id": "L2-A1-011",
+      "diagnosis_type": "structural_fragility",
+      "mode": "apriori",
+      "target_type": "Resource",
+      "target_id": "http://example.org/noria/resource/pe_4_2",
+      "activation_status": "triggered",
+      "reliability_score": 45,
+      "severity_score": 18,
+      "priority_score": 33,
+      "evidence": [
+        {
+          "level1_agent": "missing_interface_detector",
+          "role": "primary",
+          "matched_anchor": "http://example.org/noria/resource/pe_4_2",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_interface_results.json"
+        },
+        {
+          "level1_agent": "missing_parent_resource_detector",
+          "role": "supporting",
+          "matched_anchor": "http://example.org/noria/resource/pe_4_2",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_parent_resource_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 5,
+        "concentration": 0,
+        "temporal_aggravation": 0,
+        "governance_weakness": 5,
+        "family_base_bonus": 8
+      },
+      "criticalities": [],
+      "explanation": "Structural fragility is diagnosed for Resource 'pe_4_2' because interface information is missing; hierarchical parentage is incomplete converge on the same anchor. The evidence spans structural signal family/families.",
+      "recommended_action": "Inspect the support chain, topology completeness, redundancy, and management assignment for this anchor."
+    },
+    {
+      "diagnosis_id": "L2-A1-002",
+      "diagnosis_type": "structural_fragility",
+      "mode": "apriori",
+      "target_type": "Resource",
+      "target_id": "http://example.org/noria/resource/term1",
+      "activation_status": "triggered",
+      "reliability_score": 45,
+      "severity_score": 18,
+      "priority_score": 33,
+      "evidence": [
+        {
+          "level1_agent": "missing_interface_detector",
+          "role": "primary",
+          "matched_anchor": "http://example.org/noria/resource/term1",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_interface_results.json"
+        },
+        {
+          "level1_agent": "missing_parent_resource_detector",
+          "role": "supporting",
+          "matched_anchor": "http://example.org/noria/resource/term1",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/apriori/missing_parent_resource_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 5,
+        "concentration": 0,
+        "temporal_aggravation": 0,
+        "governance_weakness": 5,
+        "family_base_bonus": 8
+      },
+      "criticalities": [],
+      "explanation": "Structural fragility is diagnosed for Resource 'term1' because interface information is missing; hierarchical parentage is incomplete converge on the same anchor. The evidence spans structural signal family/families.",
+      "recommended_action": "Inspect the support chain, topology completeness, redundancy, and management assignment for this anchor."
+    }
+  ]
 }

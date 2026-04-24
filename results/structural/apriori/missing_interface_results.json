@@ -2,85 +2,67 @@
   {
     "resource": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_pe_1_1"
+      "value": "http://example.org/noria/resource/term1"
     }
   },
   {
     "resource": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_term1"
+      "value": "http://example.org/noria/resource/as1"
     }
   },
   {
     "resource": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_as1"
+      "value": "http://example.org/noria/resource/pe_1_1"
     }
   },
   {
     "resource": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_as3"
+      "value": "http://example.org/noria/resource/pe_1_2"
     }
   },
   {
     "resource": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_pe_1_2"
+      "value": "http://example.org/noria/resource/pe_2_1"
     }
   },
   {
     "resource": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_pe_2_1"
+      "value": "http://example.org/noria/resource/pe_2_2"
     }
   },
   {
     "resource": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_pe_2_2"
+      "value": "http://example.org/noria/resource/pe_3_1"
     }
   },
   {
     "resource": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_pe_3_1"
+      "value": "http://example.org/noria/resource/pe_3_2"
     }
   },
   {
     "resource": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_pe_3_2"
+      "value": "http://example.org/noria/resource/pe_4_1"
     }
   },
   {
     "resource": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_pe_4_1"
+      "value": "http://example.org/noria/resource/pe_4_2"
     }
   },
   {
     "resource": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_pe_4_2"
-    }
-  },
-  {
-    "resource": {
-      "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_rack_01"
-    }
-  },
-  {
-    "resource": {
-      "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_rack_02"
-    }
-  },
-  {
-    "resource": {
-      "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_srv2"
+      "value": "https://example.org/masynreas/datasets/baseA/res_access_switch_02"
     }
   }
 ]

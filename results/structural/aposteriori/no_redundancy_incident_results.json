@@ -2,31 +2,11 @@
   {
     "ticket": {
       "type": "uri",
-      "value": "https://w3id.org/noria/document/TT_TOY2022TT"
+      "value": "http://example.org/noria/event/TT_TOY2022TT"
     },
     "resource": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_term1"
-    }
-  },
-  {
-    "ticket": {
-      "type": "uri",
-      "value": "https://w3id.org/noria/document/TT_TOY2022TT"
-    },
-    "resource": {
-      "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_term1"
-    }
-  },
-  {
-    "ticket": {
-      "type": "uri",
-      "value": "https://w3id.org/noria/document/TT_TOY2022TT02"
-    },
-    "resource": {
-      "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_pe_1_1"
+      "value": "http://example.org/noria/resource/term1"
     }
   }
 ]

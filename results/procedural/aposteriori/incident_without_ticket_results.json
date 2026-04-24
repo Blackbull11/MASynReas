@@ -1,1 +1,78 @@
-[]
+[
+  {
+    "event": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/event_monitor_down"
+    },
+    "severity": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/severity_high"
+    },
+    "time": {
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+      "value": "2026-02-16T10:00:00Z"
+    },
+    "relatedElement": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/res_monitor_vm_01"
+    }
+  },
+  {
+    "event": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/event_monitor_timeout"
+    },
+    "severity": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/severity_minor"
+    },
+    "time": {
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+      "value": "2026-02-16T10:03:00Z"
+    },
+    "relatedElement": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/res_monitor_vm_01"
+    }
+  },
+  {
+    "event": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/event_monitor_timeout_repeat"
+    },
+    "severity": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/severity_minor"
+    },
+    "time": {
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+      "value": "2026-02-16T10:04:00Z"
+    },
+    "relatedElement": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/res_monitor_vm_01"
+    }
+  },
+  {
+    "event": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/event_monitor_up"
+    },
+    "severity": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/severity_minor"
+    },
+    "time": {
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+      "value": "2026-02-16T10:02:00Z"
+    },
+    "relatedElement": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/res_monitor_vm_01"
+    }
+  }
+]

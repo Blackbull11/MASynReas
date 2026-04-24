@@ -1,7 +1,184 @@
 {
   "agent": "single_point_of_failure_diagnoser",
   "mode": "aposteriori",
-  "activation_status": "not_triggered",
-  "reason": "No resource concentrates enough structural incident evidence to suggest a single point of failure.",
-  "diagnoses": []
+  "activation_status": "triggered",
+  "reason": "Activation conditions satisfied around Resource 'term1'.",
+  "diagnoses": [
+    {
+      "diagnosis_id": "L2-P1-002",
+      "diagnosis_type": "single_point_of_failure",
+      "mode": "aposteriori",
+      "target_type": "Resource",
+      "target_id": "https://example.org/masynreas/datasets/baseB/res_firewall_01",
+      "activation_status": "triggered",
+      "reliability_score": 95,
+      "severity_score": 42,
+      "priority_score": 71,
+      "evidence": [
+        {
+          "level1_agent": "high_impact_resource_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/res_firewall_01",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/aposteriori/high_impact_resource_results.json"
+        },
+        {
+          "level1_agent": "incident_on_incomplete_link_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/res_firewall_01",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/aposteriori/incident_on_incomplete_link_results.json"
+        },
+        {
+          "level1_agent": "isolated_incident_resource_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/res_firewall_01",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/aposteriori/isolated_incident_resource_results.json"
+        },
+        {
+          "level1_agent": "no_redundancy_incident_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/res_firewall_01",
+          "record_count": 2,
+          "family": "structural",
+          "result_file": "results/structural/aposteriori/no_redundancy_incident_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 12,
+        "concentration": 20,
+        "temporal_aggravation": 0,
+        "governance_weakness": 0,
+        "family_base_bonus": 10
+      },
+      "criticalities": [],
+      "explanation": "Single point of failure is diagnosed for Resource 'res_firewall_01' because incident resources have broad downstream impact; incident resources sit on incomplete links; incident resources appear isolated; incident resources have no visible redundancy converge on the same anchor. The evidence spans structural signal family/families.",
+      "recommended_action": "Inspect this local component first for isolation, incomplete topology, and missing failover support."
+    },
+    {
+      "diagnosis_id": "L2-P1-003",
+      "diagnosis_type": "single_point_of_failure",
+      "mode": "aposteriori",
+      "target_type": "Resource",
+      "target_id": "https://example.org/masynreas/datasets/baseB/res_monitor_vm_01",
+      "activation_status": "triggered",
+      "reliability_score": 55,
+      "severity_score": 30,
+      "priority_score": 44,
+      "evidence": [
+        {
+          "level1_agent": "isolated_incident_resource_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/res_monitor_vm_01",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/aposteriori/isolated_incident_resource_results.json"
+        },
+        {
+          "level1_agent": "no_redundancy_incident_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/res_monitor_vm_01",
+          "record_count": 2,
+          "family": "structural",
+          "result_file": "results/structural/aposteriori/no_redundancy_incident_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 8,
+        "concentration": 12,
+        "temporal_aggravation": 0,
+        "governance_weakness": 0,
+        "family_base_bonus": 10
+      },
+      "criticalities": [],
+      "explanation": "Single point of failure is diagnosed for Resource 'res_monitor_vm_01' because incident resources appear isolated; incident resources have no visible redundancy converge on the same anchor. The evidence spans structural signal family/families.",
+      "recommended_action": "Inspect this local component first for isolation, incomplete topology, and missing failover support."
+    },
+    {
+      "diagnosis_id": "L2-P1-004",
+      "diagnosis_type": "single_point_of_failure",
+      "mode": "aposteriori",
+      "target_type": "Resource",
+      "target_id": "https://example.org/masynreas/datasets/baseB/res_workforce_vm_01",
+      "activation_status": "triggered",
+      "reliability_score": 55,
+      "severity_score": 30,
+      "priority_score": 44,
+      "evidence": [
+        {
+          "level1_agent": "isolated_incident_resource_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/res_workforce_vm_01",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/aposteriori/isolated_incident_resource_results.json"
+        },
+        {
+          "level1_agent": "no_redundancy_incident_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/res_workforce_vm_01",
+          "record_count": 2,
+          "family": "structural",
+          "result_file": "results/structural/aposteriori/no_redundancy_incident_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 8,
+        "concentration": 12,
+        "temporal_aggravation": 0,
+        "governance_weakness": 0,
+        "family_base_bonus": 10
+      },
+      "criticalities": [],
+      "explanation": "Single point of failure is diagnosed for Resource 'res_workforce_vm_01' because incident resources appear isolated; incident resources have no visible redundancy converge on the same anchor. The evidence spans structural signal family/families.",
+      "recommended_action": "Inspect this local component first for isolation, incomplete topology, and missing failover support."
+    },
+    {
+      "diagnosis_id": "L2-P1-001",
+      "diagnosis_type": "single_point_of_failure",
+      "mode": "aposteriori",
+      "target_type": "Resource",
+      "target_id": "http://example.org/noria/resource/term1",
+      "activation_status": "triggered",
+      "reliability_score": 55,
+      "severity_score": 27,
+      "priority_score": 42,
+      "evidence": [
+        {
+          "level1_agent": "isolated_incident_resource_detector",
+          "role": "primary",
+          "matched_anchor": "http://example.org/noria/resource/term1",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/aposteriori/isolated_incident_resource_results.json"
+        },
+        {
+          "level1_agent": "no_redundancy_incident_detector",
+          "role": "primary",
+          "matched_anchor": "http://example.org/noria/resource/term1",
+          "record_count": 1,
+          "family": "structural",
+          "result_file": "results/structural/aposteriori/no_redundancy_incident_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 5,
+        "concentration": 12,
+        "temporal_aggravation": 0,
+        "governance_weakness": 0,
+        "family_base_bonus": 10
+      },
+      "criticalities": [],
+      "explanation": "Single point of failure is diagnosed for Resource 'term1' because incident resources appear isolated; incident resources have no visible redundancy converge on the same anchor. The evidence spans structural signal family/families.",
+      "recommended_action": "Inspect this local component first for isolation, incomplete topology, and missing failover support."
+    }
+  ]
 }

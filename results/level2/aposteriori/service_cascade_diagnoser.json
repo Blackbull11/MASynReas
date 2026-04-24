@@ -1,7 +1,208 @@
 {
   "agent": "service_cascade_diagnoser",
   "mode": "aposteriori",
-  "activation_status": "not_triggered",
-  "reason": "Functional and dynamic propagation signals do not yet converge on a service or module scope.",
-  "diagnoses": []
+  "activation_status": "triggered",
+  "reason": "Activation conditions satisfied around Application 'app_monitoring_dashboard'.",
+  "diagnoses": [
+    {
+      "diagnosis_id": "L2-P3-003",
+      "diagnosis_type": "service_cascade",
+      "mode": "aposteriori",
+      "target_type": "Service",
+      "target_id": "https://example.org/masynreas/datasets/baseB/service_workforce_portal",
+      "activation_status": "triggered",
+      "reliability_score": 95,
+      "severity_score": 51,
+      "priority_score": 75,
+      "evidence": [
+        {
+          "level1_agent": "cascading_service_failure_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/service_workforce_portal",
+          "record_count": 10,
+          "family": "functional",
+          "result_file": "results/functional/aposteriori/cascading_service_failure_results.json"
+        },
+        {
+          "level1_agent": "hidden_service_dependency_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/service_workforce_portal",
+          "record_count": 10,
+          "family": "functional",
+          "result_file": "results/functional/aposteriori/hidden_service_dependency_results.json"
+        },
+        {
+          "level1_agent": "service_impacted_by_multiple_resources_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/service_workforce_portal",
+          "record_count": 1,
+          "family": "functional",
+          "result_file": "results/functional/aposteriori/service_impacted_by_multiple_resources_results.json"
+        },
+        {
+          "level1_agent": "service_with_repeated_incident_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/service_workforce_portal",
+          "record_count": 1,
+          "family": "functional",
+          "result_file": "results/functional/aposteriori/service_with_repeated_incident_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 15,
+        "concentration": 20,
+        "temporal_aggravation": 6,
+        "governance_weakness": 0,
+        "family_base_bonus": 10
+      },
+      "criticalities": [],
+      "explanation": "Service cascade is diagnosed for Service 'service_workforce_portal' because shared support chains affect several services; hidden service dependencies concentrate impact; one service is impacted by several resources; the same service suffers repeated incidents converge on the same anchor. The evidence spans functional signal family/families.",
+      "recommended_action": "Inspect the shared module, hidden dependency, and common support resources behind this service scope first."
+    },
+    {
+      "diagnosis_id": "L2-P3-002",
+      "diagnosis_type": "service_cascade",
+      "mode": "aposteriori",
+      "target_type": "Service",
+      "target_id": "https://example.org/masynreas/datasets/baseB/service_network_monitoring",
+      "activation_status": "triggered",
+      "reliability_score": 75,
+      "severity_score": 47,
+      "priority_score": 62,
+      "evidence": [
+        {
+          "level1_agent": "cascading_service_failure_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/service_network_monitoring",
+          "record_count": 10,
+          "family": "functional",
+          "result_file": "results/functional/aposteriori/cascading_service_failure_results.json"
+        },
+        {
+          "level1_agent": "hidden_service_dependency_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/service_network_monitoring",
+          "record_count": 10,
+          "family": "functional",
+          "result_file": "results/functional/aposteriori/hidden_service_dependency_results.json"
+        },
+        {
+          "level1_agent": "service_with_repeated_incident_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/service_network_monitoring",
+          "record_count": 1,
+          "family": "functional",
+          "result_file": "results/functional/aposteriori/service_with_repeated_incident_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 15,
+        "concentration": 16,
+        "temporal_aggravation": 6,
+        "governance_weakness": 0,
+        "family_base_bonus": 10
+      },
+      "criticalities": [],
+      "explanation": "Service cascade is diagnosed for Service 'service_network_monitoring' because shared support chains affect several services; hidden service dependencies concentrate impact; the same service suffers repeated incidents converge on the same anchor. The evidence spans functional signal family/families.",
+      "recommended_action": "Inspect the shared module, hidden dependency, and common support resources behind this service scope first."
+    },
+    {
+      "diagnosis_id": "L2-P3-001",
+      "diagnosis_type": "service_cascade",
+      "mode": "aposteriori",
+      "target_type": "Application",
+      "target_id": "https://example.org/masynreas/datasets/baseB/app_monitoring_dashboard",
+      "activation_status": "triggered",
+      "reliability_score": 75,
+      "severity_score": 45,
+      "priority_score": 62,
+      "evidence": [
+        {
+          "level1_agent": "cascading_service_failure_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/app_monitoring_dashboard",
+          "record_count": 10,
+          "family": "functional",
+          "result_file": "results/functional/aposteriori/cascading_service_failure_results.json"
+        },
+        {
+          "level1_agent": "hidden_service_dependency_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/app_monitoring_dashboard",
+          "record_count": 10,
+          "family": "functional",
+          "result_file": "results/functional/aposteriori/hidden_service_dependency_results.json"
+        },
+        {
+          "level1_agent": "module_level_incident_aggregation_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/app_monitoring_dashboard",
+          "record_count": 1,
+          "family": "functional",
+          "result_file": "results/functional/aposteriori/module_level_incident_aggregation_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 15,
+        "concentration": 20,
+        "temporal_aggravation": 0,
+        "governance_weakness": 0,
+        "family_base_bonus": 10
+      },
+      "criticalities": [],
+      "explanation": "Service cascade is diagnosed for Application 'app_monitoring_dashboard' because shared support chains affect several services; hidden service dependencies concentrate impact; incidents aggregate at module level converge on the same anchor. The evidence spans functional signal family/families.",
+      "recommended_action": "Inspect the shared module, hidden dependency, and common support resources behind this service scope first."
+    },
+    {
+      "diagnosis_id": "L2-P3-004",
+      "diagnosis_type": "service_cascade",
+      "mode": "aposteriori",
+      "target_type": "ApplicationModule",
+      "target_id": "https://example.org/masynreas/datasets/baseB/module_monitoring_dashboard",
+      "activation_status": "triggered",
+      "reliability_score": 65,
+      "severity_score": 45,
+      "priority_score": 56,
+      "evidence": [
+        {
+          "level1_agent": "cascading_service_failure_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/module_monitoring_dashboard",
+          "record_count": 10,
+          "family": "functional",
+          "result_file": "results/functional/aposteriori/cascading_service_failure_results.json"
+        },
+        {
+          "level1_agent": "hidden_service_dependency_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/module_monitoring_dashboard",
+          "record_count": 10,
+          "family": "functional",
+          "result_file": "results/functional/aposteriori/hidden_service_dependency_results.json"
+        },
+        {
+          "level1_agent": "module_level_incident_aggregation_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/module_monitoring_dashboard",
+          "record_count": 1,
+          "family": "functional",
+          "result_file": "results/functional/aposteriori/module_level_incident_aggregation_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 15,
+        "concentration": 20,
+        "temporal_aggravation": 0,
+        "governance_weakness": 0,
+        "family_base_bonus": 10
+      },
+      "criticalities": [],
+      "explanation": "Service cascade is diagnosed for ApplicationModule 'module_monitoring_dashboard' because shared support chains affect several services; hidden service dependencies concentrate impact; incidents aggregate at module level converge on the same anchor. The evidence spans functional signal family/families.",
+      "recommended_action": "Inspect the shared module, hidden dependency, and common support resources behind this service scope first."
+    }
+  ]
 }

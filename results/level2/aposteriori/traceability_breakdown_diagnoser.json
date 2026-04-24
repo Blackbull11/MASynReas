@@ -1,7 +1,56 @@
 {
   "agent": "traceability_breakdown_diagnoser",
   "mode": "aposteriori",
-  "activation_status": "not_triggered",
-  "reason": "At least two traceability-breakdown primary signals are required.",
-  "diagnoses": []
+  "activation_status": "triggered",
+  "reason": "Several procedural traceability signals are simultaneously positive.",
+  "diagnoses": [
+    {
+      "diagnosis_id": "L2-P4-001",
+      "diagnosis_type": "traceability_breakdown",
+      "mode": "aposteriori",
+      "target_type": "OperationalScope",
+      "target_id": "operational_process",
+      "activation_status": "triggered",
+      "reliability_score": 65,
+      "severity_score": 35,
+      "priority_score": 52,
+      "evidence": [
+        {
+          "level1_agent": "incident_without_ticket_detector",
+          "role": "primary",
+          "matched_anchor": "operational_process",
+          "record_count": 1,
+          "family": "procedural",
+          "result_file": "results/procedural/aposteriori/incident_without_ticket_results.json"
+        },
+        {
+          "level1_agent": "ticket_without_assigned_procedure_detector",
+          "role": "supporting",
+          "matched_anchor": "operational_process",
+          "record_count": 2,
+          "family": "procedural",
+          "result_file": "results/procedural/apriori/ticket_without_assigned_procedure_results.json"
+        },
+        {
+          "level1_agent": "ticket_without_linked_event_detector",
+          "role": "primary",
+          "matched_anchor": "operational_process",
+          "record_count": 2,
+          "family": "procedural",
+          "result_file": "results/procedural/aposteriori/ticket_without_linked_event_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 10,
+        "concentration": 0,
+        "temporal_aggravation": 0,
+        "governance_weakness": 15,
+        "family_base_bonus": 10
+      },
+      "criticalities": [],
+      "explanation": "Traceability breakdown is diagnosed because several operational links are missing at once: incident-to-ticket creation, ticket-to-event linkage, or service escalation tracking.",
+      "recommended_action": "Restore ticket-event linkage and service escalation traceability before deeper root-cause investigation."
+    }
+  ]
 }

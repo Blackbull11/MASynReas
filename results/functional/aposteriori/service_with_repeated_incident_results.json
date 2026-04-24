@@ -2,12 +2,23 @@
   {
     "service": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/SVC_TOY_DBAccess"
+      "value": "https://example.org/masynreas/datasets/baseB/service_workforce_portal"
     },
     "eventCount": {
       "type": "typed-literal",
       "datatype": "http://www.w3.org/2001/XMLSchema#integer",
       "value": "6"
+    }
+  },
+  {
+    "service": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/service_network_monitoring"
+    },
+    "eventCount": {
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+      "value": "5"
     }
   }
 ]

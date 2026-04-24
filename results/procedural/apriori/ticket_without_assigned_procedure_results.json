@@ -2,13 +2,7 @@
   {
     "ticket": {
       "type": "uri",
-      "value": "https://w3id.org/noria/document/TT_TOY2022TT02"
-    }
-  },
-  {
-    "ticket": {
-      "type": "uri",
-      "value": "https://w3id.org/noria/document/TT_TOY2022TT"
+      "value": "http://example.org/noria/event/TT_TOY2022TT"
     }
   }
 ]

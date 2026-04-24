@@ -2,11 +2,11 @@
   {
     "ticket": {
       "type": "uri",
-      "value": "https://w3id.org/noria/document/TT_TOY2022TT"
+      "value": "http://example.org/noria/event/TT_TOY2022TT"
     },
     "resource": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_as2"
+      "value": "http://example.org/noria/resource/term1"
     },
     "connectivityDegree": {
       "type": "typed-literal",
@@ -17,46 +17,61 @@
   {
     "ticket": {
       "type": "uri",
-      "value": "https://w3id.org/noria/document/TT_TOY2022TT"
+      "value": "https://example.org/masynreas/datasets/baseB/ticket_billing_warning"
     },
     "resource": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_srv1"
+      "value": "https://example.org/masynreas/datasets/baseB/res_billing_api_01"
     },
     "connectivityDegree": {
       "type": "typed-literal",
       "datatype": "http://www.w3.org/2001/XMLSchema#integer",
-      "value": "0"
+      "value": "1"
     }
   },
   {
     "ticket": {
       "type": "uri",
-      "value": "https://w3id.org/noria/document/TT_TOY2022TT"
+      "value": "https://example.org/masynreas/datasets/baseB/ticket_customer_warning"
     },
     "resource": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_term1"
+      "value": "https://example.org/masynreas/datasets/baseB/res_customer_vm_01"
     },
     "connectivityDegree": {
       "type": "typed-literal",
       "datatype": "http://www.w3.org/2001/XMLSchema#integer",
-      "value": "0"
+      "value": "1"
     }
   },
   {
     "ticket": {
       "type": "uri",
-      "value": "https://w3id.org/noria/document/TT_TOY2022TT02"
+      "value": "https://example.org/masynreas/datasets/baseB/ticket_monitoring_warning"
     },
     "resource": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_pe_1_1"
+      "value": "https://example.org/masynreas/datasets/baseB/res_monitor_vm_01"
     },
     "connectivityDegree": {
       "type": "typed-literal",
       "datatype": "http://www.w3.org/2001/XMLSchema#integer",
-      "value": "0"
+      "value": "1"
+    }
+  },
+  {
+    "ticket": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/ticket_workforce_warning"
+    },
+    "resource": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/res_workforce_vm_01"
+    },
+    "connectivityDegree": {
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+      "value": "1"
     }
   }
 ]

@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "procedure": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseA/procedure_restart_customer_portal"
+    }
+  },
+  {
+    "procedure": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseA/procedure_restart_monitoring_agent"
+    }
+  }
+]

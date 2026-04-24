@@ -1,7 +1,88 @@
 {
   "agent": "change_induced_incident_diagnoser",
   "mode": "aposteriori",
-  "activation_status": "not_triggered",
-  "reason": "No change-centered evidence is strong enough to implicate a change as a common cause.",
-  "diagnoses": []
+  "activation_status": "triggered",
+  "reason": "Activation conditions satisfied around ChangeRequest 'change_customer_release'.",
+  "diagnoses": [
+    {
+      "diagnosis_id": "L2-P2-001",
+      "diagnosis_type": "change_induced_incident",
+      "mode": "aposteriori",
+      "target_type": "ChangeRequest",
+      "target_id": "https://example.org/masynreas/datasets/baseB/change_customer_release",
+      "activation_status": "triggered",
+      "reliability_score": 55,
+      "severity_score": 27,
+      "priority_score": 42,
+      "evidence": [
+        {
+          "level1_agent": "change_followed_by_incident_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/change_customer_release",
+          "record_count": 1,
+          "family": "dynamic",
+          "result_file": "results/dynamic/aposteriori/change_followed_by_incident_results.json"
+        },
+        {
+          "level1_agent": "change_overlap_conflict",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/change_customer_release",
+          "record_count": 1,
+          "family": "dynamic",
+          "result_file": "results/dynamic/aposteriori/change_overlap_conflict_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 5,
+        "concentration": 0,
+        "temporal_aggravation": 12,
+        "governance_weakness": 0,
+        "family_base_bonus": 10
+      },
+      "criticalities": [],
+      "explanation": "Change-induced incident is diagnosed for ChangeRequest 'change_customer_release' because a change is followed by an incident on a related element; changes overlap on the same related element converge on the same anchor. The evidence spans dynamic signal family/families.",
+      "recommended_action": "Inspect the implicated change request timeline, overlapping interventions, and incident links before looking for unrelated root causes."
+    },
+    {
+      "diagnosis_id": "L2-P2-002",
+      "diagnosis_type": "change_induced_incident",
+      "mode": "aposteriori",
+      "target_type": "RelatedElement",
+      "target_id": "https://example.org/masynreas/datasets/baseB/app_customer_portal",
+      "activation_status": "triggered",
+      "reliability_score": 45,
+      "severity_score": 27,
+      "priority_score": 37,
+      "evidence": [
+        {
+          "level1_agent": "change_followed_by_incident_detector",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/app_customer_portal",
+          "record_count": 1,
+          "family": "dynamic",
+          "result_file": "results/dynamic/aposteriori/change_followed_by_incident_results.json"
+        },
+        {
+          "level1_agent": "change_overlap_conflict",
+          "role": "primary",
+          "matched_anchor": "https://example.org/masynreas/datasets/baseB/app_customer_portal",
+          "record_count": 1,
+          "family": "dynamic",
+          "result_file": "results/dynamic/aposteriori/change_overlap_conflict_results.json"
+        }
+      ],
+      "severity_factors": {
+        "criticality": 0,
+        "breadth": 5,
+        "concentration": 0,
+        "temporal_aggravation": 12,
+        "governance_weakness": 0,
+        "family_base_bonus": 10
+      },
+      "criticalities": [],
+      "explanation": "Change-induced incident is diagnosed for RelatedElement 'app_customer_portal' because a change is followed by an incident on a related element; changes overlap on the same related element converge on the same anchor. The evidence spans dynamic signal family/families.",
+      "recommended_action": "Inspect the implicated change request timeline, overlapping interventions, and incident links before looking for unrelated root causes."
+    }
+  ]
 }

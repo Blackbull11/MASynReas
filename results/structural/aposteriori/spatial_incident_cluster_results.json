@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "location": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/room_dc1"
+    },
+    "incidentCount": {
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+      "value": "4"
+    },
+    "resourceCount": {
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+      "value": "4"
+    }
+  }
+]

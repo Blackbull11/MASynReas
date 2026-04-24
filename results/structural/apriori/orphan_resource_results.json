@@ -1,1 +1,8 @@
-[]
+[
+  {
+    "resource": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseA/res_access_switch_02"
+    }
+  }
+]

@@ -2,61 +2,311 @@
   {
     "event": {
       "type": "uri",
-      "value": "https://w3id.org/noria/event/LOG_TOY_pe_1_1_2022-02-12T22-58-00Z"
+      "value": "https://example.org/masynreas/datasets/baseB/event_monitoring_warning"
     },
     "time": {
-      "type": "literal",
-      "value": "2022-02-12T22:58:00Z"
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+      "value": "2026-02-15T09:20:00Z"
     },
     "resource": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_pe_1_1"
+      "value": "https://example.org/masynreas/datasets/baseB/res_monitor_vm_01"
     },
     "application": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/APP_TOY_INF01"
+      "value": "https://example.org/masynreas/datasets/baseB/app_monitoring_dashboard"
     },
     "module": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/APPM_TOY_INF01_M01"
+      "value": "https://example.org/masynreas/datasets/baseB/module_monitoring_dashboard"
     },
     "service1": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/SVC_TOY_DBAccess"
+      "value": "https://example.org/masynreas/datasets/baseB/service_network_monitoring"
     },
     "service2": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/SVC_TOY_TimeServer"
+      "value": "https://example.org/masynreas/datasets/baseB/service_workforce_portal"
     }
   },
   {
     "event": {
       "type": "uri",
-      "value": "https://w3id.org/noria/event/LOG_TOY_pe_1_1_2022-02-12T22-58-00Z"
+      "value": "https://example.org/masynreas/datasets/baseB/event_monitoring_warning"
     },
     "time": {
-      "type": "literal",
-      "value": "2022-02-12T22:58:00Z"
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+      "value": "2026-02-15T09:20:00Z"
     },
     "resource": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/RES_TOY_pe_1_1"
+      "value": "https://example.org/masynreas/datasets/baseB/res_monitor_vm_01"
     },
     "application": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/APP_TOY_INF01"
+      "value": "https://example.org/masynreas/datasets/baseB/app_monitoring_dashboard"
     },
     "module": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/APPM_TOY_INF01_M01"
+      "value": "https://example.org/masynreas/datasets/baseB/module_monitoring_dashboard"
     },
     "service1": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/SVC_TOY_TimeServer"
+      "value": "https://example.org/masynreas/datasets/baseB/service_workforce_portal"
     },
     "service2": {
       "type": "uri",
-      "value": "https://w3id.org/noria/object/SVC_TOY_DBAccess"
+      "value": "https://example.org/masynreas/datasets/baseB/service_network_monitoring"
+    }
+  },
+  {
+    "event": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/event_monitor_down"
+    },
+    "time": {
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+      "value": "2026-02-16T10:00:00Z"
+    },
+    "resource": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/res_monitor_vm_01"
+    },
+    "application": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/app_monitoring_dashboard"
+    },
+    "module": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/module_monitoring_dashboard"
+    },
+    "service1": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/service_network_monitoring"
+    },
+    "service2": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/service_workforce_portal"
+    }
+  },
+  {
+    "event": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/event_monitor_down"
+    },
+    "time": {
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+      "value": "2026-02-16T10:00:00Z"
+    },
+    "resource": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/res_monitor_vm_01"
+    },
+    "application": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/app_monitoring_dashboard"
+    },
+    "module": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/module_monitoring_dashboard"
+    },
+    "service1": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/service_workforce_portal"
+    },
+    "service2": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/service_network_monitoring"
+    }
+  },
+  {
+    "event": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/event_monitor_up"
+    },
+    "time": {
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+      "value": "2026-02-16T10:02:00Z"
+    },
+    "resource": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/res_monitor_vm_01"
+    },
+    "application": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/app_monitoring_dashboard"
+    },
+    "module": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/module_monitoring_dashboard"
+    },
+    "service1": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/service_network_monitoring"
+    },
+    "service2": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/service_workforce_portal"
+    }
+  },
+  {
+    "event": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/event_monitor_up"
+    },
+    "time": {
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+      "value": "2026-02-16T10:02:00Z"
+    },
+    "resource": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/res_monitor_vm_01"
+    },
+    "application": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/app_monitoring_dashboard"
+    },
+    "module": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/module_monitoring_dashboard"
+    },
+    "service1": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/service_workforce_portal"
+    },
+    "service2": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/service_network_monitoring"
+    }
+  },
+  {
+    "event": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/event_monitor_timeout"
+    },
+    "time": {
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+      "value": "2026-02-16T10:03:00Z"
+    },
+    "resource": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/res_monitor_vm_01"
+    },
+    "application": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/app_monitoring_dashboard"
+    },
+    "module": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/module_monitoring_dashboard"
+    },
+    "service1": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/service_network_monitoring"
+    },
+    "service2": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/service_workforce_portal"
+    }
+  },
+  {
+    "event": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/event_monitor_timeout"
+    },
+    "time": {
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+      "value": "2026-02-16T10:03:00Z"
+    },
+    "resource": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/res_monitor_vm_01"
+    },
+    "application": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/app_monitoring_dashboard"
+    },
+    "module": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/module_monitoring_dashboard"
+    },
+    "service1": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/service_workforce_portal"
+    },
+    "service2": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/service_network_monitoring"
+    }
+  },
+  {
+    "event": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/event_monitor_timeout_repeat"
+    },
+    "time": {
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+      "value": "2026-02-16T10:04:00Z"
+    },
+    "resource": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/res_monitor_vm_01"
+    },
+    "application": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/app_monitoring_dashboard"
+    },
+    "module": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/module_monitoring_dashboard"
+    },
+    "service1": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/service_network_monitoring"
+    },
+    "service2": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/service_workforce_portal"
+    }
+  },
+  {
+    "event": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/event_monitor_timeout_repeat"
+    },
+    "time": {
+      "type": "typed-literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+      "value": "2026-02-16T10:04:00Z"
+    },
+    "resource": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/res_monitor_vm_01"
+    },
+    "application": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/app_monitoring_dashboard"
+    },
+    "module": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/module_monitoring_dashboard"
+    },
+    "service1": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/service_workforce_portal"
+    },
+    "service2": {
+      "type": "uri",
+      "value": "https://example.org/masynreas/datasets/baseB/service_network_monitoring"
     }
   }
 ]

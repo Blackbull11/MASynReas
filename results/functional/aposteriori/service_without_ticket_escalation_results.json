@@ -1,14 +1,1 @@
-[
-  {
-    "service": {
-      "type": "uri",
-      "value": "https://w3id.org/noria/object/SVC_TOY_DBAccess"
-    }
-  },
-  {
-    "service": {
-      "type": "uri",
-      "value": "https://w3id.org/noria/object/SVC_TOY_TimeServer"
-    }
-  }
-]
+[]
