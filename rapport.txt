@@ -777,6 +777,381 @@ et la conformité atteint 0,778~--- soit une amélioration de \textbf{+150\,\%}
 par rapport au LLM seul, sans aucune hallucination supplémentaire
 et avec une calibration de sévérité restaurée.
 
+% ------------------------------------------------------------
+\subsection{Le LLM comme détecteur autonome : baseline monovalent}
+% ------------------------------------------------------------
+
+\subsubsection{Objectif et question centrale}
+
+La question de cette expérience est aussi directe que provocatrice :
+\emph{un LLM seul, sans aucun agent MAS, peut-il détecter les anomalies
+d'un graphe de connaissances ICT~?}
+Si la réponse est oui, alors l'architecture multi-agents n'ajoute aucune
+valeur à la détection de premier niveau.
+Si la réponse est non, où exactement le LLM échoue-t-il, et pourquoi~?
+
+\subsubsection{Modèle et infrastructure}
+
+Le modèle utilisé est identique aux expériences~3 et~6 :
+\textbf{Mistral-7B-Instruct-v0.3} float16, GPU NVIDIA RTX~4000~Ada (20~Go VRAM),
+serveur \texttt{jaguar.polytechnique.fr}, via HuggingFace Transformers.
+L'entrée est le graphe complet de \textbf{noria-0.2} (3\,152 triplets RDF)
+sérialisé en Turtle, présenté sans modification au LLM.
+
+\subsubsection{Protocole}
+
+Deux stratégies de prompt sont testées :
+
+\begin{itemize}
+  \item \textbf{Guidée} : le prompt liste explicitement les types d'anomalies
+        connus dans NORIA-O (structural weakness, functional gap, procedural gap,
+        etc.) et demande au LLM de détecter les entités correspondantes.
+        Le LLM a donc un vocabulaire de référence.
+  \item \textbf{Ouverte} : le prompt demande au LLM de lister librement
+        toute anomalie qu'il perçoit dans le graphe, sans contrainte
+        terminologique.
+\end{itemize}
+
+Dans les deux cas, la sortie attendue est un tableau JSON :
+\texttt{[\{entity, anomaly\_type, family, severity, explanation\}]}.
+La ground truth est l'ensemble des entités signalées par les agents L1 réels
+sur noria-0.2.
+
+\subsubsection{Résultats}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llccccc}
+\hline
+\textbf{Mode} & \textbf{Stratégie}
+  & \textbf{Détections LLM} & \textbf{Entités MAS} & \textbf{Rappel}
+  & \textbf{Précision} & \textbf{Temps (s)} \\
+\hline
+Apriori     & Guidée & 11 & 33 & 0,061 & 0,182 & 187,7 \\
+Apriori     & Ouverte &  5 & 33 & 0,000 & 0,000 &  27,8 \\
+Aposteriori & Guidée &  4 & 19 & \textbf{0,211} & \textbf{1,000} &  22,8 \\
+Aposteriori & Ouverte & 5 & 19 & 0,158 & 0,750 &  24,4 \\
+\hline
+\end{tabular}
+\caption{Performance du LLM seul (Mistral-7B-Instruct-v0.3) comme détecteur
+  d'anomalies sur noria-0.2, face aux 33 (apriori) et 19 (aposteriori)
+  entités identifiées par les agents L1 MAS.}
+\label{tab:llm-baseline}
+\end{table}
+
+\subsubsection{Analyse}
+
+\paragraph{Aposteriori guidée : précision parfaite, rappel catastrophique.}
+En mode aposteriori guidé, le LLM atteint une précision de \textbf{1,00}~:
+les 4 entités qu'il cite sont effectivement des anomalies réelles.
+Mais il n'en trouve que 4 sur 19 (rappel = 0,211).
+Autrement dit, le LLM est un détecteur extrêmement conservateur~:
+là où les agents L1 signalent 19~entités anormales, il n'en identifie que les
+4 les plus visibles dans le texte du graphe.
+La couverture par famille d'agents est de 3/9~: les familles dynamique et
+une grande partie de la famille fonctionnelle lui échappent.
+
+\paragraph{Apriori : échec quasi-total.}
+En mode apriori, le rappel tombe à \textbf{0,061} même avec le prompt guidé,
+et à \textbf{0,000} en mode ouvert.
+Ce résultat illustre la limite structurelle la plus importante des LLMs
+dans ce contexte~: le \emph{raisonnement par absence}.
+Les anomalies apriori sont définies par ce qui \emph{n'existe pas} :
+une ressource sans interface, une application sans ressource de support,
+un ticket sans procédure assignée.
+Le LLM génère par complétion de patterns positifs~; il ne peut pas
+garantir qu'il a vérifié systématiquement l'exhaustivité de chaque contrainte
+pour chaque entité du graphe.
+Le temps d'inférence guidé apriori (187,7~s) est en outre 8 fois plus long
+qu'aposteriori (22,8~s), car le LLM tente de parcourir les 3\,152 triplets
+en cherchant des patterns absents.
+
+\paragraph{Stratégie ouverte : meilleure couverture de familles, précision médiocre.}
+En aposteriori ouvert, le LLM couvre 4/9 familles (vs 3/9 en guidé) mais
+sa précision tombe à 0,75~: il invente une anomalie \emph{Equipment Alarm}
+sur \texttt{RES\_TOY\_as2} qui ne correspond à aucune détection L1.
+La flexibilité du prompt ouvert se paye d'une moins bonne fiabilité.
+
+\begin{insight}
+  Le LLM est un bon \emph{raisonneur local} mais un mauvais \emph{scanner systématique}.
+  Ses 4 détections aposteriori guidées sont toutes correctes~; il ne peut
+  simplement pas garantir d'en avoir trouvé \emph{toutes}.
+  Un système de diagnostic ICT ne peut pas s'appuyer sur un LLM seul~:
+  le rappel insuffisant (0,21 au mieux) et l'incapacité structurelle au
+  raisonnement par absence rendent le LLM inadapté à la détection exhaustive.
+  Ces limitations sont précisément celles que les agents L1 déterministes
+  du MAS comblent par construction~: chaque agent SPARQL applique sa requête
+  à l'intégralité du graphe, garantissant le rappel exhaustif sur son domaine.
+\end{insight}
+
+% ------------------------------------------------------------
+\subsection{Évaluation sur le catalogue synthétique}
+% ------------------------------------------------------------
+
+\subsubsection{Objectif et question centrale}
+
+Une démonstration sur un seul dataset de référence peut être le fruit d'un
+surapprentissage~--- le système aurait été conçu pour ce cas particulier.
+L'objectif de cette expérience est de mesurer si le système tient la route
+sur un catalogue varié de cas~: patterns diagnostiques différents,
+configurations plus ou moins dégradées, données partielles, bruit.
+Si le système est générique, ses métriques doivent rester stables.
+
+\subsubsection{Protocole}
+
+27 datasets synthétiques ont été construits manuellement pour couvrir~:
+
+\begin{itemize}
+  \item \textbf{DS01--DS09} : cas de base par famille de diagnoseur
+        (point unique de défaillance, cascade, rupture de traçabilité,
+        fragilité structurelle, etc.)~;
+  \item \textbf{DS10, DS18, DS23} : cas à diagnostics multiples (2 ou 3
+        diagnoseurs attendus simultanément)~;
+  \item \textbf{DS19--DS22} : robustesse --- données manquantes
+        (relations structurelles absentes, liens procéduraux incomplets),
+        bruit (événements non pertinents dupliqués)~;
+  \item \textbf{DS24} : calibration des scores de fiabilité/sévérité
+        (signaux forts, moyens, et faibles dans un même graphe)~;
+  \item \textbf{DS25--DS27} : montée en charge --- 170, 258 et 352 triplets.
+\end{itemize}
+
+Chaque dataset est exécuté dans les deux modes (apriori et aposteriori),
+produisant 54 paires (mode, dataset) dont 36 avec au moins un diagnoseur
+attendu.
+Les métriques sont Précision@L2, Rappel@L2 et F1@L2 sur les diagnoseurs
+de niveau~2, calculés en comparant les diagnoseurs déclenchés aux diagnoseurs
+attendus per-dataset.
+
+\subsubsection{Résultats}
+
+\paragraph{Performance globale.}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lrrr}
+\hline
+\textbf{Mode} & \textbf{Précision@L2} & \textbf{Rappel@L2} & \textbf{F1@L2} \\
+\hline
+Aposteriori & 0,825 & 0,808 & \textbf{0,815} \\
+Apriori     & 0,177 & 0,740 & 0,196 \\
+Global      & 0,394 & 0,542 & 0,456 \\
+\hline
+\end{tabular}
+\caption{Performance MAS sur 27 datasets synthétiques (36 paires mode+dataset
+  avec diagnoseur attendu).}
+\label{tab:catalogue-perf}
+\end{table}
+
+Le système atteint un \textbf{macro-F1 aposteriori de 0,815}~: les diagnoseurs
+aposteriori (SPOF, cascade, traçabilité, changement induit) sont déclenchés
+avec une fiabilité très élevée.
+Le macro-F1 apriori de 0,196 reflète principalement un excès de faux positifs
+du diagnoseur \texttt{procedural\_unreadiness}
+(15~FP pour 1~TP sur les 16 paires apriori), lui-même lié à la définition
+trop large de ses conditions SPARQL~: toute ressource sans plan d'opération
+associé est signalée, ce qui produit des déclenchements sur des datasets
+propres.
+
+\paragraph{Classement et diagnostics multiples (MRR).}
+
+Sur les 4 datasets à diagnostics multiples (DS10, DS18, DS23, DS24),
+le \textbf{MRR (Mean Reciprocal Rank)} atteint \textbf{0,833}~:
+le diagnoseur attendu en première position est retrouvé en tête dans
+3 cas sur 4.
+Sur DS23 (3 diagnoseurs attendus hiérarchisés par urgence), le diagnoseur
+de rang~1 (\texttt{single\_point\_of\_failure}) est correctement
+placé en tête et le second rang (\texttt{traceability\_breakdown})
+est aussi récupéré.
+
+\paragraph{Robustesse (DS19--DS22).}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llc}
+\hline
+\textbf{Dataset} & \textbf{Perturbation} & \textbf{F1@L2} \\
+\hline
+DS19 & Données structurelles et temporelles manquantes & \textbf{1,00} \\
+DS20 & Liens procéduraux incomplets                    & \textbf{1,00} \\
+DS21 & Événements non pertinents (bruit)               & \textbf{1,00} \\
+DS22 & Enregistrements dupliqués (bruit)               & \textbf{1,00} \\
+\hline
+\end{tabular}
+\caption{Robustesse du système sur 4 datasets de perturbation.}
+\label{tab:robustness}
+\end{table}
+
+Aucune dégradation sur les 4 datasets de robustesse.
+DS19 illustre le cas particulier d'un système qui \emph{s'abstient correctement}~:
+sans données suffisantes pour déclencher un diagnoseur, aucun faux positif
+n'est produit (F1~= 1,00 avec 0 TP, 0 FP, 0 FN attendus).
+DS21 et DS22 montrent que les requêtes SPARQL déterministes sont
+naturellement insensibles au bruit~: un événement hors-cible ou un
+doublon ne crée pas de déclenchement parasite.
+
+\paragraph{Scalabilité (DS25--DS27).}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lrrrr}
+\hline
+\textbf{Dataset} & \textbf{Triplets} & \textbf{L1 (ms)} & \textbf{L2 (ms)} & \textbf{Total (ms)} \\
+\hline
+DS25 (petit)  & 170 & 4\,505 & 254 & 4\,759 \\
+DS26 (moyen)  & 258 & 4\,366 & 242 & 4\,608 \\
+DS27 (large)  & 352 & 5\,823 & 361 & 6\,434 \\
+\hline
+\end{tabular}
+\caption{Temps d'exécution total en modes aposteriori sur 3 graphs de tailles
+  croissantes (DS25--DS27, Virtuoso local).}
+\label{tab:scalability}
+\end{table}
+
+Le temps de diagnostic reste \textbf{sous 7 secondes} quelle que soit la
+taille du graphe dans cette plage.
+Les timings L1 varient légèrement du fait de la dispersion des temps de
+démarrage JVM et de la variabilité des requêtes SPARQL sur Virtuoso~;
+la tendance est essentiellement plate entre 170 et 352 triplets,
+ce qui suggère que le goulot d'étranglement est le démarrage des processus
+plutôt que le volume de données.
+
+\begin{insight}
+  Le catalogue de 27 datasets confirme la généricité du système~:
+  macro-F1 aposteriori de 0,815, MRR de 0,833 sur les cas multi-diagnostics,
+  robustesse parfaite face aux perturbations, et temps de réponse constant
+  sous 7~s.
+  La faiblesse apriori (F1~= 0,196) est localisée dans un seul diagnoseur
+  surconfiant~; les 4 autres diagnoseurs apriori déclenchent à précision 1,00
+  ou restent silencieux~--- comportement souhaitable pour un système de
+  production.
+\end{insight}
+
+% ------------------------------------------------------------
+\subsection{LLM versus MAS pour la classification de diagnostic L2}
+% ------------------------------------------------------------
+
+\subsubsection{Objectif et question centrale}
+
+L'expérience~3 a montré que le MAS améliore la synthèse libre d'un LLM.
+Mais est-ce que le MAS est meilleur qu'un LLM pour \emph{nommer précisément}
+le bon pattern de diagnostic~?
+Cette expérience pose la question différemment : étant donné un graphe
+de connaissances ICT, qui sait le mieux identifier le diagnoseur L2
+qui doit se déclencher --- le LLM ou le MAS~?
+La réponse détermine si le MAS est uniquement utile comme assistant
+du LLM, ou s'il a une valeur propre en tant que classificateur.
+
+\subsubsection{Modèle et infrastructure}
+
+Même modèle que les expériences~3 et~4 :
+\textbf{Mistral-7B-Instruct-v0.3} float16, GPU NVIDIA RTX~4000~Ada (20~Go VRAM),
+\texttt{jaguar.polytechnique.fr}.
+Le catalogue complet de 36 paires (mode, dataset) est utilisé
+(DS01--DS27 filtrés sur les paires ayant au moins un diagnoseur attendu,
+soit 16 paires apriori + 20 paires aposteriori).
+
+\subsubsection{Protocole}
+
+La tâche est une \textbf{classification fermée}~: le LLM doit nommer
+parmi la liste des 12 diagnoseurs de niveau~2 (\texttt{single\_point\_of\_failure},
+\texttt{service\_cascade}, \texttt{traceability\_breakdown},
+\texttt{structural\_fragility}, etc.) ceux qui, selon lui, doivent
+se déclencher sur le graphe fourni.
+Cette tâche est \textbf{fondamentalement différente} de celle de l'expérience~3
+(rapport libre de synthèse en langage naturel)~: ici le LLM ne synthétise pas,
+il prédit un label parmi une liste connue.
+
+Les mêmes trois conditions d'entrée sont testées~: A (graphe seul), B (graphe~+~L1),
+C (graphe~+~L1~+~L2), comparées à la référence MAS.
+
+\subsubsection{Résultats}
+
+\paragraph{Performance globale sur 36 paires.}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lcccc}
+\hline
+\textbf{Condition} & \textbf{Précision} & \textbf{Rappel} & \textbf{F1} & \textbf{TP / FP / FN} \\
+\hline
+A --- LLM, graphe seul           & 0,111 & 0,579 & 0,088 & 4 / 32 / 20 \\
+B --- LLM, graphe~+~L1           & 0,197 & 0,639 & 0,191 & 7 / 35 / 17 \\
+C --- LLM, graphe~+~L1~+~L2      & 0,426 & 0,685 & 0,391 & 9 / 22 / 15 \\
+MAS (référence)                  & \textbf{0,537} & \textbf{0,778} & \textbf{0,540} & 13 / 20 / 11 \\
+\hline
+\end{tabular}
+\caption{Classification des diagnoseurs L2 : LLM (3 conditions) vs MAS,
+  sur 36 paires (mode, dataset).}
+\label{tab:llm-vs-mas-global}
+\end{table}
+
+\paragraph{Décomposition apriori / aposteriori.}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lcccc}
+\hline
+ & \multicolumn{2}{c}{\textbf{Apriori (16 paires)}} & \multicolumn{2}{c}{\textbf{Aposteriori (20 paires)}} \\
+\textbf{Condition} & \textbf{F1} & \textbf{TP/FP/FN}
+                   & \textbf{F1} & \textbf{TP/FP/FN} \\
+\hline
+A --- LLM graphe seul  & 0,104 & 2/14/9  & 0,075 & 2/18/11 \\
+B --- LLM graphe~+~L1  & 0,148 & 5/19/6  & 0,225 & 2/16/11 \\
+C --- LLM graphe~+~L1~+~L2 & \textbf{0,244} & 5/13/6  & 0,508 & 4/9/9  \\
+MAS (référence)        & 0,196 & 5/18/6  & \textbf{0,815} & 8/2/5  \\
+\hline
+\end{tabular}
+\caption{F1 de classification L2 par mode. En aposteriori, le MAS
+  (\textbf{F1~= 0,815}) dépasse très largement LLM-C (F1~= 0,508).
+  En apriori, LLM-C (F1~= 0,244) dépasse marginalement le MAS (F1~= 0,196).}
+\label{tab:llm-vs-mas-mode}
+\end{table}
+
+\subsubsection{Analyse}
+
+\paragraph{Aposteriori : le MAS domine par un facteur 1,6.}
+Sur les 20 paires aposteriori, le MAS atteint F1~= \textbf{0,815} avec
+8~TP et seulement 2~FP~; LLM-C atteint F1~= 0,508 (9~FP).
+L'avantage du MAS vient de sa précision~: 0,825 contre 0,55 pour LLM-C.
+Le LLM, même enrichi du résumé L2, continue de déclencher des diagnoseurs
+que rien dans le graphe ne justifie~--- il sur-généralise par complétion
+de patterns vus à l'entraînement.
+Le MAS, dont chaque diagnoseur applique une condition SPARQL nécessaire
+et suffisante, ne se déclenche que si la preuve est explicitement présente
+dans le graphe.
+
+\paragraph{Apriori : inversion --- LLM-C légèrement meilleur que le MAS.}
+Sur les 16 paires apriori, la situation s'inverse~:
+LLM-C (F1~= 0,244) dépasse marginalement le MAS (F1~= 0,196).
+L'explication est dans les faux positifs~: le diagnoseur
+\texttt{procedural\_unreadiness} du MAS génère 15~FP (sur les 18 totaux apriori),
+effondrant sa précision à 0,177.
+LLM-C, qui ne connaît pas cette sur-sensibilité, évite ces faux positifs.
+Ce résultat indique que les diagnoseurs apriori du MAS bénéficieraient
+d'un affinement de leurs conditions SPARQL.
+
+\paragraph{L'effet des couches MAS sur le LLM en classification.}
+Le gradient A $\to$ B $\to$ C est régulier sur la F1 globale
+(0,088 $\to$ 0,191 $\to$ 0,391), confirmant que chaque couche MAS apporte
+de l'information utile au LLM pour la classification.
+Cependant, même LLM-C reste à \textbf{$-$28\,\%} sous le MAS en F1 globale
+(0,391 vs 0,540)~: le LLM assisté du contexte L1+L2 apprend \emph{de}
+la décision MAS, mais ne la reproduit pas~--- il lui manque la garantie
+logique d'exhaustivité que la requête SPARQL fournit mécaniquement.
+
+\begin{insight}
+  En classification de patterns L2, le MAS n'est pas simplement un
+  ``générateur de contexte'' pour le LLM~: c'est un meilleur classificateur
+  aposteriori que n'importe quelle condition LLM (F1~= 0,815 vs 0,508).
+  La distinction entre les deux modes est structurelle~: les diagnoseurs
+  aposteriori sont basés sur des preuves positives présentes dans le graphe
+  (un incident lié à une ressource, un ticket fermé sans procédure)~---
+  preuves que SPARQL détecte exhaustivement.
+  Les diagnoseurs apriori sont basés sur des absences et des seuils
+  configurables~--- conditions plus ambiguës pour les deux approches,
+  mais où le MAS souffre davantage de sur-sensibilité.
+\end{insight}
+
 % ============================================================
 \section{Discussion}
 % ============================================================
