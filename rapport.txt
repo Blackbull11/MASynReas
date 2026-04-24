@@ -512,88 +512,166 @@ familles.
 
 \subsubsection{Objectif et question centrale}
 
-La question centrale du projet est : \emph{à quoi sert le MAS si on
-dispose déjà d'un LLM ?}
-Pour y répondre empiriquement, nous mesurons l'impact de chaque couche
-du pipeline sur la qualité des diagnostics produits.
+L'idée directrice de cette expérience est la suivante : si un grand modèle
+de langage peut lire un graphe de connaissances et en extraire un diagnostic,
+à quoi sert le système multi-agents ?
+Pour répondre empiriquement à cette question, nous mesurons ce que le LLM
+produit seul~--- face au graphe brut~--- puis ce qu'il produit lorsqu'on
+lui fournit successivement les sorties du niveau~1 (détections d'anomalies),
+puis celles du niveau~2 (diagnostics corrélés).
+Chaque couche supprimée constitue une condition de contrôle ;
+l'amélioration mesurée entre conditions quantifie la valeur ajoutée
+de la couche correspondante.
+
+La tâche demandée au LLM est délibérément pratique : produire un rapport
+diagnostique opérationnel en langage naturel, identifiant la cause racine,
+l'entité principale affectée et le niveau de sévérité.
+Cette formulation correspond à ce qu'un opérateur NOC attendrait d'un
+assistant IA, et elle est \textbf{différente de celle de l'expérience~6}
+(qui demande au LLM de \emph{nommer} un pattern de diagnoseur parmi une
+liste fermée) : ici, le LLM doit \emph{synthétiser} librement à partir
+des données fournies.
+
+\subsubsection{Modèle et infrastructure}
+
+Le modèle utilisé est \textbf{Mistral-7B-Instruct-v0.3} en précision
+float16, exécuté sur un GPU \textbf{NVIDIA RTX~4000~Ada} (20~Go VRAM)
+du serveur \texttt{jaguar.polytechnique.fr} (cluster GPU de l'École
+Polytechnique), via la bibliothèque HuggingFace Transformers.
+Paramètres d'inférence : température~= 0,1 (quasi-déterministe),
+max\_new\_tokens~= 300.
+
+\begin{itemize}
+  \item \textbf{Ce modèle est identique à celui des expériences~4 et~6},
+        ce qui rend les trois expériences LLM directement comparables.
+  \item La précision float16 (vs quantification Q4 du run CPU de
+        l'expérience~4) évite toute perte de qualité liée à la compression.
+  \item 3~runs indépendants par condition permettent de mesurer la
+        consistance (stabilité des réponses à température basse).
+\end{itemize}
+
+L'inférence est réalisée en deux phases séparées.
+\textbf{Phase~1 (locale)} : le script \texttt{prepare\_llm\_ablation.py}
+charge chaque dataset dans Virtuoso, exécute les agents L1 et L2 réels,
+et exporte un paquet autonome (\texttt{llm\_ablation\_data.json}) contenant
+pour chaque scénario : le graphe Turtle brut, un résumé des détections L1,
+un résumé des diagnostics L2, et la ground truth.
+\textbf{Phase~2 (GPU)} : le script \texttt{ablation\_synthesis\_infer.py}
+lit ce paquet et soumet les prompts à Mistral-7B sur jaguar,
+sans aucune dépendance à Virtuoso.
+Cette séparation garantit que les poids du LLM n'interfèrent pas avec
+l'exécution des agents MAS.
 
 \subsubsection{Protocole}
 
-Trois conditions sont testées sur les mêmes scénarios, en ne changeant
-que l'entrée du LLM (modèle : \texttt{llama3.1:8b} via Ollama, exécution
-locale sur CPU) :
+Trois conditions sont testées sur les cinq mêmes scénarios.
+Seule l'entrée du LLM varie~; le prompt de tâche est identique dans
+les trois cas :
+
+\begin{quotation}
+\noindent\textit{``You are a network operations expert analyzing an ICT
+infrastructure knowledge graph. Based on the data provided, produce a
+concise diagnostic report: identify the most likely root cause, name
+the primary affected entity (exact identifier from the graph), assess
+the severity: CRITICAL, HIGH, MEDIUM, or LOW. Answer in 3 to 5
+sentences.''}
+\end{quotation}
 
 \begin{table}[H]
 \centering
-\begin{tabular}{llp{6.5cm}}
+\begin{tabular}{llp{7cm}}
 \hline
 \textbf{Condition} & \textbf{Architecture} & \textbf{Entrée du LLM} \\
 \hline
-A & LLM seul & Texte brut du trouble ticket (contexte opérateur minimal) \\
-B & Niveau~1 $\to$ LLM & JSON structurés produits par les 54~agents détecteurs \\
-C & Niveau~1+2 $\to$ LLM & JSON niveau~1 + diagnostics corrélés des 4~agents de niveau~2 \\
+A & LLM seul
+  & Graphe Turtle brut du dataset (configuration + événements selon le mode) \\
+B & Niveau~1 $\to$ LLM
+  & Graphe + résumé textuel des détections produites par les agents L1 réels \\
+C & Niveau~1+2 $\to$ LLM
+  & Graphe + résumé L1 + résumé des diagnostics L2 (agent déclenché, entité anchor, scores de fiabilité/sévérité/priorité) \\
 \hline
 \end{tabular}
-\caption{Les trois conditions de l'étude d'ablation.}
+\caption{Les trois conditions de l'étude d'ablation GPU.
+  Les sorties L1 et L2 sont générées dynamiquement par les agents MAS réels,
+  pas construites manuellement.}
 \label{tab:ablation-conditions}
 \end{table}
 
-Quatre métriques sont calculées automatiquement sur 5~runs indépendants
-par condition et par scénario :
-\begin{itemize}
-  \item \textbf{Hallucination} ($\downarrow$) : fraction des noms
-        d'entités produits par le LLM absents du scénario réel ;
-  \item \textbf{Conformité} ($\uparrow$) : fraction des éléments du
-        ground truth (entité, type de diagnostic, sévérité) présents
-        dans la réponse ;
-  \item \textbf{Consistance} ($\uparrow$) : similarité de Jaccard entre
-        les 5~réponses d'un même run (mesure de reproductibilité) ;
-  \item \textbf{Sévérité} ($\uparrow$) : 1 si le niveau de sévérité
-        du ground truth est correctement reproduit, 0 sinon.
-\end{itemize}
+\subsubsection{Scénarios}
 
-Cinq scénarios ont été construits à partir des entités de noria-0.2 :
+Cinq scénarios sont issus du catalogue de datasets synthétiques,
+chacun conçu pour mettre en jeu un pattern diagnostique précis.
+La ground truth de chaque scénario comprend trois éléments :
+l'identifiant de l'entité principale affectée (\emph{anchor}),
+le type de diagnostic attendu, et le niveau de sévérité.
 
 \begin{table}[H]
 \centering
-\begin{tabular}{llp{5cm}p{4cm}}
+\begin{tabular}{llp{4.2cm}lc}
 \hline
-\textbf{ID} & \textbf{Nom} & \textbf{Description} & \textbf{Ground truth} \\
+\textbf{ID} & \textbf{Dataset} & \textbf{Description} & \textbf{Anchor} & \textbf{Sévérité} \\
 \hline
-S1 & SPOF & \texttt{RES\_TOY\_as2} : 3~signaux structurels simultanés
-   & \texttt{single\_point\_of\_failure} / CRITICAL \\
-S2 & Change & \texttt{CR\_2022\_001} : signal dynamique + procédural corrélés
-   & \texttt{change\_induced\_incident} / HIGH \\
-S3 & Traçabilité & Incidents sans ticket ET tickets sans événement
-   & \texttt{traceability\_breakdown} / HIGH \\
-S4 & Fragilité & Accumulation de faiblesses apriori sur \texttt{RES\_TOY\_as2}
-   & \texttt{structural\_fragility} / HIGH \\
-S5 & Cross-family & SPOF structurel + incident induit par changement (2~familles)
-   & \texttt{single\_point\_of\_failure} / CRITICAL \\
+S1 & DS11 aposteriori
+   & Pare-feu isolé, sans redondance, incident actif
+   & \texttt{res\_firewall\_01} & CRITICAL \\
+S2 & DS12 aposteriori
+   & Changement logiciel suivi d'un incident sur l'infrastructure cliente
+   & \texttt{change\_customer\_release} & HIGH \\
+S3 & DS14 aposteriori
+   & Incidents sans ticket ET tickets sans événement lié (rupture procédurale)
+   & \texttt{operational\_process} & HIGH \\
+S4 & DS04 apriori
+   & Switch d'accès sans interface, sans parent, non managé (3~faiblesses simultanées)
+   & \texttt{res\_access\_switch\_02} & HIGH \\
+S5 & DS18 aposteriori
+   & Deux services impactés simultanément via une dépendance commune (cascade)
+   & \texttt{service\_workforce\_portal} & CRITICAL \\
 \hline
 \end{tabular}
-\caption{Scénarios de l'étude d'ablation (noria-0.2).}
+\caption{Scénarios de l'étude d'ablation GPU (datasets synthétiques DS04--DS18).}
 \label{tab:ablation-scenarios}
 \end{table}
 
+\subsubsection{Métriques}
+
+Quatre métriques sont calculées automatiquement sur les 3~runs par condition :
+
+\begin{itemize}
+  \item \textbf{Conformité} ($\uparrow$, $\in \{0, \tfrac{1}{3}, \tfrac{2}{3}, 1\}$) :
+        fraction de trois éléments du ground truth présents dans la réponse :
+        l'entité anchor (correspondance sous-chaîne insensible à la casse),
+        le niveau de sévérité, et un mot-clé du type diagnostique.
+  \item \textbf{Hallucination} ($\downarrow$) : fraction des tokens de type
+        entité NORIA (pattern \texttt{[A-Z][A-Z\_0-9]\{2,\}}) présents dans la
+        réponse mais absents du graphe soumis.
+        Les termes génériques (\texttt{CRITICAL}, \texttt{HIGH}, \texttt{ICT}, etc.)
+        sont exclus du décompte.
+  \item \textbf{Sévérité} ($\uparrow$, binaire) : 1 si le niveau de sévérité
+        attendu apparaît littéralement dans la réponse, 0 sinon.
+  \item \textbf{Consistance} ($\uparrow$) : similarité de Jaccard moyenne
+        entre toutes les paires de runs (mesure de stabilité~; à température
+        0,1, une valeur $>$ 0,40 indique une réponse stable).
+\end{itemize}
+
 \subsubsection{Résultats}
 
-\paragraph{Moyennes par condition (5~scénarios $\times$ 5~runs).}
+\paragraph{Macro-moyennes par condition (5~scénarios $\times$ 3~runs).}
 
 \begin{table}[H]
 \centering
 \begin{tabular}{lcccc}
 \hline
-\textbf{Condition} & \textbf{Hallucination $\downarrow$} & \textbf{Conformité $\uparrow$}
-  & \textbf{Consistance $\uparrow$} & \textbf{Sévérité $\uparrow$} \\
+\textbf{Condition} & \textbf{Conformité $\uparrow$} & \textbf{Hallucination $\downarrow$}
+  & \textbf{Sévérité $\uparrow$} & \textbf{Consistance $\uparrow$} \\
 \hline
-A --- LLM seul         & 0,00 & 0,60 & 0,68 & \textbf{1,00} \\
-B --- Niveau~1 $\to$ LLM  & 0,05 & 0,53 & 0,57 & 0,60 \\
-C --- Niveau~1+2 $\to$ LLM & \textbf{0,00} & \textbf{0,87} & 0,66 & \textbf{1,00} \\
+A --- graphe seul           & 0,311 & \textbf{0,000} & 0,733 & 0,328 \\
+B --- graphe + L1           & 0,533 & 0,267          & 0,467 & 0,433 \\
+C --- graphe + L1 + L2      & \textbf{0,778} & 0,133 & \textbf{0,733} & \textbf{0,420} \\
 \hline
 \end{tabular}
-\caption{Résultats moyens de l'étude d'ablation (5~scénarios $\times$ 5~runs,
-  \texttt{llama3.1:8b}).}
+\caption{Résultats moyens de l'étude d'ablation GPU
+  (5~scénarios $\times$ 3~runs, \texttt{Mistral-7B-Instruct-v0.3} float16,
+  NVIDIA RTX~4000~Ada, \texttt{jaguar.polytechnique.fr}).}
 \label{tab:ablation-avg}
 \end{table}
 
@@ -603,72 +681,101 @@ C --- Niveau~1+2 $\to$ LLM & \textbf{0,00} & \textbf{0,87} & 0,66 & \textbf{1,00
 \centering
 \begin{tabular}{l ccc ccc ccc}
 \hline
- & \multicolumn{3}{c}{\textbf{Conformité}} & \multicolumn{3}{c}{\textbf{Consistance}} & \multicolumn{3}{c}{\textbf{Sévérité}} \\
+ & \multicolumn{3}{c}{\textbf{Conformité}} & \multicolumn{3}{c}{\textbf{Hallucination}} & \multicolumn{3}{c}{\textbf{Sévérité}} \\
 \textbf{Scénario} & A & B & C & A & B & C & A & B & C \\
 \hline
-S1 SPOF          & 0,67 & 1,00 & \textbf{1,00} & 0,84 & 0,44 & 0,54 & 1 & 1 & 1 \\
-S2 Change        & 0,67 & 0,33 & \textbf{0,67} & 0,52 & \textbf{0,82} & \textbf{0,82} & 1 & \textbf{0} & 1 \\
-S3 Traçabilité   & 0,33 & 0,33 & \textbf{0,67} & 0,80 & 0,52 & 0,62 & 1 & 1 & 1 \\
-S4 Fragilité     & 0,67 & 0,67 & \textbf{1,00} & 0,70 & 0,51 & 0,70 & 1 & 1 & 1 \\
-S5 Cross-family  & 0,67 & 0,33 & \textbf{1,00} & 0,53 & 0,56 & 0,63 & 1 & \textbf{0} & 1 \\
+S1 SPOF          & 0,556 & 0,889 & \textbf{1,000} & 0,000 & 0,333 & 0,333 & 1 & 1 & 1 \\
+S2 Change        & 0,333 & 0,667 & \textbf{0,889} & 0,000 & 0,333 & 0,333 & 0,67 & \textbf{0,33} & 0,67 \\
+S3 Traçabilité   & 0,000 & 0,000 & \textbf{0,333} & 0,000 & \textbf{0,667} & 0,000 & 0 & 0 & 0,67 \\
+S4 Fragilité     & 0,333 & \textbf{0,778} & \textbf{0,778} & 0,000 & 0,000 & 0,000 & 1 & 0,33 & 0,33 \\
+S5 Cascade       & 0,333 & 0,333 & \textbf{0,889} & 0,000 & 0,000 & 0,000 & 1 & 0,67 & 1 \\
 \hline
 \end{tabular}
-\caption{Conformité, consistance et sévérité par scénario et par condition.
-  Les valeurs en gras signalent le meilleur score de conformité (colonne C),
-  ou un échec notable (sévérité~B).}
+\caption{Conformité, hallucination et sévérité par scénario.
+  Les valeurs en gras signalent le meilleur score de conformité ou un taux
+  d'hallucination critique (S3~B~= 0,667).}
 \label{tab:ablation-detail}
 \end{table}
 
 \subsubsection{Analyse}
 
-\paragraph{La condition C domine sur toutes les métriques critiques.}
-La condition C (niveau~1+2 $\to$ LLM) obtient la meilleure conformité
-moyenne (0,87) et zéro hallucination.
-Elle est la seule condition à atteindre conformité = 1,00 sur S1, S4 et S5,
-et la seule à reproduire correctement la sévérité sur tous les scénarios
-(1,00 contre 0,60 pour la condition B).
+\paragraph{Gradient A $<$ B $<$ C : chaque couche améliore la qualité.}
+La conformité progresse nettement à chaque ajout de contexte MAS :
+0,311 (graphe seul) $\to$ 0,533 (+71\,\%) avec les détections L1
+$\to$ 0,778 (+46\,\%) avec les diagnostics L2.
+La condition~C est la seule à atteindre une conformité $\geq$~0,889
+sur S1, S2 et S5.
 
-\paragraph{Résultat contre-intuitif : la condition B est pire que A.}
-Sur S2 (incident induit par changement) et S5 (cross-family), la
-condition B :
-\begin{itemize}
-  \item \textbf{rate la sévérité} (répond CRITICAL au lieu de HIGH) ;
-  \item obtient une conformité de 0,33, inférieure à A (0,67).
-\end{itemize}
-Sur S1, la condition B atteint conformité = 1,00 mais hallucine une entité
-(taux = 0,25) ; la condition C obtient le même résultat sans hallucination.
+\paragraph{Résultat contre-intuitif : la condition B introduit des hallucinations.}
+La condition~A (graphe seul) produit \textbf{zéro hallucination},
+car le LLM ne cite que ce qu'il voit dans le Turtle.
+La condition~B atteint un taux d'hallucination de 0,267 en moyenne~:
+le résumé L1 liste de nombreuses entités sans corrélation, et le LLM
+commence à en mentionner qui n'existent pas dans le graphe.
+Le cas extrême est S3 (traçabilité) où le taux atteint \textbf{0,667}~:
+le résumé L1 énumère des entités issues de multiples agents sans relation
+entre elles, saturant le LLM en signaux contradictoires.
+La condition~C ramène le taux à 0,000 sur S3~: le résumé L2, qui désigne
+explicitement l'agent déclenché et son entité anchor, filtre le bruit
+et ancre la réponse.
+
+\paragraph{Résultat clé : la condition B dégrade aussi la calibration de sévérité.}
+La sévérité passe de 0,733 (A) à \textbf{0,467} (B) avant de
+revenir à 0,733 (C).
+Sur S4 (fragilité apriori), le résumé L1 décrit un switch dont
+l'interface manque, le parent manque, et qui est orphelin~--- trois signaux
+qui, sans corrélation, sonnent comme une urgence CRITICAL.
+Le ground truth est HIGH~: il s'agit d'une fragilité configurationnelle,
+pas d'un incident actif.
+Le diagnostic L2 (type \texttt{structural\_fragility}, score de sévérité
+normalisé à 26/100) ancre le LLM dans le bon registre~; la condition~C
+récupère une sévérité partiellement correcte.
 
 \begin{insight}
-Les JSON bruts du niveau~1 contiennent \texttt{RES\_TOY\_as2} dans
-plusieurs fichiers indépendants (\texttt{isolated}, \texttt{no\_redundancy},
-\texttt{high\_impact}, \texttt{change\_linked}).
-Sans corrélation, le LLM se concentre sur la ressource la plus visible
-et sur-diagnostique en CRITICAL, même quand le signal dominant est la
-chaîne de changement.
-Le diagnostic de niveau~2 --- qui dit explicitement
-\emph{``change CR\_2022\_001, dual corroboration, severity HIGH''} ---
-recadre correctement le modèle.
-\textbf{Des faits bruts non corrélés peuvent activement tromper le LLM :
-le niveau~2 n'est pas un luxe, il est nécessaire pour que les faits du
-niveau~1 soient exploitables.}
+Des signaux de détection bruts et non corrélés peuvent activement
+\emph{induire en erreur} le LLM sur deux dimensions simultanément :
+en lui faisant inventer des entités (hallucination) et en dérèglant
+sa calibration de sévérité.
+Le niveau~2 n'est pas un luxe d'ingénierie~: il est la couche qui
+transforme un ensemble de faits bruts en un contexte exploitable
+par un modèle de langage.
 \end{insight}
 
-\paragraph{S5 --- le cas cross-family est le plus démonstratif.}
-Sur le scénario combinant SPOF structurel et incident induit par
-changement, la condition C atteint conformité = 1,00 là où la condition B
-obtient 0,33.
-L'écart est maximal précisément quand les familles produisent des signaux
-potentiellement contradictoires, ce qui illustre la valeur décisive de la
-corrélation multi-famille du niveau~2.
+\paragraph{S3 (traçabilité) : la limite structurelle du LLM.}
+Aucune des trois conditions n'atteint une conformité supérieure à 0,333
+sur ce scénario.
+Le pattern de rupture de traçabilité est défini par une \emph{absence} :
+des incidents sans ticket associé, des tickets sans événement lié.
+Le LLM génère par complétion de patterns présents~; il ne peut pas
+garantir l'exhaustivité d'un scan systématique pour détecter ce qui
+\emph{devrait} exister et ne l'est pas.
+Ce résultat converge avec le finding de l'expérience~4 sur la détection
+d'entités~: le raisonnement par absence est une limite structurelle des
+LLMs génératifs, indépendante du contexte fourni.
+
+\paragraph{S5 (cascade) : impact maximal du niveau~2.}
+Sur le scénario mettant en jeu deux services impactés simultanément via
+une ressource commune, la condition~C atteint conformité = 0,889 contre
+0,333 pour A et B.
+Sans le résumé L2 qui dit explicitement
+\emph{``service\_cascade\_diagnoser~: TRIGGERED, anchor~=
+service\_workforce\_portal, reliability~= 95''}, le LLM identifie
+le service de monitoring (le plus visible dans le graphe) mais manque
+la dimension cascade.
+C'est précisément quand les signaux multi-familles sont les plus ambigus
+que la synthèse du niveau~2 est la plus décisive.
 
 \paragraph{Conclusion.}
-Le MAS ne remplace pas le LLM --- il le rend fiable.
-Sans le niveau~1, le LLM peut halluciner.
-Avec le niveau~1 seul (condition B), il peut sur-diagnostiquer en présence
-de signaux non corrélés.
-Avec le niveau~1+2 (condition C), il produit des diagnostics précis, sans
-hallucination, et reproductibles, avec une conformité de 0,87 contre 0,53
-pour le niveau~1 seul et 0,60 pour le LLM seul.
+Le MAS ne remplace pas le LLM~--- il le rend fiable.
+Livré face au graphe brut (condition~A), le LLM produit des diagnostics
+partiels mais sans erreurs graves.
+Avec les détections L1 seules (condition~B), il améliore la conformité
+(+71\,\%) mais au prix d'hallucinations et d'une dégradation de sévérité~:
+le trop-plein d'information non structurée le désoriente.
+Avec les diagnostics L2 (condition~C), les deux effets négatifs disparaissent
+et la conformité atteint 0,778~--- soit une amélioration de \textbf{+150\,\%}
+par rapport au LLM seul, sans aucune hallucination supplémentaire
+et avec une calibration de sévérité restaurée.
 
 % ============================================================
 \section{Discussion}
