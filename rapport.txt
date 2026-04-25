@@ -1944,7 +1944,7 @@ condition. Les métriques évaluées sont définies comme suit~:
         est mentionné dans la réponse.
   \item \textbf{Consistance} --- similarité de Jaccard moyenne sur toutes les
         paires de runs pour un même (scénario, condition), calculée sur les
-        sacs de tokens.
+        ensembles de mots (tokens lowercasés, dédupliqués).
 \end{itemize}
 
 \begin{table}[H]
